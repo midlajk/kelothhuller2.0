@@ -1,0 +1,96 @@
+<%- include('./includes/head.ejs') %>
+    <div class="container-fluid">
+
+        <!-- Page Heading -->
+
+
+        <!-- DataTales Example -->
+        <div class="card shadow mb-4">
+            <div class="card-header py-3">
+                <h6 class="m-0 font-weight-bold text-primary">കൊടുക്കാനുള്ളത്
+                </h6>
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                        <thead>
+                            <tr>
+                                <th>Date</th>
+                                <th>Seller</th>
+                                <th>Bags</th>
+                                <th>kooli</th>
+                                <th>hint</th>
+                                <th>Edit</th>
+
+
+                            </tr>
+                        </thead>
+                        <tfoot>
+                            <tr>
+                                <tr>
+                                    <th>Date</th>
+                                    <th>Seller</th>
+                                    <th>Bags</th>
+                                    <th>kooli</th>
+                                    <th>hint</th>
+                                    <th>Edit</th>
+
+
+                                </tr>
+                        </tfoot>
+                        <tbody>
+
+                            <%for (let doc of docs){%>
+                                <tr>
+                                    <td>
+                                        <%= moment(doc.work.date).format( 'MMM-DD-YYYY') %>
+                                    </td>
+                                    <td>
+                                        <%=doc.work.loadof%>
+                                    </td>
+                                    <td>
+                                        <%=doc.work.numberofsack%>
+                                    </td>
+                                    <td>
+                                        <%=doc.work.kooli%>
+                                    </td>
+                                    <td>
+                                        <%=doc.work.product%>
+                                    </td>
+                                    <td>Edit</td>
+
+                                </tr>
+                                <%}%>
+                                    <%for (let dic of dics){%>
+                                        <tr>
+                                            <td>
+                                                <%= moment(dic.payed.date).format( 'MMM-DD-YYYY') %>
+                                            </td>
+                                            <td>
+
+                                            </td>
+                                            <td>
+
+                                            </td>
+                                            <td>
+                                                <%=doc.payed.amount%>
+                                            </td>
+                                            <td>
+                                                <%=doc.payed.message%>
+                                            </td>
+                                            <td>Edit</td>
+
+                                        </tr>
+                                        <%}%>
+
+
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+
+    <%- include('./includes/end.ejs') %>

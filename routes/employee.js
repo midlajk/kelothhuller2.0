@@ -1,0 +1,14 @@
+const path = require('path');
+const express = require('express');
+const router = express.Router();
+const mongoose = require('mongoose');
+const employeeController = require('../controller/employee');
+router.get('/viewkooli', employeeController.viewkooli);
+router.get('/indidualkooli/:id', employeeController.indidualkooli);
+router.get('/viewattendance', employeeController.viewattendance);
+router.get('/Editemployee', employeeController.Editemployee);
+router.post('/postaddemployee', employeeController.postaddemployee);
+router.get('/markattendance', employeeController.markattendance);
+router.get('/addkooli', employeeController.addkooli);
+router.post('/addkooli', employeeController.postaddkooli);
+module.exports = router;

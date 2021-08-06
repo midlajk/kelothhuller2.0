@@ -1,0 +1,88 @@
+<%- include('./includes/head.ejs') %>
+    <div class="container-fluid">
+
+        <!-- Page Heading -->
+
+
+        <!-- DataTales Example -->
+        <div class="card shadow mb-4">
+            <div class="card-header py-3">
+                <h6 class="m-0 font-weight-bold text-primary">Kooli details
+                </h6>
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                        <thead>
+                            <tr>
+                                <th>Date</th>
+                                <th>Seller</th>
+                                <th>Bags</th>
+                                <th>kooli</th>
+                                <th>Total</th>
+                                <th>Edit</th>
+                                <th>Exployees</th>
+
+                            </tr>
+                        </thead>
+                        <tfoot>
+                            <tr>
+                                <tr>
+                                    <th>Date</th>
+                                    <th>Seller</th>
+                                    <th>Bags</th>
+                                    <th>Per kooli</th>
+                                    <th>Total</th>
+                                    <th>Edit</th>
+                                    <th>Exployees</th>
+                                </tr>
+                        </tfoot>
+                        <tbody>
+                            <%for(var i=0; i < docs.length ; i++){%>
+
+                                <tr>
+                                    <td>
+                                        <%= moment(docs[i].order.date).format( 'MMM-DD-YYYY') %>
+
+                                    </td>
+                                    <td>
+                                        <%=docs[i].seller%>
+                                    </td>
+                                    <td>
+                                        <%=docs[i].order.numberofsack%>
+                                    </td>
+                                    <td>
+                                        <%=docs[i].order.kooli%>
+                                    </td>
+                                    <td>
+                                        <%=docs[i].order.total%>
+                                    </td>
+                                    <td>
+                                        edit
+                                    </td>
+
+                                    <td>
+                                        <table class="table table-bordered">
+                                            <%for(var k=0; k < docs[i].order.loaders.length; k++){%>
+                                                <tr>
+                                                    <td>
+                                                        <a href="/employee/indidualkooli/<%=docs[i].order.loaders[k]%>">
+                                                            <%=docs[i].order.loaders[k]%>
+                                                        </a>
+                                                    </td>
+                                                </tr>
+                                                <%}%>
+                                        </table>
+                                    </td>
+                                </tr>
+
+                                <%}%>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <%- include('./includes/end.ejs') %>

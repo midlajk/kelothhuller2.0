@@ -1,0 +1,132 @@
+<%- include('./includes/head.ejs') %>
+
+
+    <div class="container-fluid">
+
+        <!-- Page Heading -->
+
+
+        <!-- DataTales Example -->
+        <div class="card shadow mb-4">
+            <div class="card-header py-3">
+                <h6 class="m-0 font-weight-bold text-primary">List of loads
+                </h6>
+
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-bordered" id="" width="100%" cellspacing="0">
+                        <thead>
+                            <tr>
+                                <th>Name</th>
+                                <th>Phone</th>
+                                <th>Place</th>
+                                <th>careof</th>
+                                <th>Duty</th>
+                                <th>Minimum salary</th>
+                                <th>Edit</th>
+
+                            </tr>
+                        </thead>
+
+                        <tbody>
+                            <form id="ademployee" action="/employee/postaddemployee" method="POST">
+                                <tr>
+
+                                    <td><input required class="p-1 form-control" style="width: 200px;" tabIndex="2" type="text" placeholder="Employee name" name="name"></td>
+
+                                    <td><input required class="p-1 form-control" style="width: 200px;" tabIndex="3" type="text" placeholder="Employee number" name="number"></td>
+                                    <td><input class="form-control" tabIndex="4" type="text" name="place" placeholder="Employee place" style="width: 150px;"></td>
+                                    <td><input class="p-1 form-control" tabIndex="5" type="text" placeholder="Employee careof" style="width: 125px;" name="careof"></td>
+                                    <td><select required class="p-1 form-control" tabIndex="6" placeholder="Minimum salary" style="width: 125px;" name="duty"> <option value="loader">loader</option> 
+                                        <option value="operator">Operator</option> <option value="manager">Manager</option>
+                                    <option value="tester">Tester</option>
+                                    <option value="driver">Driver</option>
+                                    <option value="assistant">Assistant</option></select></td>
+
+                                    <td><input required class="p-1 form-control" tabIndex="6" type="number" placeholder="Minimum salary" style="width: 125px;" name="salary"></td>
+
+                                    <td>
+                                        <button form="adloari" type="submit" class="btn btn-success">Submit</button>
+                                    </td>
+                                </tr>
+                            </form>
+
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                        <thead>
+                            <tr>
+                                <th>Name</th>
+                                <th>Phone</th>
+                                <th>Place</th>
+                                <th>careof</th>
+                                <th>Duty</th>
+                                <th>Salary</th>
+                                <th>Edit</th>
+
+                            </tr>
+                        </thead>
+                        <tfoot>
+                            <tr>
+                                <th>Name</th>
+                                <th>Phone</th>
+                                <th>Place</th>
+                                <th>careof</th>
+                                <th>Duty</th>
+                                <th>Salary</th>
+                                <th>Edit</th>
+
+                            </tr>
+                        </tfoot>
+                        <tbody>
+                            <%for(var i = 0; i < docs.length; i++){%>
+                                <tr>
+                                    <td>
+                                        <%=docs[i].name%>
+                                    </td>
+                                    <td>
+                                        <%=docs[i].phone%>
+                                    </td>
+                                    <td>
+                                        <%=docs[i].place%>
+                                    </td>
+
+                                    <td>
+                                        <%=docs[i].careof%>
+                                    </td>
+                                    <td>
+                                        <%=docs[i].duty%>
+                                    </td>
+                                    <td>
+                                        <%=docs[i].salary%>
+                                    </td>
+
+                                    <td>Edit</td>
+                                </tr>
+                                <%}%>
+
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script type="text/javascript">
+        $(document).on('keypress', 'input,select', function(e) {
+            if (e.which == 13) {
+                e.preventDefault();
+                var $next = $('[tabIndex=' + (+this.tabIndex + 1) + ']');
+                console.log($next.length);
+                if (!$next.length) {
+                    $next = $('[tabIndex=1]');
+                }
+                $next.focus().click();
+            }
+        });
+    </script>
+    <%- include('./includes/end.ejs') %>

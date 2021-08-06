@@ -1,0 +1,100 @@
+<%- include('./includes/head.ejs') %>
+
+
+    <div class="container-fluid">
+
+        <!-- Page Heading -->
+
+
+        <!-- DataTales Example -->
+        <div class="card shadow mb-4">
+            <div class="card-header py-3">
+                <h6 class="m-0 font-weight-bold text-primary">List of User
+                </h6>
+
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-bordered" id="" width="100%" cellspacing="0">
+                        <thead>
+                            <tr>
+                                <th>User name</th>
+                                <th>Previllage</th>
+                                <th>Password</th>
+                                <th>Role</th>
+                                <th>Edit</th>
+
+                            </tr>
+                        </thead>
+                        <tfoot>
+                            <tr>
+                                <th>User name</th>
+                                <th>Previllage</th>
+                                <th>Password</th>
+                                <th>Role</th>
+                                <th>Edit</th>
+
+                            </tr>
+                        </tfoot>
+                        <tbody>
+                            <form id="aduser" action="/adduser" method="POST">
+                                <tr>
+
+                                    <td><input required class="p-1 form-control" style="width: 200px;" tabIndex="1" type="text" placeholder="User name" name="name" id=""></td>
+
+                                    <td>
+                                        <select required name="previlage" tabindex="2" class="form-control" style="width: 155px;">
+                                            <option  value="fullprevilage">fullprevilage</option>
+                                            <option value="halfprevilage">halfprevilage</option>
+                                            <option value="minimumprevilage">minimumprevilage</option>
+                                        </select>
+                                    </td>
+                                    <td><input required class="form-control" tabIndex="3" type="text" name="password" style="width: 150px;" placeholder="Password"></td>
+                                    <td><input required class="p-1 form-control" tabIndex="4" type="text" placeholder="Role" style="width: 125px;" name="role" id="price-2"></td>
+
+                                    <td>
+                                        <button form="aduser" tabIndex="5" class="btn btn-primary" type="submit">Submit</button></td>
+                                </tr>
+                            </form>
+                            <%for(let doc of docs){%>
+                                <tr>
+                                    <td>
+                                        <%if(doc.previlage != 'fullprevilage'){%>
+                                            <a href="">
+                                                <%=doc.name%>
+                                            </a>
+                                            <%}else{%>
+                                                <%=doc.name%>
+                                                    <%}%>
+                                    </td>
+                                    <td>
+                                        <%=doc.previlage%>
+                                    </td>
+                                    <td>Encripted</td>
+                                    <td>
+                                        <%=doc.role%>
+                                    </td>
+                                    <td><a href="" class="btn btn-primary">edit</a></td>
+                                </tr>
+                                <%}%>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+    </div>
+    <script type="text/javascript">
+        $(document).on('keypress', 'input,select', function(e) {
+            if (e.which == 13) {
+                e.preventDefault();
+                var $next = $('[tabIndex=' + (+this.tabIndex + 1) + ']');
+                console.log($next.length);
+                if (!$next.length) {
+                    $next = $('[tabIndex=1]');
+                }
+                $next.focus().click();
+            }
+        });
+    </script>
+    <%- include('./includes/end.ejs') %>

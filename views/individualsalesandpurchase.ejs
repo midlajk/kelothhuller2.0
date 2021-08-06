@@ -1,0 +1,234 @@
+<%- include('./includes/head.ejs') %>
+    <div class="container-fluid">
+
+        <!-- Page Heading -->
+
+
+        <!-- DataTales Example -->
+        <div class="card shadow mb-4">
+            <div class="card-header py-3">
+                <h6 class="m-0 font-weight-bold text-primary">
+                    <%if(category =='sales'){%>
+                        sales to
+                        <%=data.name%>
+                            <%}else{%>
+                                Purchase from
+                                <%=data.name%>
+                                    <%}%>
+                </h6>
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-bordered" width="100%" cellspacing="0">
+                        <thead>
+                            <tr>
+                                <th>Date</th>
+                                <th>Bags</th>
+                                <th>Kilogram</th>
+                                <th>Price</th>
+                                <th>Total amount</th>
+                                <th>Amount paid</th>
+                                <th>Pending amount</th>
+                                <th>Submit</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <form id="buyerform" action="<%if(category =='sales'){%>/updateindividualsales<%}else{%>/updateindividualpuchase<%}%>" method="POST">
+                                <tr>
+                                    <td><input tabindex="2" name="date" class="form-control" type="date" id=""></td>
+                                    <td><input class="p-1 form-control" style="width: 100px;" tabIndex="3" type="number" name="bags" id="bags"></td>
+                                    <td><input class="form-control" tabIndex="4" type="number" name="kilogram" style="width: 125px;" id="kilogram"></td>
+                                    <td><input class="p-1 form-control" tabIndex="5" type="number" style="width: 125px;" name="price" id="price"></td>
+                                    <td id="total"></td>
+                                    <td><input class="p-1 form-control" style="width: 150px;" tabIndex="6" type="number" name="paid" id="paid"></td>
+                                    <td id="remaining"></td>
+                                    <td>
+                                        <input type="hidden" name="id" value="<%=data._id%>">
+                                        <button form="buyerform" tabIndex="7" class="btn btn-primary" type="submit">Submit</button></td>
+
+                                </tr>
+                            </form>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                        <thead>
+                            <tr>
+                                <th>Date</th>
+                                <th>Bags</th>
+                                <th>kilogram</th>
+                                <th>Price</th>
+                                <th>Total</th>
+                                <th>Paid</th>
+                                <th>Remaining</th>
+                                <th>Edit</th>
+
+                            </tr>
+                        </thead>
+                        <tfoot>
+                            <tr>
+
+                                <tr>
+                                    <th>Date</th>
+                                    <th>Bags</th>
+                                    <th>kilogram</th>
+                                    <th>Price</th>
+                                    <th>Total</th>
+                                    <th>Paid</th>
+                                    <th>Remaining</th>
+
+                                    <th>Edit</th>
+                                </tr>
+                        </tfoot>
+                        <tbody>
+
+
+
+                            <%for (var i =0; i < data.deal.length; i++){%>
+                                <tr>
+                                    <td>
+                                        <%= moment(data.deal[i].date).format( 'MMM-DD-YYYY') %>
+
+                                    </td>
+
+                                    <td>
+                                        <%=data.deal[i].bags%>
+                                    </td>
+                                    <td>
+                                        <%=data.deal[i].kilogram%>
+                                    </td>
+                                    <td>
+                                        <%=data.deal[i].price%>
+                                    </td>
+                                    <td>
+                                        <%=data.deal[i].total%>
+                                    </td>
+                                    <td>
+                                        <a href="#" onclick="viewpayment('<%=i%>')">
+                                            <%=data.deal[i].paid%>
+                                        </a>
+
+                                    </td>
+                                    <td>
+
+                                        <%=data.deal[i].remaining%>
+                                    </td>
+                                    <td><a href="" class="btn btn-primary">edit</a></td>
+                                </tr>
+                                <%}%>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <div class="portfolio-modal modal fade" id="portfolioModal1" tabindex="-1" role="dialog" aria-hidden="true">
+        <div class="modal-content modal-xl" style="margin: auto;margin-top: 10%;">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Payment details of abcds 20123 orde</h5>
+                <a type="button" onclick="modalclose()" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">×</span>
+                </a>
+            </div>
+            <div class="container">
+                <table class="table table-bordered" width="100%" cellspacing="0">
+                    <thead>
+                        <tr>
+                            <th>Date</th>
+                            <th>amount payed</th>
+                            <th>Payment through</th>
+                            <th>Careoff</th>
+                            <th>Hint</th>
+                        </tr>
+                    </thead>
+                    <tfoot>
+                        <tr>
+                            <th>total amount</th>
+                            <th>amount payed</th>
+                            <th colspan="2">Payed amount</th>
+                            <th>Careoff</th>
+
+                        </tr>
+                    </tfoot>
+                    <tbody id="paymentm">
+
+                    </tbody>
+                </table>
+                <!--gallery1 end-->
+                <div class="modal-footer">
+                    <a onclick="modalclose()" class="btn btn-danger" type="button" data-dismiss="modal">Cancel</a>
+
+                </div>
+            </div>
+            <div class="modal fade" id="myModalD" tabindex="-1" role="dialog" aria- labelledby="myModalLabel" aria-hidden="true">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+
+                    </div>
+                    <!-- /.modal-content -->
+                </div>
+                <!-- /.modal-dialog -->
+            </div>
+            <!-- /.modal -->
+        </div>
+    </div>
+
+
+
+    <script type="text/javascript">
+        $(document).on('keypress', 'input,select', function(e) {
+            if (e.which == 13) {
+                e.preventDefault();
+                var $next = $('[tabIndex=' + (+this.tabIndex + 1) + ']');
+                console.log($next.length);
+                if (!$next.length) {
+                    $next = $('[tabIndex=1]');
+                }
+                $next.focus().click();
+            }
+        });
+    </script>
+    <script type="text/javascript">
+        $(".form-control").on("change", function() {
+            var kilogram = document.getElementById('kilogram').value;
+            var price = document.getElementById('price').value;
+            var total = kilogram * price;
+            var paid = document.getElementById('paid').value;
+            var remaining = total - paid;
+            document.getElementById('total').innerText = total;
+            document.getElementById('remaining').innerText = remaining;
+
+        });
+    </script>
+    <script>
+        function viewpayment(data) {
+            document.getElementById('paymentm').innerHTML = ''
+            var html = '';
+            var datas = '<%- JSON.stringify(data.deal) %>'
+            const obj = JSON.parse(datas);
+            obj.forEach(element => {
+                html += '<tr>';
+                html += '<td>1</td>';
+                html += '<td>2</td>';
+                html += '<td>3</td>';
+                html += '<td>4</td>';
+                html += '<td>5</td>';
+                html += '</tr>';
+            });
+            $('#paymentm').append(html);
+            $('#portfolioModal1').modal('show')
+
+        };
+
+
+        function modalclose() {
+            $('#portfolioModal1').modal('hide')
+        }
+    </script>
+    <%- include('./includes/end.ejs') %>

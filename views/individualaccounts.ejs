@@ -1,0 +1,140 @@
+<%- include('./includes/head.ejs') %>
+    <div class="container-fluid">
+
+        <!-- Page Heading -->
+
+        <form id="buyerform" action="">
+            <tr>
+                <td><input tabIndex="1" type="date" name="" id=""></td>
+                <td><input tabIndex="2" type="number" name="" id=""></td>
+                <td><select tabIndex="3" name="" id="">
+                    <option value="Debit">കൊടുത്തത് </option><option value="Credit">കൊടുക്കാനുള്ളത്
+                    </option>
+                    
+                </select></td>
+                <td><input tabIndex="4" type="text" name="" id=""></td>
+
+                <td><button form="buyerform" tabIndex="7" class="btn btn-primary" type="submit">Submit</button></td>
+            </tr>
+        </form>
+        <!-- DataTales Example -->
+        <div class="card shadow mb-4">
+            <div class="card-header py-3">
+                <h6 class="m-0 font-weight-bold text-primary">കൊടുക്കാനുള്ളത്
+                </h6>
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                        <thead>
+                            <tr>
+                                <th>Name</th>
+                                <th>Date</th>
+                                <th>Category</th>
+                                <th>Order</th>
+                                <th>amount</th>
+                                <th>Agent</th>
+                                <th>Type</th>
+                                <th>Message</th>
+                                <th>Edit</th>
+
+
+                            </tr>
+                        </thead>
+                        <tfoot>
+                            <tr>
+
+                                <tr>
+                                    <th>Name</th>
+                                    <th>Date</th>
+                                    <th>Category</th>
+                                    <th>Order</th>
+                                    <th>amount</th>
+                                    <th>Refferal</th>
+                                    <th>Type</th>
+                                    <th>Message</th>
+                                    <th>Edit</th>
+
+
+                                </tr>
+                        </tfoot>
+                        <tbody>
+                            <%for(var i=0; i< doc.length; i++){%>
+                                <tr>
+                                    <td>
+                                        <%=doc[i].name%>
+                                    </td>
+                                    <td>
+                                        <%=moment(doc[i].paid.date).format('MMM-DD-YYYY')%>
+                                    </td>
+                                    <td>Paid</td>
+                                    <td>
+                                        <%=doc[i].paid.order%>
+                                    </td>
+                                    <td>
+                                        <%=doc[i].paid.amount%>
+                                    </td>
+                                    <td>
+                                        <%=doc[i].paid.agent%>
+                                    </td>
+                                    <td>
+                                        <%=doc[i].paid.typee%>
+                                    </td>
+                                    <td>
+                                        <%=doc[i].paid.message%>
+                                    </td>
+                                    <td>
+                                        <%=doc[i].paid.remaining%>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <%=doc[i].name%>
+                                    </td>
+                                    <td>
+                                        <%=moment(doc[i].payment.date).format('MMM-DD-YYYY')%>
+                                    </td>
+                                    <td>payment</td>
+                                    <td>
+                                        <%=doc[i].payment.order%>
+                                    </td>
+                                    <td>
+                                        <%=doc[i].payment.amount%>
+                                    </td>
+                                    <td>
+                                        <%=doc[i].payment.agent%>
+                                    </td>
+                                    <td>
+                                        <%=doc[i].payment.typee%>
+                                    </td>
+                                    <td>
+                                        <%=doc[i].payment.message%>
+                                    </td>
+                                    <td>
+                                        <%=doc[i].payment.remaining%>
+                                    </td>
+                                </tr>
+                                <%}%>
+
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+    </div>
+    <script type="text/javascript">
+        $(document).on('keypress', 'input,select', function(e) {
+            if (e.which == 13) {
+                e.preventDefault();
+                var $next = $('[tabIndex=' + (+this.tabIndex + 1) + ']');
+                console.log($next.length);
+                if (!$next.length) {
+                    $next = $('[tabIndex=1]');
+                }
+                $next.focus().click();
+            }
+        });
+    </script>
+
+    <%- include('./includes/end.ejs') %>

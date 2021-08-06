@@ -1,0 +1,126 @@
+<%- include('./includes/head.ejs') %>
+
+
+    <div class="container-fluid">
+
+        <!-- Page Heading -->
+
+
+        <!-- DataTales Example -->
+        <div class="card shadow mb-4">
+            <div class="card-header py-3">
+                <h6 class="m-0 font-weight-bold text-primary">List of User
+                </h6>
+
+            </div>
+
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-bordered" id="" width="100%" cellspacing="0">
+                        <thead>
+                            <tr>
+                                <th>Date</th>
+                                <th>Lori number</th>
+                                <th>Load to</th>
+                                <th>Content</th>
+                                <th>Driver</th>
+                                <th>Rent</th>
+                                <th>Edit</th>
+
+                            </tr>
+                        </thead>
+
+                        <tbody>
+                            <form id="adloari" action="/addlorirent" method="POST">
+                                <tr>
+                                    <td><input class="p-1 form-control" style="width: 160px;" tabIndex="1" required type="date" placeholder="User name" name="date"></td>
+                                    <td><input required class="p-1 form-control" style="width: 200px;" tabIndex="2" type="text" placeholder="Loari number" name="loari"></td>
+
+                                    <td><input required class="p-1 form-control" style="width: 200px;" tabIndex="3" type="text" placeholder="Load to" name="loadto"></td>
+                                    <td><input class="form-control" tabIndex="4" type="text" name="content" placeholder="content" style="width: 150px;"></td>
+                                    <td><input class="p-1 form-control" tabIndex="5" type="text" placeholder="Driver name" style="width: 125px;" name="driver"></td>
+                                    <td><input required class="p-1 form-control" tabIndex="6" type="number" placeholder="Load rent" style="width: 125px;" name="rent"></td>
+
+                                    <td>
+                                        <button form="adloari" class="btn btn-success">Submit</button>
+                                    </td>
+                                </tr>
+                            </form>
+
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                        <thead>
+                            <tr>
+                                <th>Date</th>
+                                <th>Lori number</th>
+                                <th>Load to</th>
+                                <th>Content</th>
+                                <th>Driver</th>
+                                <th>Rent</th>
+                                <th>Edit</th>
+
+                            </tr>
+                        </thead>
+                        <tfoot>
+                            <tr>
+                                <th>Date</th>
+                                <th>Lori number</th>
+                                <th>Load to</th>
+                                <th>Content</th>
+                                <th>Driver</th>
+                                <th>Rent</th>
+                                <th>Edit</th>
+
+                            </tr>
+                        </tfoot>
+                        <tbody>
+                            <%for(var i = 0; i < docs.length; i++){%>
+                                <tr>
+                                    <td>
+                                        <%=moment(docs[i].trips.date).format( 'MMM-DD-YYYY')%>
+
+                                    </td>
+                                    <td>
+                                        <%=docs[i].registration%>
+                                    </td>
+                                    <td>
+                                        <%=docs[i].trips.loadto%>
+                                    </td>
+                                    <td>
+                                        <%=docs[i].trips.content%>
+                                    </td>
+                                    <td>
+                                        <%=docs[i].trips.driver%>
+                                    </td>
+                                    <td>
+                                        <%=docs[i].trips.rent%>
+                                    </td>
+                                    <td>Edit</td>
+                                </tr>
+                                <%}%>
+
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script type="text/javascript">
+        $(document).on('keypress', 'input,select', function(e) {
+            if (e.which == 13) {
+                e.preventDefault();
+                var $next = $('[tabIndex=' + (+this.tabIndex + 1) + ']');
+                console.log($next.length);
+                if (!$next.length) {
+                    $next = $('[tabIndex=1]');
+                }
+                $next.focus().click();
+            }
+        });
+    </script>
+    <%- include('./includes/end.ejs') %>
