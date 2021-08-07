@@ -36,11 +36,11 @@
                             <form id="buyerform" action="<%if(category =='sales'){%>/updateindividualsales<%}else{%>/updateindividualpuchase<%}%>" method="POST">
                                 <tr>
                                     <td><input tabindex="2" name="date" class="form-control" type="date" id=""></td>
-                                    <td><input class="p-1 form-control" style="width: 100px;" tabIndex="3" type="number" name="bags" id="bags"></td>
-                                    <td><input class="form-control" tabIndex="4" type="number" name="kilogram" style="width: 125px;" id="kilogram"></td>
-                                    <td><input class="p-1 form-control" tabIndex="5" type="number" style="width: 125px;" name="price" id="price"></td>
+                                    <td><input class="p-1 form-control" style="width: 100px;" tabIndex="3" type="number" step=".01" name="bags" id="bags"></td>
+                                    <td><input class="form-control" tabIndex="4" type="number" step=".01" name="kilogram" style="width: 125px;" id="kilogram"></td>
+                                    <td><input class="p-1 form-control" tabIndex="5" type="number" step=".01" style="width: 125px;" name="price" id="price"></td>
                                     <td id="total"></td>
-                                    <td><input class="p-1 form-control" style="width: 150px;" tabIndex="6" type="number" name="paid" id="paid"></td>
+                                    <td><input class="p-1 form-control" style="width: 150px;" tabIndex="6" type="number" step=".01" name="paid" id="paid"></td>
                                     <td id="remaining"></td>
                                     <td>
                                         <input type="hidden" name="id" value="<%=data._id%>">
