@@ -14,6 +14,11 @@
                             <div class="p-5">
                                 <div class="text-center">
                                     <h1 class="h4 text-gray-900 mb-4">Admin side login</h1>
+                                    <% if (errorMessage) { %>
+                                        <p class="mb-4" style="color: crimson;">
+                                            <%= errorMessage %>
+                                        </p>
+                                        <% } %>
                                 </div>
                                 <form action="/login" method="POST" id="addloading">
 
@@ -25,7 +30,7 @@
                                     </div>
 
                                     <div class="form-group ">
-                                        <input tabindex="5" required type="text" name="password" class="form-control form-control-user col-sm-102mb-3 mb-sm-0" id="exampleInputEmail" placeholder="Enter password">
+                                        <input tabindex="5" required type="password" name="password" class="form-control form-control-user col-sm-102mb-3 mb-sm-0" id="exampleInputEmail" placeholder="Enter password">
                                     </div>
 
 

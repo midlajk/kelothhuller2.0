@@ -1,0 +1,599 @@
+<%- include('./includes/head.ejs') %>
+
+
+    <div class="container-fluid">
+        <div class="d-sm-flex align-items-center justify-content-between mb-4">
+            <h1 class="h3 mb-0 text-gray-800">Sales Account</h1>
+
+
+
+
+        </div>
+
+        <!-- Content Row -->
+        <!-- Content Row -->
+        <div class="row">
+
+            <!-- Earnings (Monthly) Card Example -->
+            <div class="col-xl-3 col-md-6 mb-4">
+                <div class="card border-left-primary shadow h-100 py-2">
+                    <div class="card-body">
+                        <div class="row no-gutters align-items-center">
+                            <div class="col mr-2">
+                                <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">Total Sales</div>
+                                <div class="h5 mb-0 font-weight-bold text-gray-800"><span id="totalsales"></span></div>
+                            </div>
+                            <div class="col-auto">
+                                <i class="fas fa-save fa-2x text-gray-300"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Earnings (Monthly) Card Example -->
+            <div class="col-xl-3 col-md-6 mb-4">
+                <div class="card border-left-success shadow h-100 py-2">
+                    <div class="card-body">
+                        <div class="row no-gutters align-items-center">
+                            <div class="col mr-2">
+                                <div class="text-xs font-weight-bold text-success text-uppercase mb-1">Total Recieved</div>
+                                <div class="h5 mb-0 font-weight-bold text-gray-800"><span id="totalrecieved"></span></div>
+                            </div>
+                            <div class="col-auto">
+                                <i class="fas fa-rupee-sign fa-2x text-gray-300"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+
+
+
+            <!-- Earnings (Monthly) Card Example -->
+
+            <!-- Pending Requests Card Example -->
+            <div class="col-xl-3 col-md-6 mb-4">
+                <div class="card border-left-warning shadow h-100 py-2">
+                    <div class="card-body">
+                        <div class="row no-gutters align-items-center">
+                            <div class="col mr-2">
+                                <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">Total Remaining</div>
+                                <div class="h5 mb-0 font-weight-bold text-gray-800"><span id="totalamountremaining"></span></div>
+                            </div>
+                            <div class="col-auto">
+                                <i class="fas fa-rupee-sign fa-2x text-gray-300"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-xl-3 col-md-6 mb-4">
+                <div class="card border-left-warning shadow h-100 py-2">
+                    <div class="card-body">
+                        <div class="row no-gutters align-items-center">
+                            <div class="col mr-2">
+                                <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">Average payment</div>
+                                <div class="h5 mb-0 font-weight-bold text-gray-800"><span id="avgpayment"></span></div>
+                            </div>
+                            <div class="col-auto">
+                                <i class="fas fa-rupee-sign fa-2x text-gray-300"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+        <!-- Content Row -->
+
+        <!-- Page Heading -->
+
+
+        <!-- DataTales Example -->
+        <div class="card shadow mb-4">
+            <div class="card-header py-3">
+
+                <% if (errorMessage) { %>
+                    <h5 class="text-center">
+                        <%= errorMessage %>
+                    </h5>
+
+                    </p>
+                    <% } %>
+                        <button id="all" class="btn btn-primary">All</button>
+                        <button id="paymentonly" class="btn btn-primary">Payment only</button>
+                        <button id="paidonly" class="btn btn-primary">Paid only</button>
+
+                        <a href="" data-toggle="modal" data-target="#filtermodel" style="float:right" class="btn btn-danger">Filter table</a>
+                        <a href="" style="float:right" class="btn btn-success">Daily book</a>
+            </div>
+            <div class="card-header py-3">
+
+                <form>
+                    <div class="col-sm-12 mb-3 mb-sm-0 input-group">
+                        <input required type="text" id="mylistofsellers" class="form-control form-control-user" oninput="check_user()" placeholder="Search for names" list="sellernames" autocomplete="off">
+                        <div class="input-group-append">
+                            <a href="" id="check" type="button" class="btn btn-danger">View Individual accounts</a>
+                        </div>
+                        <datalist id="sellernames">
+                            <%for(let docs of names){%>
+                                <option value="<%=docs.name%>">
+                                <%}%>
+                        </datalist>
+
+                    </div>
+                </form>
+
+
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-bordered" width="100%" cellspacing="0">
+                        <thead>
+                            <tr>
+                                <th>Date</th>
+                                <th>Seller/Buyer</th>
+
+                                <th>Amount</th>
+                                <th>Through</th>
+                                <th>Agent</th>
+
+                                <th>Submit</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <form id="buyerform" action="/purchasepayment" method="POST">
+                                <tr>
+                                    <td><input autofocus required tabindex="2" name="date" class="form-control " value="<%=todaydate%>" type="date" id="date"></td>
+                                    <td><input required class="p-1 form-control" style="width: 200px;" tabIndex="3" autocomplete="off" list="sellernames" type="text" name="name" id="customer">
+                                        <datalist id="sellernames">
+                                            <%for(let docs of names){%>
+                                                <option value="<%=docs.name%>"><%=docs.name%>:<%=docs.relation%></option>
+                                                <%}%>
+                                        </datalist></td>
+                                    <input type="hidden" name="types" value="seperate">
+
+                                    <td><input required class="p-1 form-control" style="width: 100px;" tabIndex="4" type="number" name="amount" id="bags"></td>
+                                    <td> <select name="through" tabindex="5" id="" class="form-control form-control-user">
+                                        <option value="bank">Bank</option>
+                                        <option value="cash">Cash</option>
+                                        <option value="other">Other</option>
+                                    </select></td>
+                                    <td><input required class="p-1 form-control" tabIndex="6" type="text" style="width: 125px;" name="agent"></td>
+
+
+
+                                    <td>
+                                        <button form="buyerform" tabIndex="7" class="btn btn-primary" type="submit">Submit</button></td>
+
+                                </tr>
+                            </form>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                        <thead>
+                            <tr>
+                                <th>Date</th>
+                                <th>Name</th>
+
+                                <th>Category</th>
+                                <th>Order</th>
+                                <th>Amount</th>
+                                <th>Remaining</th>
+                                <th>Agent</th>
+                                <th>Method</th>
+                                <th>Edit</th>
+
+                            </tr>
+                        </thead>
+                        <tfoot>
+                            <tr>
+                                <th>Date</th>
+                                <th>Name</th>
+
+                                <th>Category</th>
+                                <th>Order</th>
+                                <th>Amount</th>
+                                <th>Remaining</th>
+                                <th>Agent</th>
+                                <th>Method</th>
+                                <th>Edit</th>
+
+
+                            </tr>
+                        </tfoot>
+                        <tbody>
+
+                            <% var length;
+                            if(buyerpayment.length > buyerspaid.length){
+                                length = buyerpayment.length
+                            } else {
+                                length = buyerspaid.length
+                            }                           
+                            for (var i = 0; i < length; i++){%>
+                                <%if(i < buyerspaid.length){%>
+                                    <tr class="buyerpaids">
+                                        <td>
+                                            <%=moment(buyerspaid[i].paid.date).format('MM-DD-YYYY')%>
+                                        </td>
+                                        <td>
+                                            <a href="/individualsales/<%=buyerspaid[i].name%>">
+                                                <%=buyerspaid[i].name%>
+                                            </a>
+
+                                        </td>
+
+                                        <td style="color:#000;">Paid</td>
+                                        <td>
+                                            <%=buyerspaid[i].paid.message%>
+                                        </td>
+                                        <td class="totalamountpaid">
+
+                                            <a href="/individualsalesaccount/<%=buyerspaid[i].name%>">
+                                                <%=buyerspaid[i].paid.amount%>
+                                            </a>
+                                        </td>
+                                        <td>
+                                            <%=buyerspaid[i].paid.remaining%>
+                                        </td>
+                                        <td>
+                                            <%=buyerspaid[i].paid.agent%>
+                                        </td>
+                                        <td>
+                                            <%=buyerspaid[i].paid.typee%>
+                                        </td>
+
+
+                                        <td><a href="#" onclick="editsalespaid('<%=i%>')" class="btn btn-primary">Edit</a></td>
+
+                                    </tr>
+                                    <%}%>
+                                        <%if(i < buyerpayment.length){%>
+                                            <tr class="buyerpayments" style="background-color: rgba(235, 232, 232, 0.753);" ;>
+                                                <td>
+                                                    <%=moment(buyerpayment[i].payment.date).format('MM-DD-YYYY')%>
+                                                </td>
+                                                <td>
+                                                    <a href="/individualsales/<%=buyerpayment[i].name%>">
+                                                        <%=buyerpayment[i].name%>
+                                                    </a>
+
+
+
+                                                </td>
+
+                                                <td style="color: rgb(192, 32, 255);">payment</td>
+                                                <td>
+                                                    <%=buyerpayment[i].payment.message%>
+                                                </td>
+                                                <td class="Totalamount">
+                                                    <a href="/individualsalesaccount/<%=buyerspaid[i].name%>">
+                                                        <%=buyerpayment[i].payment.amount%>
+                                                    </a>
+                                                </td>
+                                                <td>
+                                                    <%=buyerpayment[i].payment.remaining%>
+                                                </td>
+                                                <td>
+                                                    <%=buyerpayment[i].payment.agent%>
+                                                </td>
+                                                <td>
+                                                    <%=buyerpayment[i].payment.typee%>
+                                                </td>
+
+                                                <td><a href="#" onclick="editsalespayment('<%=i%>')" class="btn btn-primary">Edit</a></td>
+
+                                            </tr>
+                                            <%}%>
+                                                <%}%>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+    </div>
+    <div class="modal fade" id="filtermodel" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Filter dates</h5>
+                    <a class="close" type="button" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">×</span>
+                    </a>
+                </div>
+                <div class="modal-body">
+                    <form id="form1" action="/filtrsales" method="POST">
+                        <div class="form-group row">
+                            <div class="col-sm-12 mb-3 mb-sm-0">
+                                <label for="">From date</label>
+                                <input type="date" class="form-control form-control-user" id="exampleFirstName" name="sdate" placeholder="Date">
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <div class="col-sm-12 mb-3 mb-sm-0">
+                                <label for="">To date</label>
+                                <input type="date" name="edate" class="form-control form-control-user" id="exampleFirstName" placeholder="Date">
+                            </div>
+                            <input type="hidden" name="type" value="filter">
+
+                        </div>
+
+
+
+
+                    </form>
+                    <form id="form2" action="/filtrsales" method="POST" class="ml-1" style="float: left;">
+                        <input type="hidden" name="type" value="2months"> <button type="submit" form="form2" class="btn btn-primary">2 months</button>
+                    </form>
+                    <form id="form3" class="ml-1" style="float: left;" action="/filtrsales" method="POST">
+                        <input type="hidden" name="type" value="5months"><button type="submit" form="form3" class="btn btn-primary">5 months</button>
+                    </form>
+                    <form id="form4" class="ml-1" style="float: left;" action="/filtrsales" method="POST">
+                        <input type="hidden" name="type" value="year"><button type="submit" form="form4" class="btn btn-primary">1 Year</button>
+                    </form>
+                    <form id="form5" class="ml-1" style="float: left;" action="/filtrsales" method="POST">
+                        <input type="hidden" name="type" value="all"> <button type="submit" form="form5" class="btn btn-primary">All records</button>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-secondary" type="button" data-dismiss="modal">Cancel</button>
+                    <button class="btn btn-primary" type="submit" form="form1">Apply filter</button>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <div class="modal fade" id="editmodel" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel"><span id="editcustomers"></span> <span id="edittype"></span></h5>
+                    <a class="close" type="button" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">×</span>
+                    </a>
+                </div>
+                <div class="modal-body">
+                    <form id="editform" action="/editaccount" method="POST">
+                        <div class="form-group row">
+                            <div class="col-sm-12 mb-3 mb-sm-0">
+                                <label for="">Date</label>
+                                <input type="date" class="form-control form-control-user" id="editdate" tabindex="42" name="editdate">
+                            </div>
+                            <input type="hidden" class="form-control form-control-user" id="section" name="section">
+
+                            <input type="hidden" class="form-control form-control-user" value="seperate" name="types">
+                            <input type="hidden" id="mode" class="form-control form-control-user" value="" name="mode">
+
+
+                            <div class="col-sm-12 mb-3 mb-sm-0">
+                                <label for="">Order</label>
+                                <input type="text" tabindex="43" class="form-control form-control-user" id="editorder" name="order">
+                            </div>
+                            <div class="col-sm-12 mb-3 mb-sm-0">
+                                <label for="">Amount</label>
+                                <input type="number" tabindex="44" class="form-control form-control-user" id="editamount" step=".01" name="amount">
+                            </div>
+                            <div class="col-sm-12 mb-3 mb-sm-0">
+                                <label for="">Agent</label>
+                                <input type="text" tabindex="45" class="form-control form-control-user" id="editcareoff" name="Careoff">
+
+
+                            </div>
+                            <div class="col-sm-12 mb-3 mb-sm-0">
+                                <label for="">Method</label>
+                                <select name="through" tabindex="5" id="through" class="form-control form-control-user">
+                                <option value="bank">Bank</option>
+                                <option value="cash">Cash</option>
+                                <option value="other">Other</option>
+                                 </select>
+                            </div>
+                            <input type="hidden" value="" name="totalrem" id="totalrem">
+                            <input type="hidden" value="" name="previous" id="previous">
+                            <input type="hidden" value="" name="arrayid" id="arrayid">
+                            <input type="hidden" value="" name="objectid" id="objectid">
+                        </div>
+                    </form>
+
+                </div>
+                <div class="modal-footer">
+                    <a id="deletebutton" class="btn btn-danger" onclick="return confirm('are you sure you want to delete this?')">Delete</a>
+
+                    <button tabindex="52" form="editform" class="btn btn-primary" type="submit">Edit Deal</button>
+                </div>
+            </div>
+
+        </div>
+    </div>
+    <div class="floatingButtonWrap">
+        <div class="floatingButtonInner">
+            <a href="#" class="floatingButton">
+                <i class="fa fa-plus icon-default"></i>
+            </a>
+            <ul class="floatingMenu">
+                <li> <a href="/purchaseaccount" class="btn btn-primary">Purchase payments </a>
+
+                </li>
+
+                <li> <a href="/salesmanagement" class="btn btn-primary">Detailed Sales report</a>
+
+                </li>
+                <li> <a href="/accountmanagement" class="btn btn-primary">Purchase and sales</a>
+                </li>
+                <li> <a href="/individualaccounts" class="btn btn-primary">Complete Payments</a>
+                </li>
+
+                <li>
+                    <a href="#">Logout</a>
+                </li>
+
+            </ul>
+        </div>
+    </div>
+    <script type="text/javascript">
+        $(document).on('keypress', 'input,select', function(e) {
+            if (e.which == 13) {
+                e.preventDefault();
+                var $next = $('[tabIndex=' + (+this.tabIndex + 1) + ']');
+
+                if (!$next.length) {
+                    $next = $('[tabIndex=1]');
+                }
+                $next.focus().click();
+            }
+        });
+    </script>
+    <script type="text/javascript">
+        $(".form-control").on("change", function() {
+            var kilogram = document.getElementById('kilogram').value;
+            var price = document.getElementById('price').value;
+            var total = parseInt(kilogram * price);
+            var paid = document.getElementById('paid').value;
+            var remaining = parseInt(total - paid);
+            document.getElementById('total').innerText = total;
+            document.getElementById('remaining').innerText = remaining;
+        });
+        $(".form-control").on("change", function() {
+            var kilogram = document.getElementById('editkilogram').value;
+            var price = document.getElementById('editprize').value;
+            var total = parseInt(kilogram * price);
+
+            document.getElementById('edittotal').innerText = total;
+
+        });
+
+
+        function editsalespaid(i) {
+            var datas = '<%- JSON.stringify(buyerspaid) %>'
+            const obj = JSON.parse(datas);
+            document.getElementById("deletebutton").href = "/deletesalesaccount/paid/" + obj[i].id + "/" + obj[i].paid.id + "/seperate";
+            var today = moment(obj[i].paid.date).format('YYYY-MM-DD');
+            document.getElementById("editdate").value = today;
+
+            $(function() {
+                var temp = obj[i].name;;
+                $("#through").val(temp);
+            });
+            document.getElementById('totalrem').value = obj[i].paid.remaining;
+            document.getElementById('previous').value = obj[i].paid.amount;
+            document.getElementById('editorder').value = obj[i].paid.message;
+            document.getElementById('editamount').value = obj[i].paid.amount
+            document.getElementById('editcareoff').value = obj[i].paid.careoff
+            document.getElementById('objectid').value = obj[i].id;
+            document.getElementById('arrayid').value = obj[i].paid.id;
+            document.getElementById('section').value = "sales"
+            document.getElementById('mode').value = "paid"
+
+
+            $('#editmodel').modal('show')
+
+        }
+
+        function editsalespayment(i) {
+            var datas = '<%- JSON.stringify(buyerpayment) %>'
+            const obj = JSON.parse(datas);
+            document.getElementById("deletebutton").href = "/deletesalesaccount/payment/" + obj[i].id + "/" + obj[i].payment.id + "/seperate";
+            var today = moment(obj[i].payment.date).format('YYYY-MM-DD');
+            document.getElementById("editdate").value = today;
+
+            $(function() {
+                var temp = obj[i].name;;
+                $("#through").val(temp);
+            });
+            document.getElementById('totalrem').value = obj[i].payment.remaining;
+            document.getElementById('previous').value = obj[i].payment.amount;
+            document.getElementById('editorder').value = obj[i].payment.message;
+            document.getElementById('editamount').value = obj[i].payment.amount
+            document.getElementById('editcareoff').value = obj[i].payment.careoff
+            document.getElementById('objectid').value = obj[i].id;
+            document.getElementById('arrayid').value = obj[i].payment.id;
+            document.getElementById('section').value = "sales"
+            document.getElementById('mode').value = "paid"
+
+
+            $('#editmodel').modal('show')
+
+        }
+
+        function check_user() {
+            var name = document.getElementById("mylistofsellers").value;
+            var x = document.getElementById("check")
+            x.href = "individualsalesaccount/" + name
+        }
+    </script>
+    <script>
+        $(document).ready(function() {
+            $('#MyTable').DataTable({
+                initComplete: function() {
+                    this.api().columns().every(function() {
+                        var column = this;
+
+                    });
+                }
+            });
+            $('#editmodel').on('shown.bs.modal', function() {
+                $('#editdate').focus();
+            })
+            $('#editmodel').on('hide.bs.modal', function() {
+                $('#date').focus();
+            })
+        });
+    </script>
+    <script>
+        $(document).ready(function() {
+            $('#all').on('click', function() {
+                $('.buyerpayments').show();
+                $('.buyerpaids').show();
+
+            });
+            $('#paymentonly').on('click', function() {
+                $('.buyerpayments').show();
+                $('.buyerpaids').hide();
+
+            });
+            $('#paidonly').on('click', function() {
+                $('.buyerpayments').hide();
+                $('.buyerpaids').show();
+            });
+        })
+        $(document).ready(function() {
+            var table = $('#dataTable').DataTable({
+                columnDefs: [{
+                    'targets': 0,
+                    type: 'date-euro'
+                }],
+                order: [0, 'desc'],
+            });
+
+
+            var totalsalesamount = 0;
+            var totalamountpaid = 0;
+            var count = 0;
+            $('#dataTable tbody tr td').each(function() {
+
+                if (this.className == 'Totalamount') {
+                    totalsalesamount += isNaN(this.innerText) ? 0 : parseInt(this.innerText);
+                    count++;
+                }
+                if (this.className == 'totalamountpaid') {
+                    totalamountpaid += isNaN(this.innerText) ? 0 : parseInt(this.innerText);
+                }
+
+            });
+
+            document.getElementById('totalsales').innerText = totalsalesamount;
+            document.getElementById('totalrecieved').innerText = totalamountpaid;
+            document.getElementById('totalamountremaining').innerText = parseInt(totalsalesamount - totalamountpaid);
+
+            document.getElementById('avgpayment').innerText = parseFloat(totalsalesamount / count).toFixed(2);
+        });
+    </script>
+    <%- include('./includes/end.ejs') %>

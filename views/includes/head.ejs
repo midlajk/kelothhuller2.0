@@ -8,11 +8,12 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <meta name="description" content="">
     <meta name="author" content="">
-
+    <script src="//cdnjs.cloudflare.com/ajax/libs/moment.js/2.7.0/moment.min.js" type="text/javascript"></script>
     <title>Keloth Huller</title>
+    <script src="//cdn.datatables.net/plug-ins/1.10.12/sorting/datetime-moment.js" type="text/javascript"></script>
 
     <!-- Custom fonts for this template -->
-    <link href="vendor/fontawesome-free/css/all.min.css" rel="stylesheet" type="text/css">
+    <link href="/vendor/fontawesome-free/css/all.min.css" rel="stylesheet" type="text/css">
     <link href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i" rel="stylesheet">
 
     <!-- Custom styles for this template -->
@@ -31,6 +32,107 @@
             max-height: 0px;
             overflow: hidden;
             transition: max-height 0.2s ease-out;
+        }
+        
+        .active {
+            color: #000000;
+            background-color: rgb(255, 255, 255);
+            margin: 10px;
+            max-width: 200px;
+            border-radius: 10px;
+        }
+        
+        .active span {
+            color: #000000;
+        }
+        
+        .floatingButtonWrap {
+            display: block;
+            position: fixed;
+            bottom: 1rem;
+            right: 1rem;
+            z-index: 999999999;
+        }
+        
+        .floatingButtonInner {
+            position: relative;
+        }
+        
+        .floatingButton {
+            display: block;
+            width: 60px;
+            height: 60px;
+            text-align: center;
+            background: -webkit-linear-gradient(45deg, #7700ff, #0073ff);
+            background: -o-linear-gradient(45deg, #7700ff, #0073ff);
+            background: linear-gradient(45deg, #7700ff, #0073ff);
+            color: #fff;
+            line-height: 50px;
+            position: absolute;
+            border-radius: 50% 50%;
+            bottom: 0px;
+            right: 0px;
+            border: 5px solid #b2bedc;
+            /* opacity: 0.3; */
+            opacity: 1;
+            transition: all 0.4s;
+        }
+        
+        .floatingButton .fa {
+            font-size: 15px !important;
+        }
+        
+        .floatingButton.open,
+        .floatingButton:hover,
+        .floatingButton:focus,
+        .floatingButton:active {
+            opacity: 1;
+            color: #fff;
+        }
+        
+        .floatingButton .fa {
+            transform: rotate(0deg);
+            transition: all 0.4s;
+        }
+        
+        .floatingButton.open .fa {
+            transform: rotate(270deg);
+        }
+        
+        .floatingMenu {
+            position: absolute;
+            bottom: 60px;
+            right: 0px;
+            /* width: 200px; */
+            display: none;
+        }
+        
+        .floatingMenu li {
+            width: 100%;
+            float: right;
+            list-style: none;
+            text-align: right;
+            margin-bottom: 5px;
+        }
+        
+        .floatingMenu li a {
+            padding: 8px 15px;
+            display: inline-block;
+            background: #0051ff;
+            color: #ffffff;
+            border-radius: 5px;
+            overflow: hidden;
+            white-space: nowrap;
+            transition: all 0.4s;
+            /* -webkit-box-shadow: 1px 3px 5px rgba(0, 0, 0, 0.22);
+    box-shadow: 1px 3px 5px rgba(0, 0, 0, 0.22); */
+            -webkit-box-shadow: 1px 3px 5px rgba(211, 224, 255, 0.5);
+            box-shadow: 1px 3px 5px rgba(211, 224, 255, 0.5);
+        }
+        
+        .floatingMenu li a:hover {
+            margin-right: 10px;
+            text-decoration: none;
         }
     </style>
 </head>
@@ -63,22 +165,22 @@
                 </li>
 
                 <li class="nav-item">
-                    <a class="nav-link" href="/accountmanagement">
+                    <a class="nav-link <%= mainpath === '/transaction' ? 'active' : '' %>" href="/transaction">
                         <i class="fas fa-fw fa-table"></i>
                         <span>Transactions</span></a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="/accountmanagement">
+                    <a class="nav-link <%= mainpath === '/stockmanagement' ? 'active' : '' %>" href="/accountmanagement">
                         <i class="fas fa-fw fa-table"></i>
                         <span>Purchase and sales</span></a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="/individualaccounts">
+                    <a class="nav-link <%= mainpath === '/accountmanagement' ? 'active' : '' %>" href="/individualaccounts">
                         <i class="fas fa-fw fa-table"></i>
                         <span>P & Sales accounts</span></a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="/accountmanagement">
+                    <a class="nav-link <%= mainpath === '/' ? 'active' : '' %>" href="/accountmanagement">
                         <i class="fas fa-fw fa-table"></i>
                         <span>Payment details</span></a>
                 </li>

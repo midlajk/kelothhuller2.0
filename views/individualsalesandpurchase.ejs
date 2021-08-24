@@ -3,11 +3,92 @@
 
         <!-- Page Heading -->
 
+        <div class="d-sm-flex align-items-center justify-content-between mb-4">
+            <h1 class="h3 mb-0 text-gray-800">Deals with
+                <%=data.name%>
+            </h1>
+
+
+        </div>
+
+        <!-- Content Row -->
+        <div class="row">
+
+            <!-- Earnings (Monthly) Card Example -->
+            <div class="col-xl-3 col-md-6 mb-4">
+                <div class="card border-left-primary shadow h-100 py-2">
+                    <div class="card-body">
+                        <div class="row no-gutters align-items-center">
+                            <div class="col mr-2">
+                                <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">Total bag deal</div>
+                                <div class="h5 mb-0 font-weight-bold text-gray-800"><span id="totalbagpurchase"></span></div>
+                            </div>
+                            <div class="col-auto">
+                                <i class="fas fa-save fa-2x text-gray-300"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Earnings (Monthly) Card Example -->
+            <div class="col-xl-3 col-md-6 mb-4">
+                <div class="card border-left-success shadow h-100 py-2">
+                    <div class="card-body">
+                        <div class="row no-gutters align-items-center">
+                            <div class="col mr-2">
+                                <div class="text-xs font-weight-bold text-success text-uppercase mb-1">Total deal amount</div>
+                                <div class="h5 mb-0 font-weight-bold text-gray-800"><span id="totalpurchaseamount"></span></div>
+                            </div>
+                            <div class="col-auto">
+                                <i class="fas fa-rupee-sign fa-2x text-gray-300"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <a href="#" class="col-xl-3 col-md-6 mb-4">
+                <div class="card border-left-info shadow h-100 py-2">
+                    <div class="card-body">
+                        <div class="row no-gutters align-items-center">
+                            <div class="col mr-2">
+                                <div class="text-xs font-weight-bold text-success text-uppercase mb-1">Average Price</div>
+                                <div class="h5 mb-0 font-weight-bold text-gray-800"><span id="averagemarket"></span></div>
+                            </div>
+                            <div class="col-auto">
+                                <i class="fas fa-rupee-sign fa-2x text-gray-300"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </a>
+
+
+            <!-- Earnings (Monthly) Card Example -->
+
+            <!-- Pending Requests Card Example -->
+            <div class="col-xl-3 col-md-6 mb-4">
+                <div class="card border-left-warning shadow h-100 py-2">
+                    <div class="card-body">
+                        <div class="row no-gutters align-items-center">
+                            <div class="col mr-2">
+                                <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">Total Deal KG</div>
+                                <div class="h5 mb-0 font-weight-bold text-gray-800"><span id="totalamountremaining"></span></div>
+                            </div>
+                            <div class="col-auto">
+                                <i class="fas fa-rupee-sign fa-2x text-gray-300"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
 
         <!-- DataTales Example -->
         <div class="card shadow mb-4">
             <div class="card-header py-3">
-                <h6 class="m-0 font-weight-bold text-primary">
+                <h6 class="m-0 font-weight-bold text-primary mb-2">
                     <%if(category =='sales'){%>
                         sales to
                         <%=data.name%>
@@ -16,6 +97,25 @@
                                 <%=data.name%>
                                     <%}%>
                 </h6>
+                <% if (errorMessage) { %>
+                    <h5 class="text-center">
+                        <%= errorMessage %>
+                    </h5>
+
+                    </p>
+                    <% } %>
+
+
+
+                        <a href="<%if(category =='sales'){%>
+                            /individualsalesaccount/<%=data.name%>
+                                <%}else{%>
+                                    /individualpurchaseaccount/<%=data.name%>
+                                        <%}%>" class="btn btn-primary">
+                            <%=data.name%>'s Accounts</a>
+
+                        <a href="" data-toggle="modal" data-target="#filtermodel" style="float:right" class="btn btn-danger">Filter table</a>
+                        <a href="" style="float:right" class="btn btn-success">Daily book</a>
             </div>
             <div class="card-body">
                 <div class="table-responsive">
@@ -35,15 +135,15 @@
                         <tbody>
                             <form id="buyerform" action="<%if(category =='sales'){%>/updateindividualsales<%}else{%>/updateindividualpuchase<%}%>" method="POST">
                                 <tr>
-                                    <td><input tabindex="2" name="date" class="form-control" type="date" id=""></td>
-                                    <td><input class="p-1 form-control" style="width: 100px;" tabIndex="3" type="number" step=".01" name="bags" id="bags"></td>
-                                    <td><input class="form-control" tabIndex="4" type="number" step=".01" name="kilogram" style="width: 125px;" id="kilogram"></td>
-                                    <td><input class="p-1 form-control" tabIndex="5" type="number" step=".01" style="width: 125px;" name="price" id="price"></td>
+                                    <td><input autofocus required tabindex="2" name="date" class="form-control" value="<%=todaydate%>" type="date" id="date"></td>
+                                    <td><input required class="p-1 form-control" style="width: 100px;" tabIndex="3" type="number" step=".01" name="bags" id="bags"></td>
+                                    <td><input required class="form-control" tabIndex="4" type="number" step=".01" name="kilogram" style="width: 125px;" id="kilogram"></td>
+                                    <td><input required class="p-1 form-control" tabIndex="5" type="number" step=".01" style="width: 125px;" name="price" id="price"></td>
                                     <td id="total"></td>
-                                    <td><input class="p-1 form-control" style="width: 150px;" tabIndex="6" type="number" step=".01" name="paid" id="paid"></td>
+                                    <td><input required class="p-1 form-control" style="width: 150px;" tabIndex="6" type="number" step=".01" name="paid" id="paid"></td>
                                     <td id="remaining"></td>
                                     <td>
-                                        <input type="hidden" name="id" value="<%=data._id%>">
+                                        <input required type="hidden" name="id" value="<%=data.name%>">
                                         <button form="buyerform" tabIndex="7" class="btn btn-primary" type="submit">Submit</button></td>
 
                                 </tr>
@@ -63,8 +163,8 @@
                                 <th>kilogram</th>
                                 <th>Price</th>
                                 <th>Total</th>
-                                <th>Paid</th>
-                                <th>Remaining</th>
+                                <th>Moisture</th>
+                                <th>Automn</th>
                                 <th>Edit</th>
 
                             </tr>
@@ -77,8 +177,8 @@
                                     <th>Bags</th>
                                     <th>kilogram</th>
                                     <th>Price</th>
-                                    <th>Total</th>
-                                    <th>Paid</th>
+                                    <th>Moisture</th>
+                                    <th>Automn</th>
                                     <th>Remaining</th>
 
                                     <th>Edit</th>
@@ -89,35 +189,38 @@
 
 
                             <%for (var i =0; i < data.deal.length; i++){%>
-                                <tr>
+                                <tr id="purchase" class="purchase">
                                     <td>
-                                        <%= moment(data.deal[i].date).format( 'MMM-DD-YYYY') %>
+                                        <%= moment(data.deal[i].date).format( 'MM-DD-YYYY') %>
 
                                     </td>
 
-                                    <td>
+                                    <td class="totalbagspurchase">
                                         <%=data.deal[i].bags%>
                                     </td>
-                                    <td>
+                                    <td class="totalamountremaining">
                                         <%=data.deal[i].kilogram%>
                                     </td>
-                                    <td>
+                                    <td class="bigprize">
                                         <%=data.deal[i].price%>
                                     </td>
-                                    <td>
+                                    <td class="totalpurchaseamount">
+
                                         <%=data.deal[i].total%>
+
                                     </td>
-                                    <td>
-                                        <a href="#" onclick="viewpayment('<%=i%>')">
-                                            <%=data.deal[i].paid%>
-                                        </a>
+                                    <td class="">
+
+                                        <%=data.deal[i].moisture%>
+
 
                                     </td>
                                     <td>
 
-                                        <%=data.deal[i].remaining%>
+                                        <%=data.deal[i].outumn%>
                                     </td>
-                                    <td><a href="" class="btn btn-primary">edit</a></td>
+                                    <td>
+                                        <a href="#" onclick="edit('<%=i%>')" class=" btn btn-primary ">edit</a></td>
                                 </tr>
                                 <%}%>
                         </tbody>
@@ -128,61 +231,175 @@
 
     </div>
 
-    <div class="portfolio-modal modal fade" id="portfolioModal1" tabindex="-1" role="dialog" aria-hidden="true">
-        <div class="modal-content modal-xl" style="margin: auto;margin-top: 10%;">
-            <div class="modal-header">
-                <h5 class="modal-title" id="exampleModalLabel">Payment details of abcds 20123 orde</h5>
-                <a type="button" onclick="modalclose()" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">×</span>
-                </a>
-            </div>
-            <div class="container">
-                <table class="table table-bordered" width="100%" cellspacing="0">
-                    <thead>
-                        <tr>
-                            <th>Date</th>
-                            <th>amount payed</th>
-                            <th>Payment through</th>
-                            <th>Careoff</th>
-                            <th>Hint</th>
-                        </tr>
-                    </thead>
-                    <tfoot>
-                        <tr>
-                            <th>total amount</th>
-                            <th>amount payed</th>
-                            <th colspan="2">Payed amount</th>
-                            <th>Careoff</th>
+    <div class="modal fade" id="filtermodel" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Filter dates</h5>
+                    <a class="close" type="button" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">×</span>
+                    </a>
+                </div>
+                <div class="modal-body">
+                    <form id="form1" action="/filtrsales" method="POST">
+                        <div class="form-group row">
+                            <div class="col-sm-12 mb-3 mb-sm-0">
+                                <label for="">From date</label>
+                                <input type="date" class="form-control form-control-user" id="exampleFirstName" name="sdate" placeholder="Date">
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <div class="col-sm-12 mb-3 mb-sm-0">
+                                <label for="">To date</label>
+                                <input type="date" name="edate" class="form-control form-control-user" id="exampleFirstName" placeholder="Date">
+                            </div>
+                            <input type="hidden" name="type" value="filter">
 
-                        </tr>
-                    </tfoot>
-                    <tbody id="paymentm">
+                        </div>
 
-                    </tbody>
-                </table>
-                <!--gallery1 end-->
+
+
+
+                    </form>
+                    <form id="form2" action="/filtrsales" method="POST" class="ml-1" style="float: left;">
+                        <input type="hidden" name="type" value="2months"> <button type="submit" form="form2" class="btn btn-primary">2 months</button>
+                    </form>
+                    <form id="form3" class="ml-1" style="float: left;" action="/filtrsales" method="POST">
+                        <input type="hidden" name="type" value="5months"><button type="submit" form="form3" class="btn btn-primary">5 months</button>
+                    </form>
+                    <form id="form4" class="ml-1" style="float: left;" action="/filtrsales" method="POST">
+                        <input type="hidden" name="type" value="year"><button type="submit" form="form4" class="btn btn-primary">1 Year</button>
+                    </form>
+                    <form id="form5" class="ml-1" style="float: left;" action="/filtrsales" method="POST">
+                        <input type="hidden" name="type" value="all"> <button type="submit" form="form5" class="btn btn-primary">All records</button>
+                    </form>
+                </div>
                 <div class="modal-footer">
-                    <a onclick="modalclose()" class="btn btn-danger" type="button" data-dismiss="modal">Cancel</a>
-
+                    <button class="btn btn-secondary" type="button" data-dismiss="modal">Cancel</button>
+                    <button class="btn btn-primary" type="submit" form="form1">Apply filter</button>
                 </div>
             </div>
-            <div class="modal fade" id="myModalD" tabindex="-1" role="dialog" aria- labelledby="myModalLabel" aria-hidden="true">
-                <div class="modal-dialog">
-                    <div class="modal-content">
 
-                    </div>
-                    <!-- /.modal-content -->
-                </div>
-                <!-- /.modal-dialog -->
-            </div>
-            <!-- /.modal -->
         </div>
     </div>
 
 
+    <div class="modal fade" id="editmodel" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel"><span id="editcustomers"></span> <span id="edittype"></span></h5>
+                    <a class="close" type="button" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">×</span>
+                    </a>
+                </div>
+                <div class="modal-body">
+                    <form id="editform" action="/editorder" method="POST">
+                        <div class="form-group row">
+                            <div class="col-sm-6 mb-3 mb-sm-0">
+                                <label for="">Date</label>
+                                <input type="date" class="form-control form-control-user" id="editdate" tabindex="41" name="editdate">
+                            </div>
+                            <%if(category =='sales'){%> <input type="hidden" class="form-control form-control-user" id="section" value="sales" name="section">
+                                <%}else{%>
+                                    <input type="hidden" value="purchase" class="form-control form-control-user" id="section" name="section">
 
-    <script type="text/javascript">
-        $(document).on('keypress', 'input,select', function(e) {
+                                    <%}%>
+
+
+                                        <input type="hidden" class="form-control form-control-user" value="indivdual" name="types">
+
+
+                                        <div class="col-sm-6 mb-3 mb-sm-0">
+                                            <label for="">Outumn</label>
+                                            <input type="number" tabindex="43" class="form-control form-control-user" id="editoutumn" step=".01" name="autumn">
+                                        </div>
+                                        <div class="col-sm-6 mb-3 mb-sm-0">
+                                            <label for="">Moisture</label>
+                                            <input type="number" tabindex="44" class="form-control form-control-user" id="editmoisture" step=".01" name="moisture">
+                                        </div>
+                                        <div class="col-sm-6 mb-3 mb-sm-0">
+                                            <label for="">Careoff</label>
+                                            <input type="text" tabindex="45" class="form-control form-control-user" id="editcareoff" name="Careoff">
+                                        </div>
+                                        <div class="col-sm-6 mb-3 mb-sm-0">
+                                            <label for="">Bags</label>
+                                            <input type="number" tabindex="46" class="form-control form-control-user" id="editbags" name="editbags">
+                                        </div>
+
+                                        <div class="col-sm-6 mb-3 mb-sm-0">
+                                            <label for="">Kilogram</label>
+                                            <input type="number" tabindex="47" class="form-control form-control-user" id="editkilogram" step=".01" name="editkilogram">
+                                        </div>
+                                        <div class="col-sm-6 mb-3 mb-sm-0">
+                                            <label for="">Prize</label>
+                                            <input type="number" tabindex="48" class="form-control form-control-user" id="editprize" step=".01" name="editprize">
+                                        </div>
+                                        <div class="col-sm-6 mb-3 mb-sm-0">
+                                            <label for="">Total</label>
+                                            <h5 id="edittotal"> </h5>
+                                        </div>
+
+
+
+
+                                        <input type="hidden" value="" name="arrayid" id="arrayid">
+                                        <input type="hidden" value="" name="objectid" id="objectid">
+                        </div>
+                    </form>
+
+                </div>
+                <div class="modal-footer">
+                    <a id="deletebutton" class="btn btn-danger" onclick="return confirm('are you sure you want to delete this?')">Delete</a>
+
+                    <button tabindex="52" form="editform" class="btn btn-primary" type="submit">Edit Deal</button>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <div class="floatingButtonWrap">
+        <div class="floatingButtonInner">
+            <a href="#" class="floatingButton">
+                <i class="fa fa-plus icon-default"></i>
+            </a>
+            <ul class="floatingMenu">
+
+                <li>
+                    <%if(category =='sales'){%>
+                        <a href="/salesmanagement" class="btn btn-primary">Sales Report</a>
+                        <%}else{%>
+                            <a href="/purchasemanagement" class="btn btn-primary">Purchase Report</a>
+                            <%}%>
+
+                </li>
+
+
+                <li>
+                    <%if(category =='sales'){%>
+                        <a href="/salesaccount" class="btn btn-primary">Sales payments</a>
+                        <%}else{%>
+                            <a href="/purchaseaccount" class="btn btn-primary">Purchase payments </a>
+                            <%}%>
+
+                </li>
+
+                <li> <a href="/individualaccounts" class="btn btn-primary">Payments</a>
+                </li>
+                <li> <a href="/accountmanagement" class="btn btn-primary">Detailed Sales and Purchase</a>
+                </li>
+                <li>
+                    <a href="#">Logout</a>
+                </li>
+
+            </ul>
+        </div>
+    </div>
+
+
+    <script type="text/javascript ">
+        $(document).on('keypress', 'input required ,select', function(e) {
             if (e.which == 13) {
                 e.preventDefault();
                 var $next = $('[tabIndex=' + (+this.tabIndex + 1) + ']');
@@ -193,9 +410,59 @@
                 $next.focus().click();
             }
         });
+        $(".form-control ").on("change ", function() {
+            var kilogram = document.getElementById('kilogram').value;
+            var price = document.getElementById('price').value;
+            var total = parseInt(kilogram * price);
+            var paid = document.getElementById('paid').value;
+            var remaining = parseInt(total - paid);
+            document.getElementById('total').innerText = total;
+            document.getElementById('remaining').innerText = remaining;
+        });
+        $(".form-control ").on("change ", function() {
+            var kilogram = document.getElementById('editkilogram').value;
+            var price = document.getElementById('editprize').value;
+            var total = parseInt(kilogram * price);
+
+            document.getElementById('edittotal').innerText = total;
+
+        });
+
+        $('#editmodel').on('hide.bs.modal', function() {
+            $('#date').focus();
+        })
+
+        function edit(i) {
+
+            var datas = '<%- JSON.stringify(data) %>'
+
+            const obj = JSON.parse(datas);
+            '<%if(category =="sales"){%>'
+            document.getElementById("deletebutton").href = "/deletesales/" + obj.id + "/" + obj.deal[i].id + "/indivdual ";
+            '<%}else{%>'
+            document.getElementById("deletebutton").href = "/deletepurchase/" + obj.id + "/" + obj.deal[i].id + "/indivdual ";
+            '<%}%>'
+            // document.getElementById("deletebutton").href = "/deletesales/ " + obj.id + "/ " + obj.deal[i].id + "/indivdual ";
+
+            var today = moment(obj.deal[i].date).format('YYYY-MM-DD');
+            document.getElementById("editdate").value = today;
+            // document.getElementById('editcustomers').innerText = obj.name;
+            document.getElementById('editbags').value = obj.deal[i].bags;
+            document.getElementById('editkilogram').value = obj.deal[i].kilogram
+            document.getElementById('edittotal').innerText = obj.deal[i].total
+            document.getElementById('editoutumn').value = obj.deal[i].outumn;
+            document.getElementById('editmoisture').value = obj.deal[i].moisture;
+            document.getElementById('editcareoff').value = obj.deal[i].careoff;
+            document.getElementById('editprize').value = obj.deal[i].price;
+            document.getElementById('objectid').value = obj.id;
+            document.getElementById('arrayid').value = obj.deal[i].id;
+
+            $('#editmodel').modal('show')
+
+        }
     </script>
-    <script type="text/javascript">
-        $(".form-control").on("change", function() {
+    <script type="text/javascript ">
+        $(".form-control ").on("change ", function() {
             var kilogram = document.getElementById('kilogram').value;
             var price = document.getElementById('price').value;
             var total = kilogram * price;
@@ -207,28 +474,159 @@
         });
     </script>
     <script>
-        function viewpayment(data) {
-            document.getElementById('paymentm').innerHTML = ''
-            var html = '';
-            var datas = '<%- JSON.stringify(data.deal) %>'
-            const obj = JSON.parse(datas);
-            obj.forEach(element => {
-                html += '<tr>';
-                html += '<td>1</td>';
-                html += '<td>2</td>';
-                html += '<td>3</td>';
-                html += '<td>4</td>';
-                html += '<td>5</td>';
-                html += '</tr>';
+        // function viewpayment(i) {
+        //     document.getElementById('paymentm').innerHTML = ''
+        //     var html = '';
+        //     var datas = '<%- JSON.stringify(data) %>'
+
+        //     const obj = JSON.parse(datas);
+        //     document.getElementById('subtotal').innerText = obj.deal[i].total
+        //     document.getElementById('subpayed').innerText = obj.deal[i].paid
+        //     obj.deal[i].payment.forEach(element => {
+        //         html += '<tr>';
+        //         html += '<td>' + moment(element.date).format('YYYY-MM-DD'); + '</td>';
+        //         html += '<td>' + element.amount + '</td>';
+        //         html += '<td>' + element.through + '</td>';
+        //         html += '<td>' + element.careoff + '</td>';
+        //         html += '<td>' + element.hint + '</td>';
+        //         html += '</tr>';
+        //     });
+        //     $('#paymentm').append(html);
+        //     $('#portfolioModal1').modal('show')
+
+        // };
+
+
+        // function modalclose() {
+        //     $('#portfolioModal1').modal('hide')
+        // }
+
+
+        $(document).ready(function() {
+            $('#dataTable thead th').each(function(i) {
+
+                calculateColumn(i);
             });
-            $('#paymentm').append(html);
-            $('#portfolioModal1').modal('show')
-
-        };
 
 
-        function modalclose() {
-            $('#portfolioModal1').modal('hide')
+            function calculateColumn(index) {
+
+
+
+                var total = 0;
+                var flag = true;
+                $('#dataTable tbody tr').each(function() {
+                    if ($(this).is(":visible ")) {
+                        var value = parseInt($('td', this).eq(index).text());
+                        if (!isNaN(value)) {
+                            total += value;
+                        } else {
+                            flag = false;
+                        }
+                    }
+                });
+                if (flag) {
+                    $('#dataTable tfoot th').eq(index).text('Total: ' + total);
+                }
+
+
+
+
+            }
+        });
+    </script>
+
+    <script type="text/javascript ">
+        $(".form-control ").on("change ", function() {
+            var kilogram = document.getElementById('kilogram').value;
+            var price = document.getElementById('price').value;
+            var total = parseInt(kilogram * price);
+            var paid = document.getElementById('paid').value;
+            var remaining = parseInt(total - paid);
+            document.getElementById('total').innerText = total;
+            document.getElementById('remaining').innerText = remaining;
+        });
+
+        function check_user() {
+            var name = document.getElementById("mylistofsellers ").value;
+            var x = document.getElementById("check ")
+            x.href = "individualpurchase/ " + name
         }
+    </script>
+    <script>
+        $(document).ready(function() {
+            $('#MyTable').DataTable({
+                initComplete: function() {
+                    this.api().columns().every(function() {
+                        var column = this;
+
+                    });
+                }
+            });
+            $('#editmodel').on('shown.bs.modal', function() {
+                $('#editdate').focus();
+            })
+            $('#editmodel').on('hide.bs.modal', function() {
+                $('#date').focus();
+            })
+        });
+    </script>
+    <script>
+        $(document).ready(function() {
+            $('#all').on('click', function() {
+                $('.sales').show();
+                $('.purchase').show();
+            })
+            $('#btnpurchase').on('click', function() {
+                $('.sales').toggle();
+
+
+
+
+            });
+            $('#btnsales').on('click', function() {
+                $('.purchase').toggle();
+
+
+
+            });
+        })
+        $(document).ready(function() {
+            $('#dataTable').DataTable({
+                "order ": [
+                    [0, "desc "]
+                ]
+            });
+
+            var totalbagspurchasesum = 0;
+            var totalpurchaseamount = 0;
+            var totalamountremaining = 0;
+            var count = 0;
+            var bigprize = 0;
+            $('#dataTable tbody tr td').each(function() {
+
+                if (this.className == 'totalbagspurchase') {
+                    totalbagspurchasesum += isNaN(this.innerHTML) ? 0 : parseInt(this.innerHTML);
+                }
+                if (this.className == 'totalamountremaining') {
+                    totalamountremaining += isNaN(this.innerText) ? 0 : parseInt(this.innerText);
+                }
+                if (this.className == 'totalpurchaseamount') {
+                    totalpurchaseamount += isNaN(this.innerText) ? 0 : parseInt(this.innerText);
+                }
+                if (this.className == 'bigprize') {
+                    count++;
+                    bigprize += isNaN(this.innerHTML) ? 0 : parseInt(this.innerHTML);
+                }
+
+
+            });
+
+            document.getElementById('totalbagpurchase').innerText = totalbagspurchasesum;
+            document.getElementById('totalpurchaseamount').innerText = totalpurchaseamount;
+
+            document.getElementById('totalamountremaining').innerText = totalamountremaining;
+            document.getElementById('averagemarket').innerText = parseFloat(bigprize / count).toFixed(2)
+        });
     </script>
     <%- include('./includes/end.ejs') %>

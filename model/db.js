@@ -1,7 +1,7 @@
 const mongoose = require("mongoose");
 
 // Connect to the db
-const url = "mongodb+srv://Fazil2000:Fazil2000@cluster0.6qacz.mongodb.net/myFirstDatabase?retryWrites=true&w=majority";
+const url = "mongodb+srv://midlaj:zain9747@cluster0.nuuwi.mongodb.net/myFirstDatabase?retryWrites=true&w=majority";
 
 
 

@@ -17,7 +17,7 @@ exports.addlorirent = (req, res) => {
 
 }
 exports.postaddlorirent = (req, res) => {
-    var number = req.body.loari.toLowerCase()
+    var number = req.body.loari.toUpperCase()
     Lorirent.findOne({ registration: number }).then(docs => {
         if (docs) {
             docs.updateOne({

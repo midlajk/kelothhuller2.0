@@ -5,27 +5,27 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const moment = require("moment");
 require('dotenv').config();
-// const MongoDBStore = require('connect-mongodb-session')(session);
+const MongoDBStore = require('connect-mongodb-session')(session);
 // const csrf = require('csurf');
-// const flash = require('connect-flash');
+const flash = require('connect-flash');
 
 
 
-const PORT = process.env.PORT || 5000;
+const PORT = process.env.PORT || 5050;
 const app = express();
 app.set('view engine', 'ejs');
 app.set('views', 'views');
 
 
-// const url = "mongodb+srv://juztcareer:Fazil@2000@cluster0.ytdyl.mongodb.net/juztCareer?retryWrites=true&w=majority";
+ const url = "mongodb+srv://midlaj:zain9747@cluster0.nuuwi.mongodb.net/myFirstDatabase?retryWrites=true&w=majority";
 
 
-// const store = new MongoDBStore({
-//     uri: url,
-//     collection: 'sessions',
+const store = new MongoDBStore({
+    uri: url,
+    collection: 'sessions',
     
 
-//  });
+ });
 
 app.use(express.static(path.join(__dirname, 'public')));
 
@@ -33,23 +33,25 @@ app.use(bodyParser.urlencoded({ extended: false }));
 
 
 
-// app.use(
-//     session({
-//         secret: 'my secret',
-//         resave: false,
-//         saveUninitialized: false,
-//         store: store,
+app.use(
+    session({
+        secret: 'my secret',
+        resave: false,
+        saveUninitialized: false,
+        store: store,
     
 
-//     })
-// );
+    })
+);
 
 // app.use(flash());
 // const csrfProtection = csrf();
 // app.use(csrfProtection);
-// app.use(flash());
+app.use(flash());
 app.use((req, res, next) => {
+ 
     res.locals.moment = moment;
+    res.locals.todaydate = moment(new Date()).format('YYYY-MM-DD');
     // res.locals.csrfToken = req.csrfToken();
     next();
 });

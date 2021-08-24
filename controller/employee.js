@@ -85,7 +85,7 @@ exports.postaddkooli = (req, res) => {
     let arrProps = Object.entries(req.body);
     s = process(0);
     var workers
-    var seller = req.body.seller.toLowerCase()
+    var seller = req.body.seller.toUpperCase()
 
     function process(index) {
         if (index < (arrProps.length)) {
@@ -160,7 +160,7 @@ exports.postaddkooli = (req, res) => {
             }
 
             function doStuffs(prop, callback) {
-                var name = prop.toLowerCase();
+                var name = prop.toUpperCase();
                 Loaders.findOne({ name: name }).then(docs => {
 
                     if (docs) {
@@ -206,7 +206,7 @@ exports.postaddkooli = (req, res) => {
         } else if (props[0] == 'workername') {
             workers = 1
             var kooli = (req.body.kooli * req.body.bags) / workers;
-            var name = props[1].toLowerCase();
+            var name = props[1].toUpperCase();
             Loaders.findOne({ name: name }).then(docs => {
                 if (docs) {
                     docs.updateOne({

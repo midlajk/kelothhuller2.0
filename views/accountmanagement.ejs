@@ -4,7 +4,7 @@
         <!-- Page Heading -->
 
         <div class="card shadow mb-4">
-            <div class="card-header"><a onclick="opendetail()" class="collapsible">Open Report from <%=moment(start).format( 'MMM-DD-YYYY')%>  to <%=moment(end).format( 'MMM-DD-YYYY')%></a></div>
+            <div class="card-header"><a onclick="opendetail()" class="collapsible">Open Report from <%=moment(start).format( 'MM-DD-YYYY')%>  to <%=moment(end).format( 'MM-DD-YYYY')%></a></div>
             <div class="card-body contunt" id="opendiv">
                 <div class="row">
 
@@ -14,30 +14,33 @@
                     <div class="col-md-6">
                         <h5>Sales side</h5>
                         <hr>
-                        <h6>Total bags purchased :
+                        <h6>Total bags purchased : <span id="totalbagpurchase"></span>
 
                         </h6><br>
-                        <h6>Total Purchase amount :
+                        <h6>Total Purchase amount : <span id="totalpurchaseamount"></span>
 
                         </h6><br>
-                        <h6>Remaining bags :
+                        <h6>Total Purchase kg : <span id="totalpurchasekg"></span>
 
                         </h6><br>
-                        <h6>Overall pending payments</h6>
+                        <h6>Remaining bags : <span id="remainingbags"></span>
+
+                        </h6><br>
+
                     </div>
                     <div class="col-md-6">
                         <h5>Purchase side</h5>
                         <hr>
-                        <h6>Total bags sales :
+                        <h6>Total bags sales : <span id="totalbagsales"></span>
 
                             </h5> <br>
-                            <h6>Total sales amount :
+                            <h6>Total totalsaleskg : <span id="totalsaleskg"></span>
 
                             </h6><br>
-                            <h6>Expected revenue :
+                            <h6>Total sales amount : <span id="totalsalesamount"></span>
 
                             </h6><br>
-                            <h6>Overall pending payments</h6>
+
                     </div>
                 </div>
 
@@ -47,14 +50,40 @@
         <!-- DataTales Example -->
         <div class="card shadow mb-4">
             <div class="card-header py-3">
-                <h6 class="m-0 font-weight-bold text-primary mb-2">കൊടുക്കാനുള്ളത്
+                <h6 class="m-0 font-weight-bold text-primary mb-2"> Purchase and sales
                 </h6>
-                <button id="btnpurchase" class="btn btn-primary">Purchase</button>
-                <button id="btnsales" class="btn btn-primary">Sales</button>
-                <a href="/purchasemanagement" class="btn btn-primary">Detailed Purchase</a>
-                <a href="/salesmanagement" class="btn btn-primary">Detailed Sales</a>
-                <a href="/individualaccounts" class="btn btn-primary">Payments</a>
-                <a href="" data-toggle="modal" data-target="#filtermodel" style="float:right" class="btn btn-danger">Filter table</a>
+                <% if (errorMessage) { %>
+                    <h5 class="text-center">
+                        <%= errorMessage %>
+                    </h5>
+
+                    </p>
+                    <% } %>
+
+                        <button id="all" class="btn btn-primary">All</button>
+                        <button id="btnpurchase" class="btn btn-primary">Purchase</button>
+                        <button id="btnsales" class="btn btn-primary">Sales</button>
+
+                        <a href="" data-toggle="modal" data-target="#filtermodel" style="float:right" class="btn btn-danger">Filter table</a> <a href="" style="float:right" class="btn btn-success">Daily book</a>
+            </div>
+            <div class="card-header py-3">
+
+                <form>
+                    <div class="col-sm-12 mb-3 mb-sm-0 input-group">
+                        <input required type="text" id="mylistofsellers" class="form-control form-control-user" oninput="check_user()" placeholder="Search for names" list="browsers" autocomplete="off">
+                        <div class="input-group-append">
+                            <a href="" id="check" type="button" class="btn btn-danger">View Individual accounts</a>
+                        </div>
+                        <datalist id="browsers">
+                            <%for(let docs of names){%>
+                                <option value="<%=docs.name%>:<%=docs.relation%>">
+                                <%}%>
+                        </datalist>
+
+                    </div>
+                </form>
+
+
             </div>
             <div class="card-body">
                 <div class="table-responsive">
@@ -77,9 +106,14 @@
                         <tbody>
                             <form id="buyerform" action="/detailedbuyerdata" method="POST">
                                 <tr>
-                                    <td><input required tabindex="1" name="date" class="form-control" type="date" id=""></td>
-                                    <td><input required class="p-1 form-control" style="width: 200px;" tabIndex="2" type="text" name="buyer" id=""></td>
-                                    <td><select id="formaction" required tabindex="3" class="p-1 form-control" style="width: 100px;" name="type" id="">
+                                    <td><input autofocus required tabindex="1" name="date" class="form-control " value="<%=todaydate%>" type="date" id="date"></td>
+                                    <td><input required class="p-1 form-control" style="width: 200px;" tabIndex="2" autocomplete="off" list="sellernames" type="text" name="buyer" id="customer">
+                                        <datalist id="sellernames">
+                                            <%for(let docs of names){%>
+                                                <option value="<%=docs.name%>"><%=docs.name%>:<%=docs.relation%></option>
+                                                <%}%>
+                                        </datalist></td>
+                                    <td><select id="formaction" required tabindex="3" class="p-1 form-control" style="width: 100px;" name="type">
                                         <option value="purchase">Purchase</option>
                                         <option value="sales">Sales</option>
                                     </select></td>
@@ -110,8 +144,8 @@
                                 <th>Kilogram</th>
                                 <th>Prize</th>
                                 <th>Total</th>
-                                <th>Paid</th>
-                                <th>Remaining</th>
+                                <th>Moisture</th>
+                                <th>Autumn</th>
                                 <th>Edit</th>
                             </tr>
                         </thead>
@@ -124,8 +158,8 @@
                                 <th>Kilogram</th>
                                 <th>Prize</th>
                                 <th>Total</th>
-                                <th>Paid</th>
-                                <th>Remaining</th>
+                                <th>Moisture</th>
+                                <th>Automn</th>
                                 <th>Edit</th>
 
                             </tr>
@@ -141,72 +175,85 @@
                             }
                             for (var i = 0; i < length; i++){%>
                                 <%if(i < seller.length){%>
-                                    <tr class="purchase">
+                                    <tr id="purchase" class="purchase">
                                         <td>
-                                            <%= moment(seller[i].deal.date).format( 'MMM-DD-YYYY') %>
+                                            <%= moment(seller[i].deal.date).format( 'MM-DD-YYYY') %>
 
                                         </td>
                                         <td>
-                                            <a href="/individualpurchase/<%=seller[i]._id%>">
+                                            <a href="/individualpurchase/<%=seller[i].name%>">
+
                                                 <%=seller[i].name%>
                                             </a>
                                         </td>
                                         <td>
                                             Purchase
                                         </td>
-                                        <td>
+                                        <td class="totalbagspurchase">
                                             <%=seller[i].deal.bags%>
                                         </td>
-                                        <td>
+                                        <td class="totalpurchasekg">
                                             <%=seller[i].deal.kilogram%>
                                         </td>
-                                        <td>
+                                        <td class="bigprize">
                                             <%=seller[i].deal.price%>
                                         </td>
-                                        <td>
-                                            <%=seller[i].deal.total%>
+                                        <td class="totalpurchaseamount">
+                                            <a href="/individualpurchaseaccount/<%=seller[i].name%>">
+                                                <%=seller[i].deal.total%>
+                                            </a>
+
                                         </td>
-                                        <td>
-                                            <%=seller[i].deal.paid%>
+                                        <td class="">
+                                            <%=seller[i].deal.moisture%>
                                         </td>
-                                        <td>
-                                            <%=seller[i].deal.remaining%>
+                                        <td class="">
+                                            <%=seller[i].deal.outumn%>
                                         </td>
-                                        <td><a href="" class="btn btn-primary">edit</a></td>
+                                        <td><a href="#" onclick="editpurchase('<%=i%>')" class="btn btn-primary">edit</a>
+
                                     </tr>
                                     <%}%>
                                         <%if(i < buyer.length){%>
-                                            <tr class="sales">
+                                            <tr class="sales" style="background: rgba(230, 230, 230, 0.918);">
                                                 <td>
-                                                    <%= moment(buyer[i].deal.date).format( 'MMM-DD-YYYY') %>
+                                                    <%= moment(buyer[i].deal.date).format( 'MM-DD-YYYY') %>
 
                                                 </td>
                                                 <td>
-                                                    <a href="/individualsales/<%=buyer[i]._id%>">
+
+                                                    <a href="/individualsales/<%=buyer[i].name%>">
                                                         <%=buyer[i].name%>
                                                     </a>
 
                                                 </td>
                                                 <td>Sales</td>
-                                                <td>
+                                                <td class="totalbagsales">
                                                     <%=buyer[i].deal.bags%>
                                                 </td>
-                                                <td>
+                                                <td class="totalsaleskg">
                                                     <%=buyer[i].deal.kilogram%>
                                                 </td>
-                                                <td>
+                                                <td class="bigprize">
                                                     <%=buyer[i].deal.price%>
                                                 </td>
-                                                <td>
-                                                    <%=buyer[i].deal.total%>
+                                                <td class="totalsalesamount">
+                                                    <a href="/individualsalesaccount/<%=buyer[i].name%>">
+                                                        <%=buyer[i].deal.total%>
+                                                    </a>
+
+
                                                 </td>
-                                                <td>
-                                                    <%=buyer[i].deal.paid%>
+                                                <td class="">
+                                                    <%=buyer[i].deal.moisture%>
                                                 </td>
-                                                <td>
-                                                    <%=buyer[i].deal.remaining%>
+                                                <td class="">
+                                                    <%=buyer[i].deal.outumn%>
                                                 </td>
-                                                <td><a href="" class="btn btn-primary">edit</a></td>
+
+                                                <td><a href="#" onclick="editsales('<%=i%>')" class="btn btn-primary">edit</a>
+
+                                                </td>
                                             </tr>
                                             <%}%>
                                                 <%}%>
@@ -232,13 +279,13 @@
                         <div class="form-group row">
                             <div class="col-sm-12 mb-3 mb-sm-0">
                                 <label for="">From date</label>
-                                <input type="date" class="form-control form-control-user" id="exampleFirstName" name="sdate" placeholder="Date">
+                                <input required type="date" class="form-control form-control-user" id="exampleFirstName" name="sdate" placeholder="Date">
                             </div>
                         </div>
                         <div class="form-group row">
                             <div class="col-sm-12 mb-3 mb-sm-0">
                                 <label for="">To date</label>
-                                <input type="date" name="edate" class="form-control form-control-user" id="exampleFirstName" placeholder="Date">
+                                <input required type="date" name="edate" class="form-control form-control-user" id="exampleFirstName" placeholder="Date">
                             </div>
                             <input type="hidden" name="type" value="filter">
 
@@ -270,18 +317,183 @@
         </div>
     </div>
 
+    <div class="modal fade" id="editmodel" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel"><span id="editcustomers"></span> <span id="edittype"></span></h5>
+                    <a class="close" type="button" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">×</span>
+                    </a>
+                </div>
+                <div class="modal-body">
+                    <form id="editform" action="/editorder" method="POST">
+                        <div class="form-group row">
+                            <div class="col-sm-6 mb-3 mb-sm-0">
+                                <label for="">Date</label>
+                                <input type="date" class="form-control form-control-user" id="editdate" tabindex="42" name="editdate">
+                            </div>
+                            <input type="hidden" class="form-control form-control-user" id="section" name="section">
+
+                            <input type="hidden" class="form-control form-control-user" value="detailedsalesandpurchase" name="types">
+
+
+                            <div class="col-sm-6 mb-3 mb-sm-0">
+                                <label for="">Autumn</label>
+                                <input type="number" tabindex="43" class="form-control form-control-user" id="editoutumn" step=".01" name="autumn">
+                            </div>
+                            <div class="col-sm-6 mb-3 mb-sm-0">
+                                <label for="">Moisture</label>
+                                <input type="number" tabindex="44" class="form-control form-control-user" id="editmoisture" step=".01" name="moisture">
+                            </div>
+                            <div class="col-sm-6 mb-3 mb-sm-0">
+                                <label for="">Careoff</label>
+                                <input type="text" tabindex="45" class="form-control form-control-user" id="editcareoff" name="Careoff">
+                            </div>
+                            <div class="col-sm-6 mb-3 mb-sm-0">
+                                <label for="">Bags</label>
+                                <input required type="number" tabindex="46" class="form-control form-control-user" id="editbags" name="editbags">
+                            </div>
+
+                            <div class="col-sm-6 mb-3 mb-sm-0">
+                                <label for="">Kilogram</label>
+                                <input required type="number" tabindex="47" class="form-control form-control-user" id="editkilogram" step=".01" name="editkilogram">
+                            </div>
+                            <div class="col-sm-6 mb-3 mb-sm-0">
+                                <label for="">Prize</label>
+                                <input required type="number" tabindex="48" class="form-control form-control-user" id="editprize" step=".01" name="editprize">
+                            </div>
+                            <div class="col-sm-6 mb-3 mb-sm-0">
+                                <label for="">Total</label>
+                                <h5 id="edittotal"> </h5>
+                            </div>
+
+
+
+
+
+                            <input type="hidden" value="" name="arrayid" id="arrayid">
+                            <input type="hidden" value="" name="objectid" id="objectid">
+                        </div>
+                    </form>
+
+                </div>
+                <div class="modal-footer">
+                    <a id="deletebutton" class="btn btn-danger" onclick="return confirm('are you sure you want to delete this?')">Delete</a>
+
+                    <button tabindex="49" form="editform" class="btn btn-primary" type="submit">Edit Deal</button>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <div class="floatingButtonWrap">
+        <div class="floatingButtonInner">
+            <a href="#" class="floatingButton">
+                <i class="fa fa-plus icon-default"></i>
+            </a>
+            <ul class="floatingMenu">
+
+                <li>
+                    <a href="/purchasemanagement" class="btn btn-primary">Detailed Purchase report</a>
+
+                </li>
+
+                <li> <a href="/salesmanagement" class="btn btn-primary">Detailed Sales report</a>
+
+                </li>
+                <li> <a href="/purchaseaccount" class="btn btn-primary">Purchase payments </a>
+
+                </li>
+                <li> <a href="/salesaccount" class="btn btn-primary">Sales payments</a>
+
+                </li>
+                <li> <a href="/individualaccounts" class="btn btn-primary">Payments</a>
+                </li>
+                <li>
+                    <a href="#">Logout</a>
+                </li>
+
+            </ul>
+        </div>
+    </div>
+    <script>
+        function editsales(i) {
+            var datas = '<%- JSON.stringify(buyer) %>'
+            const obj = JSON.parse(datas);
+            document.getElementById("deletebutton").href = "/deletesales/" + obj[i].id + "/" + obj[i].deal.id + "/nonseperate";
+            var today = moment(obj[i].deal.date).format('YYYY-MM-DD');
+            document.getElementById("editdate").value = today;
+
+            document.getElementById('edittype').innerText = "sales";
+            document.getElementById('editcustomers').innerText = obj[i].name;
+            document.getElementById('editbags').value = obj[i].deal.bags;
+            document.getElementById('editkilogram').value = obj[i].deal.kilogram
+            document.getElementById('edittotal').innerText = obj[i].deal.total
+
+
+            document.getElementById('objectid').value = obj[i].id;
+            document.getElementById('arrayid').value = obj[i].deal.id;
+            document.getElementById('section').value = "sales"
+            document.getElementById('editoutumn').value = obj[i].deal.outumn;
+            document.getElementById('editmoisture').value = obj[i].deal.moisture;
+            document.getElementById('editcareoff').value = obj[i].deal.careoff;
+            document.getElementById('editprize').value = obj[i].deal.price;
+
+            $('#editmodel').modal('show')
+
+        }
+
+        function editpurchase(i) {
+            var datas = '<%- JSON.stringify(seller) %>'
+            const obj = JSON.parse(datas);
+            document.getElementById("deletebutton").href = "/deletepurchase/" + obj[i].id + "/" + obj[i].deal.id + "/nonseperate";
+            var today = moment(obj[i].deal.date).format('YYYY-MM-DD');
+            document.getElementById("editdate").value = today;
+
+            document.getElementById('edittype').innerText = "purchase";
+            document.getElementById('editcustomers').innerText = obj[i].name;
+            document.getElementById('section').value = "purchase"
+            document.getElementById('editbags').value = obj[i].deal.bags;
+            document.getElementById('editkilogram').value = obj[i].deal.kilogram;
+            document.getElementById('edittotal').innerText = obj[i].deal.total;
+
+            document.getElementById('objectid').value = obj[i].id;
+            document.getElementById('arrayid').value = obj[i].deal.id;
+
+            document.getElementById('editoutumn').value = obj[i].deal.outumn;
+            document.getElementById('editmoisture').value = obj[i].deal.moisture;
+            document.getElementById('editcareoff').value = obj[i].deal.careoff;
+            document.getElementById('editprize').value = obj[i].deal.price;
+
+            $('#editmodel').modal('show')
+        }
+
+        function check_user() {
+            var st = document.getElementById("mylistofsellers").value;
+            var content = st.split(':');
+            var name = content[0];
+            var type = content[1];
+
+            var link
+            if (type == 'buyer') {
+                link = "individualsales"
+            } else {
+                link = "individualpurchase"
+            }
+            var x = document.getElementById("check")
+            x.href = "/" + link + "/" + name
+        }
+    </script>
+
+
     <script type="text/javascript">
-        $("#formaction").change(function() {
-            var action = $(this).val() == "purchase" ? "/detailedbuyerdata" : "/buyerform";
-            $("#buyerform").attr("action", action);
-        });
-
-
         $(document).on('keypress', 'input,select', function(e) {
             if (e.which == 13) {
                 e.preventDefault();
                 var $next = $('[tabIndex=' + (+this.tabIndex + 1) + ']');
-                console.log($next.length);
+
                 if (!$next.length) {
                     $next = $('[tabIndex=1]');
                 }
@@ -295,11 +507,23 @@
         $(".form-control").on("change", function() {
             var kilogram = document.getElementById('kilogram').value;
             var price = document.getElementById('price').value;
-            var total = kilogram * price;
+            var total = parseInt(kilogram * price);
             var paid = document.getElementById('paid').value;
-            var remaining = total - paid;
+            var remaining = parseInt(total - paid);
             document.getElementById('total').innerText = total;
             document.getElementById('remaining').innerText = remaining;
+        });
+        $(".form-control").on("change", function() {
+            var kilogram = document.getElementById('editkilogram').value;
+            var price = document.getElementById('editprize').value;
+            var total = parseInt(kilogram * price);
+
+            document.getElementById('edittotal').innerText = total;
+
+        });
+        $("#formaction").change(function() {
+            var action = $(this).val() == "purchase" ? "/detailedbuyerdata" : "/buyerform";
+            $("#buyerform").attr("action", action);
         });
     </script>
     <script>
@@ -312,79 +536,86 @@
                     });
                 }
             });
-
+            $('#editmodel').on('shown.bs.modal', function() {
+                $('#editdate').focus();
+            })
+            $('#editmodel').on('hide.bs.modal', function() {
+                $('#date').focus();
+            })
         });
     </script>
     <script>
         $(document).ready(function() {
+            $('#all').on('click', function() {
+                $('.sales').show();
+                $('.purchase').show();
+            })
             $('#btnpurchase').on('click', function() {
                 $('.sales').toggle();
-
-                $('#dataTable thead th').each(function(i) {
-                    calculateColumn(i);
-                });
+                $('.purchase').show();
 
 
-                function calculateColumn(index) {
-                    var total = 0;
-                    var flag = true;
-                    $('#dataTable tbody tr').each(function() {
-                        if ($(this).is(":visible")) {
-                            var value = parseInt($('td', this).eq(index).text());
-                            if (!isNaN(value)) {
-                                total += value;
-                            } else {
-                                flag = false;
-                            }
-                        }
-                    });
-                    if (flag) {
-                        $('#dataTable tfoot th').eq(index).text('Total: ' + total);
-                    }
-
-                }
             });
             $('#btnsales').on('click', function() {
                 $('.purchase').toggle();
+                $('.sales').show();
 
-                $('#dataTable thead th').each(function(i) {
-
-                    calculateColumn(i);
-                });
-
-
-                function calculateColumn(index) {
-
-
-
-                    var total = 0;
-                    var flag = true;
-                    $('#dataTable tbody tr').each(function() {
-                        if ($(this).is(":visible")) {
-                            var value = parseInt($('td', this).eq(index).text());
-                            if (!isNaN(value)) {
-                                total += value;
-                            } else {
-                                flag = false;
-                            }
-                        }
-                    });
-                    if (flag) {
-                        $('#dataTable tfoot th').eq(index).text('Total: ' + total);
-                    }
-
-
-
-
-                }
             });
         })
         $(document).ready(function() {
-            $('#dataTable').DataTable({
-                "order": [
-                    [0, "desc"]
-                ]
+            var table = $('#dataTable').DataTable({
+                columnDefs: [{
+                    'targets': 0,
+                    type: 'date-euro'
+                }],
+                order: [0, 'desc'],
             });
+
+
+            var totalbagspurchasesum = 0;
+            var totalpurchaseamount = 0;
+            var totalamountpaid = 0;
+
+            var totalbagsales = 0;
+            var totalsalesamount = 0;
+
+            var totalsaleskg = 0;
+            var totalpurchasekg = 0;
+            $('#dataTable tbody tr td').each(function() {
+
+                if (this.className == 'totalbagspurchase') {
+                    totalbagspurchasesum += isNaN(this.innerHTML) ? 0 : parseInt(this.innerHTML);
+                }
+                if (this.className == 'totalpurchaseamount') {
+                    totalpurchaseamount += isNaN(this.innerText) ? 0 : parseInt(this.innerText);
+                }
+
+
+                if (this.className == 'totalbagsales') {
+                    totalbagsales += isNaN(this.innerHTML) ? 0 : parseInt(this.innerHTML);
+                }
+                if (this.className == 'totalsalesamount') {
+                    console.log()
+                    totalsalesamount += isNaN(this.innerText) ? 0 : parseInt(this.innerText);
+                }
+
+                if (this.className == 'totalpurchasekg') {
+                    totalpurchasekg += isNaN(this.innerHTML) ? 0 : parseInt(this.innerHTML);
+                }
+                if (this.className == 'totalsaleskg') {
+                    totalsaleskg += isNaN(this.innerHTML) ? 0 : parseInt(this.innerHTML);
+                }
+
+            });
+            var remainingbags = totalbagspurchasesum - totalsalesamount
+            var expectedrevenue = totalbagsales - totalpurchaseamount
+            document.getElementById('totalbagpurchase').innerText = totalbagspurchasesum;
+            document.getElementById('totalpurchaseamount').innerText = totalpurchaseamount;
+            document.getElementById('totalbagsales').innerText = totalbagsales;
+            document.getElementById('totalsalesamount').innerText = totalsalesamount;
+            document.getElementById('totalpurchasekg').innerText = totalpurchasekg;
+            document.getElementById('totalsaleskg').innerText = totalsaleskg;
+            document.getElementById('remainingbags').innerText = remainingbags;
         });
     </script>
     <script>

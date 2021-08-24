@@ -1,17 +1,36 @@
 const mongoose = require('mongoose');
 var Schema = mongoose.Schema;
+var transaction = new Schema({
+    id: String,
+    Date: Date,
+    amount: Number,
+    types: String,
+    comment: String,
+    credit: Number,
+    paymentmode: String,
+    debit: Number,
+    mode:String
 
+
+});
+
+var Transaction =
+    mongoose.model('Transaction', transaction);
+module.exports = Transaction;
 var sellers = new Schema({
+    id: String,
     name: String,
     deal: [{
+        id: String,
         orderid: String,
         date: Date,
         bags: Number,
         kilogram: Number,
         price: Number,
         total: Number,
-        paid: Number,
-        remaining: Number
+        outumn: String,
+        moisture: String,
+        careoff: String,
 
     }]
 });
@@ -22,16 +41,19 @@ module.exports = Sellers;
 
 
 var buyers = new Schema({
+    id: String,
     name: String,
     deal: [{
-        orderid: String,
+        id: String,
+        careoff: String,
         date: Date,
         bags: Number,
         kilogram: Number,
         price: Number,
         total: Number,
-        paid: Number,
-        remaining: Number
+        outumn: String,
+        moisture: String,
+
 
     }]
 });
@@ -42,25 +64,29 @@ module.exports = Buyers;
 
 
 var buyerspayment = new Schema({
+    id: String,
     name: String,
     total: Number,
     paid: [{
+        id: String,
         date: Date,
         order: String,
         amount: Number,
         agent: String,
-        category: String,
-        typee: String,
         message: String,
-        remaining: Number
+        remaining: Number,
+        typee:String
 
     }],
     payment: [{
+        id: String,
         date: Date,
         amount: Number,
         order: String,
-        typee: String,
         message: String,
+        remaining: Number,
+        agent: String,
+        typee:String
     }]
 });
 
@@ -69,25 +95,29 @@ var Buyerspayment =
 module.exports = Buyerspayment;
 
 var sellerp = new Schema({
+    id: String,
     name: String,
     total: Number,
     paid: [{
+        id: String,
         date: Date,
         order: String,
         amount: Number,
         agent: String,
-        category: String,
-        typee: String,
         message: String,
-        remaining: Number
-
+        remaining: Number,
+        typee:String
     }],
     payment: [{
+        id: String,
         date: Date,
-        amount: Number,
         order: String,
-        typee: String,
+        amount: Number,
+        agent: String,
         message: String,
+        remaining: Number,
+        typee:String
+
     }]
 });
 
@@ -106,20 +136,20 @@ var Users =
 module.exports = Users;
 var lorirent = new Schema({
     registration: String,
-    trips:[{
-        date:Date,
-        loadto:String,
-        product:String,
-        driver:String,
-        rent:Number,
+    trips: [{
+        date: Date,
+        loadto: String,
+        product: String,
+        driver: String,
+        rent: Number,
     }],
-    paid:[{
-        date:Date,
-        amount:Number,
-        paymentto:String,
-        content:String
+    paid: [{
+        date: Date,
+        amount: Number,
+        paymentto: String,
+        content: String
     }]
-   
+
 });
 
 var Lorirent =
@@ -128,14 +158,27 @@ module.exports = Lorirent;
 
 var utility = new Schema({
     name: String,
-   detail:[{
-       date:Date,
-       payment:String,
-       amount:Number
+    detail: [{
+        date: Date,
+        payment: String,
+        amount: Number
 
-   }]
+    }]
 });
 
 var Utility =
     mongoose.model('Utility', utility);
-    module.exports = Utility;
+module.exports = Utility;
+
+var names = new Schema({
+    name: String,
+    relation: String,
+    phone: Number,
+    address: String,
+    careoff: String,
+
+});
+
+var Names =
+    mongoose.model('Names', names);
+module.exports = Names;
