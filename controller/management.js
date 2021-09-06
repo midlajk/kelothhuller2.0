@@ -5,9 +5,9 @@ var fs = require('fs');
 const Sellers = mongoose.model('Sellers');
 const Users = mongoose.model('Users');
 const Buyers = mongoose.model('Buyers');
-const Sellerpayment = mongoose.model('Sellerpayment');
+
 const Transaction = mongoose.model('Transaction');
-const Buyerspayment = mongoose.model('Buyerspayment');
+
 const Names = mongoose.model('Names');
 const Utility = mongoose.model('Utility');
 const generateUniqueId = require('generate-unique-id');
@@ -65,8 +65,6 @@ exports.accountmanagement = (req, res) => {
 
 }
 
-
-
 exports.filtrsales = (req, res) => {
 
     let message = req.flash('error');
@@ -94,6 +92,8 @@ exports.filtrsales = (req, res) => {
 
         start = new Date(req.body.sdate);
         end = new Date(req.body.edate);
+
+        console.log(start)
         filter = [{ $unwind: "$deal" }, {
             $match: {
 
@@ -170,6 +170,16 @@ exports.filtrsales = (req, res) => {
 
 }
 exports.postdetailedbuyerdata = (req, res) => {
+    var totalpayment
+    var price;
+    if (req.body.through == 'quatity') {
+        totalpayment = 0
+
+    } else {
+        totalpayment = parseInt(req.body.price * req.body.kilogram)
+
+    }
+
     const objectid = generateUniqueId({
         length: 25,
         useLetters: true
@@ -181,21 +191,29 @@ exports.postdetailedbuyerdata = (req, res) => {
 
     var name = req.body.buyer.toUpperCase();
 
-    Sellers.findOne({ name: name }).then((docs, err) => {
+    Sellers.findOneAndUpdate({ name: name }).then((docs, err) => {
 
         if (err) {
             console.log(err)
         }
         if (docs) {
+
+            docs.total = docs.total - parseInt(req.body.paid) + totalpayment,
+                docs.save()
             docs.updateOne({
+
                     $push: {
+
                         "deal": {
                             id: arrayid,
                             date: req.body.date,
-                            bags: req.body.bags,
                             kilogram: req.body.kilogram,
                             price: req.body.price,
-                            total: parseInt(req.body.price * req.body.kilogram),
+                            total: totalpayment,
+                            paid: req.body.paid,
+                            Remaining: docs.total,
+                            through: req.body.through,
+                            hint: req.body.hint
 
                         }
                     }
@@ -203,109 +221,32 @@ exports.postdetailedbuyerdata = (req, res) => {
                 function(err, model) {
 
 
-                    Sellerpayment.findOne({ name: name }).then(docs => {
-                        if (!docs) {
-
-                        } else {
-
-                            docs.total = parseInt(docs.total) + parseInt(req.body.remaining)
-                            if (req.body.paid && req.body.paid != 0) {
-                                docs.updateOne({
-                                        $push: {
-
-                                            "paid": {
-                                                id: arrayid,
-                                                date: req.body.date,
-                                                amount: req.body.paid,
-                                                agent: "not defined",
-                                                typee: "bank",
-                                                message: req.body.bags + "bags",
-                                                remaining: parseInt(req.body.price * req.body.kilogram) - parseInt(req.body.paid),
-                                            }
-
-                                        },
-
-                                    }, { safe: true, upsert: true },
-                                    function(err, model) {
-
-                                    }
-                                )
-                            }
-                            docs.updateOne({
-
-                                    $push: {
-                                        "payment": {
-                                            id: arrayid,
-                                            date: req.body.date,
-                                            amount: req.body.price * req.body.kilogram,
-                                            agent: "not defined",
-                                            typee: "bank",
-                                            message: req.body.bags + "bags",
-                                            remaining: parseInt(req.body.price * req.body.kilogram) - parseInt(req.body.paid),
-
-                                        }
-                                    }
-                                }, { safe: true, upsert: true },
-                                function(err, model) {
-
-                                }
-                            )
-                        }
-                    })
 
                 }
             )
+
         } else {
 
             var sellers = new Sellers({
                 id: objectid,
                 name: name,
+                total: totalpayment - parseInt(req.body.paid),
                 deal: [{
                     id: arrayid,
                     date: req.body.date,
-                    bags: req.body.bags,
                     kilogram: req.body.kilogram,
                     price: req.body.price,
-                    total: parseInt(req.body.price * req.body.kilogram),
+                    total: totalpayment,
+                    paid: req.body.paid,
+                    Remaining: totalpayment - parseInt(req.body.paid),
+                    through: req.body.through,
+                    hint: req.body.hint
 
                 }]
 
             })
             sellers.save(function(err, doc) {
-                var sellerpayment = new Sellerpayment({
-                    id: objectid,
-                    name: name,
-                    total: doc.deal[0].remaining,
 
-                    paid: [{
-                        id: arrayid,
-                        date: req.body.date,
-                        amount: req.body.paid,
-                        agent: "not defined",
-                        typee: "bank",
-                        message: req.body.bags + "bags",
-                        remaining: parseInt(req.body.price * req.body.kilogram) - parseInt(req.body.paid),
-
-                    }],
-                    payment: [{
-                        id: arrayid,
-                        date: req.body.date,
-                        amount: req.body.price * req.body.kilogram,
-                        agent: "not defined",
-                        typee: "purchase",
-                        message: req.body.bags + "bags",
-                        remaining: parseInt(req.body.price * req.body.kilogram) - parseInt(req.body.paid),
-                    }]
-                })
-
-                sellerpayment.save(function(err, docs) {
-                    if (err) {
-                        console.log(err);
-
-                    }
-
-
-                })
             })
             Names.findOne({ $and: [{ name: name }, { relation: "seller" }] }).then(docs => {
                 if (docs) {
@@ -368,62 +309,30 @@ exports.postdetailedbuyerdata = (req, res) => {
 
 }
 exports.deletepurchase = (req, res) => {
+    console.log("ehere")
     var name
-    Sellers.findOne({ id: req.params.objectid }, function(errs, datas) {
+    Sellers.findOneAndUpdate({ id: req.params.objectid }).then((docs, err) => {
 
-        name = datas.name
-        if (errs) {
-            res.send(errs);
-        } else {
-            datas.updateOne({
-                    $pull: {
-                        "deal": {
-                            id: req.params.arrayid
-                        }
+        name = docs.name
+        docs.total = docs.total - parseInt(req.params.total) + parseInt(req.params.paid)
+        docs.save()
+        docs.updateOne({
+                $pull: {
+                    "deal": {
+                        id: req.params.arrayid
                     }
-                }, { safe: true, upsert: true },
-                function(err, model) {
-                    console.log(err);
-                    Sellerpayment.findOne({ id: req.params.objectid }).then(docs => {
-                        if (!docs) {
-
-                        } else {
-                            docs.updateOne({
-                                    $pull: {
-                                        "paid": {
-                                            id: req.params.arrayid,
-
-                                        }
-
-                                    },
-
-                                }, { safe: true, upsert: true },
-                                function(err, model) {
-
-                                }
-                            )
-                            docs.updateOne({
-
-                                    $pull: {
-                                        "payment": {
-                                            id: req.params.arrayid,
-
-                                        }
-                                    }
-                                }, { safe: true, upsert: true },
-                                function(err, model) {
-
-                                }
-                            )
-                        }
-                    })
-
                 }
-            )
+            }, { safe: true, upsert: true },
+            function(err, model) {
+                console.log(err);
 
-        }
-    }).then((err, docs) => {
-        if (err) console.log(err)
+
+            }
+        )
+
+
+    }).then((docs, err) => {
+        if (err) console.log("error")
         Transaction.findOneAndRemove({ id: req.params.arrayid }).then(docs => {
             if (req.params.type == "seperate") {
                 res.redirect('/purchasemanagement')
@@ -438,6 +347,12 @@ exports.deletepurchase = (req, res) => {
     })
 };
 exports.postbuyerform = (req, res) => {
+    var totalpayment
+    if (req.body.through == 'quatity') {
+        totalpayment = 0
+    } else {
+        totalpayment = parseInt(req.body.price * req.body.kilogram)
+    }
     const objectid = generateUniqueId({
         length: 25,
         useLetters: true
@@ -449,9 +364,11 @@ exports.postbuyerform = (req, res) => {
 
     var name = req.body.buyer.toUpperCase();
     console.log(name)
-    Buyers.findOne({ name: name }).then(docs => {
+    Buyers.findOneAndUpdate({ name: name }).then(docs => {
         if (docs) {
 
+            docs.total = docs.total - parseInt(req.body.paid) + totalpayment,
+                docs.save()
             docs.updateOne({
                     $push: {
                         "deal": {
@@ -460,76 +377,37 @@ exports.postbuyerform = (req, res) => {
                             bags: req.body.bags,
                             kilogram: req.body.kilogram,
                             price: req.body.price,
-                            total: parseInt(req.body.price * req.body.kilogram),
+                            total: totalpayment,
+                            paid: req.body.paid,
+                            Remaining: docs.total,
+                            through: req.body.through,
+                            hint: req.body.hint
 
                         }
                     }
                 }, { safe: true, upsert: true },
                 function(err, model) {
                     console.log(err);
-                    Buyerspayment.findOne({ name: name }).then(docs => {
-                        if (!docs) {
 
-                        } else {
-
-                            docs.total = parseInt(docs.total) + parseInt(req.body.remaining)
-                            if (req.body.paid && req.body.paid != 0) {
-                                docs.updateOne({
-                                        $push: {
-                                            "paid": {
-                                                id: arrayid,
-                                                date: req.body.date,
-                                                amount: req.body.paid,
-                                                agent: "not defined",
-                                                typee: "bank",
-                                                message: req.body.bags + "bags",
-                                                remaining: parseInt(req.body.price * req.body.kilogram) - parseInt(req.body.paid),
-                                            }
-
-                                        },
-
-                                    }, { safe: true, upsert: true },
-                                    function(err, model) {
-
-                                    }
-                                )
-                            }
-                            docs.updateOne({
-
-                                    $push: {
-                                        "payment": {
-
-                                            id: arrayid,
-                                            date: req.body.date,
-                                            amount: req.body.price * req.body.kilogram,
-                                            agent: "not defined",
-                                            typee: "bank",
-                                            message: doc.deal[0].bags + " bags",
-                                            remaining: parseInt(req.body.price * req.body.kilogram) - parseInt(req.body.paid),
-
-                                        }
-                                    }
-                                }, { safe: true, upsert: true },
-                                function(err, model) {
-
-                                }
-                            )
-                        }
-                    })
                 }
             )
+
         } else {
             var buyers = new Buyers({
                 id: objectid,
                 name: name,
+                total: totalpayment + parseInt(req.body.paid),
                 deal: [{
                     id: arrayid,
                     date: req.body.date,
                     bags: req.body.bags,
                     kilogram: req.body.kilogram,
                     price: req.body.price,
-                    total: parseInt(req.body.price * req.body.kilogram),
-
+                    total: totalpayment,
+                    paid: req.body.paid,
+                    Remaining: totalpayment - parseInt(req.body.paid),
+                    through: req.body.through,
+                    hint: req.body.hint
 
                 }]
 
@@ -538,39 +416,7 @@ exports.postbuyerform = (req, res) => {
 
             buyers.save(function(err, doc) {
 
-                var buyerspayment = new Buyerspayment({
-                    id: objectid,
-                    name: name,
-                    total: doc.deal[0].remaining,
-                    paid: [{
-                        id: arrayid,
-                        date: req.body.date,
-                        amount: req.body.paid,
-                        agent: "not defined",
-                        typee: "bank",
-                        message: req.body.bags + "bags",
-                        remaining: parseInt(req.body.price * req.body.kilogram) - parseInt(req.body.paid),
 
-                    }],
-                    payment: [{
-                        id: arrayid,
-                        date: req.body.date,
-                        amount: req.body.price * req.body.kilogram,
-                        agent: "not defined",
-                        typee: "bank",
-                        message: doc.deal[0].bags + " bags",
-                        remaining: parseInt(req.body.price * req.body.kilogram) - parseInt(req.body.paid),
-
-                    }]
-                })
-
-                buyerspayment.save(function(err, docs) {
-                    if (err) {
-                        console.log(err);
-
-                    }
-
-                })
 
             })
             Names.findOne({ $and: [{ name: name }, { relation: "buyer" }] }).then(docs => {
@@ -633,59 +479,24 @@ exports.postbuyerform = (req, res) => {
 }
 exports.deletesales = (req, res) => {
     var name
-    Buyers.findOne({ id: req.params.objectid }, function(errs, datas) {
-
-        name = datas.name
-        if (errs) {
-            res.send(errs);
-        } else {
-            datas.updateOne({
-                    $pull: {
-                        "deal": {
-                            id: req.params.arrayid
-                        }
+    Buyers.findOneAndUpdate({ id: req.params.objectid }).then((docs, err) => {
+        name = docs.name
+        docs.total = docs.total - parseInt(req.params.total) + parseInt(req.params.paid)
+        docs.save()
+        docs.updateOne({
+                $pull: {
+                    "deal": {
+                        id: req.params.arrayid
                     }
-                }, { safe: true, upsert: true },
-                function(err, model) {
-                    console.log(err);
-                    Buyerspayment.findOne({ id: req.params.objectid }).then(docs => {
-                        if (!docs) {
-
-                        } else {
-                            docs.updateOne({
-                                    $pull: {
-                                        "paid": {
-                                            id: req.params.arrayid,
-
-                                        }
-
-                                    },
-
-                                }, { safe: true, upsert: true },
-                                function(err, model) {
-
-                                }
-                            )
-                            docs.updateOne({
-
-                                    $pull: {
-                                        "payment": {
-                                            id: req.params.arrayid,
-
-                                        }
-                                    }
-                                }, { safe: true, upsert: true },
-                                function(err, model) {
-
-                                }
-                            )
-                        }
-                    })
-
                 }
-            )
+            }, { safe: true, upsert: true },
+            function(err, model) {
+                console.log(err);
 
-        }
+
+            }
+        )
+
     }).then((err, docs) => {
         if (err) console.log(err)
 
@@ -711,7 +522,22 @@ exports.salesmanagement = (req, res) => {
     } else {
         message = null;
     }
-    Buyers.aggregate([{ $unwind: "$deal" }]).then(datas => {
+    var start = new Date()
+    var end = new Date()
+    end.setDate(end.getDate() + 1)
+    start.setMonth(start.getMonth() - 1);
+    Buyers.aggregate([{ $unwind: "$deal" }, {
+            $match: {
+
+                "deal.date": {
+                    $lt: end,
+                    $gte: start
+                }
+            }
+        },
+
+
+    ]).then(datas => {
         Names.find({ relation: "buyer" }).then(names => {
 
             res.render('salesmanagement', {
@@ -719,34 +545,108 @@ exports.salesmanagement = (req, res) => {
                 subpath: '',
                 buyer: datas,
                 names: names,
-                errorMessage: message
+                errorMessage: message,
+                start: start,
+                end: end,
             })
         }).catch(err => console.log(err));
     }).catch(err => console.log(err));
 
 }
-exports.purchasemanagement = (req, res) => {
+exports.salesfilter = (req, res) => {
+
     let message = req.flash('error');
     if (message.length > 0) {
         message = message[0];
     } else {
         message = null;
     }
-    Sellers.aggregate([{ $unwind: "$deal" }]).then(datas => {
-        Names.find({ relation: "seller" }).then(names => {
+    var end = new Date()
+    var start = new Date()
 
-            res.render('purchasemanagement', {
+    var filter = [{ $unwind: "$deal" }]
+    if (req.body.type == 'filter') {
+
+        start = new Date(req.body.sdate);
+        end = new Date(req.body.edate);
+
+        console.log(start)
+        filter = [{ $unwind: "$deal" }, {
+            $match: {
+
+                "deal.date": {
+                    $lt: end,
+                    $gte: start
+                }
+            }
+        }]
+
+    } else if (req.body.type == '2months') {
+        start.setMonth(start.getMonth() - 2);
+
+
+        filter = [{ $unwind: "$deal" }, {
+            $match: {
+
+                "deal.date": {
+                    $lt: end,
+                    $gte: start
+                }
+            }
+        }, totals]
+    } else if (req.body.type == '5months') {
+        start.setMonth(start.getMonth() - 5);
+
+        filter = [{ $unwind: "$deal" }, {
+            $match: {
+
+                "deal.date": {
+                    $lt: end,
+                    $gte: start
+                }
+            }
+        }, totals]
+
+    } else if (req.body.type == 'year') {
+        start.setFullYear(start.getFullYear() - 1);
+        (start)
+
+        filter = [{ $unwind: "$deal" }, {
+            $match: {
+
+                "deal.date": {
+                    $lt: end,
+                    $gte: start
+                }
+            }
+        }, totals]
+    } else {
+        start = "Beginning"
+
+        filter = [{ $unwind: "$deal" }]
+
+    }
+
+    Buyers.aggregate(filter).then(data => {
+
+        Names.find().then(names => {
+            res.render('salesmanagement', {
                 mainpath: '/stockmanagement',
                 subpath: '',
-                seller: datas,
+                buyer: data,
                 names: names,
-                errorMessage: message
+                errorMessage: message,
+                start: start,
+                end: end,
+
             })
         }).catch(err => console.log(err));
+
     }).catch(err => console.log(err));
 
+
 }
-exports.individualaccounts = (req, res) => {
+exports.purchasemanagement = (req, res) => {
     let message = req.flash('error');
     if (message.length > 0) {
         message = message[0];
@@ -757,72 +657,121 @@ exports.individualaccounts = (req, res) => {
     var end = new Date()
     end.setDate(end.getDate() + 1)
     start.setMonth(start.getMonth() - 1);
-    Sellerpayment.aggregate([
-        { $unwind: "$payment" },
-        {
+    Sellers.aggregate([{ $unwind: "$deal" }, {
+        $match: {
+
+            "deal.date": {
+                $lt: end,
+                $gte: start
+            }
+        },
+
+    }]).then(datas => {
+        Names.find({ relation: "seller" }).then(names => {
+
+            res.render('purchasemanagement', {
+                mainpath: '/stockmanagement',
+                subpath: '',
+                seller: datas,
+                names: names,
+                errorMessage: message,
+                start: start,
+                end: end,
+            })
+        }).catch(err => console.log(err));
+    }).catch(err => console.log(err));
+
+}
+exports.purchasefilter = (req, res) => {
+
+    let message = req.flash('error');
+    if (message.length > 0) {
+        message = message[0];
+    } else {
+        message = null;
+    }
+    var end = new Date()
+    var start = new Date()
+
+    var filter = [{ $unwind: "$deal" }]
+    if (req.body.type == 'filter') {
+
+        start = new Date(req.body.sdate);
+        end = new Date(req.body.edate);
+
+        console.log(start)
+        filter = [{ $unwind: "$deal" }, {
             $match: {
 
-                "payment.date": {
+                "deal.date": {
                     $lt: end,
                     $gte: start
                 }
             }
-        },
-    ]).then(sellerpayment => {
-        Sellerpayment.aggregate([{ $unwind: "$paid" },
-            {
-                $match: {
+        }]
 
-                    "paid.date": {
-                        $lt: end,
-                        $gte: start
-                    }
+    } else if (req.body.type == '2months') {
+        start.setMonth(start.getMonth() - 2);
+
+
+        filter = [{ $unwind: "$deal" }, {
+            $match: {
+
+                "deal.date": {
+                    $lt: end,
+                    $gte: start
                 }
-            },
+            }
+        }, totals]
+    } else if (req.body.type == '5months') {
+        start.setMonth(start.getMonth() - 5);
 
-        ]).then(sellerpaid => {
-            Buyerspayment.aggregate([{ $unwind: "$payment" },
-                {
-                    $match: {
+        filter = [{ $unwind: "$deal" }, {
+            $match: {
 
-                        "payment.date": {
-                            $lt: end,
-                            $gte: start
-                        }
-                    }
-                },
+                "deal.date": {
+                    $lt: end,
+                    $gte: start
+                }
+            }
+        }, totals]
 
-            ]).then(buyerpayment => {
-                Buyerspayment.aggregate([{ $unwind: "$paid" },
-                    {
-                        $match: {
+    } else if (req.body.type == 'year') {
+        start.setFullYear(start.getFullYear() - 1);
+        (start)
 
-                            "paid.date": {
-                                $lt: end,
-                                $gte: start
-                            }
-                        }
-                    },
+        filter = [{ $unwind: "$deal" }, {
+            $match: {
 
-                ]).then(buyerspaid => {
-                    Names.find().then(names => {
+                "deal.date": {
+                    $lt: end,
+                    $gte: start
+                }
+            }
+        }, totals]
+    } else {
+        start = "Beginning"
 
-                        res.render('individualaccounts', {
-                            mainpath: '/accountmanagement',
-                            subpath: '',
-                            sellerpayment: sellerpayment,
-                            sellerpaid: sellerpaid,
-                            buyerpayment: buyerpayment,
-                            buyerspaid: buyerspaid,
-                            names: names,
-                            errorMessage: message
-                        })
-                    })
-                })
+        filter = [{ $unwind: "$deal" }]
+
+    }
+
+    Sellers.aggregate(filter).then(data => {
+
+        Names.find().then(names => {
+            res.render('purchasemanagement', {
+                mainpath: '/stockmanagement',
+                subpath: '',
+                seller: data,
+                names: names,
+                errorMessage: message,
+                start: start,
+                end: end,
             })
-        })
+        }).catch(err => console.log(err));
 
-    })
+    }).catch(err => console.log(err));
+
 
 }
 exports.individualpurchase = (req, res) => {
@@ -832,18 +781,161 @@ exports.individualpurchase = (req, res) => {
     } else {
         message = null;
     }
+    var start = new Date()
+    var end = new Date()
+    end.setDate(end.getDate() + 1)
+    start.setMonth(start.getMonth() - 1);
+    Sellers.findOne({
+        name: req.params.id
+    }).then(name => {
+        Sellers.aggregate([{
+            $match: {
+                "name": req.params.id
+            }
+        }, { $unwind: "$deal" }, {
+            $match: {
 
-    Sellers.findOne({ name: req.params.id }).then(docs => {
+                "deal.date": {
+                    $lt: end,
+                    $gte: start
+                }
+            }
+        }]).then(docs => {
+            Names.find().then(names => {
+                res.render('individualsalesandpurchase', {
+                    mainpath: '/stockmanagement',
+                    category: 'purchase',
+                    subpath: '',
+                    data: docs,
+                    errorMessage: message,
+                    start: start,
+                    end: end,
+                    name: name,
+                    names: names
 
-        res.render('individualsalesandpurchase', {
-            mainpath: '/stockmanagement',
-            category: 'purchase',
-            subpath: '',
-            data: docs,
-            errorMessage: message
+                })
+            }).catch(err => console.log(err));
+        }).catch(err => console.log(err));
+    }).catch(err => console.log(err));
+}
+exports.individualpurchasefilter = (req, res) => {
 
-        })
+    let message = req.flash('error');
+    if (message.length > 0) {
+        message = message[0];
+    } else {
+        message = null;
+    }
+    var end = new Date()
+    var start = new Date()
 
+    var filter = [{
+        $match: {
+            "name": req.params.id
+        }
+    }, { $unwind: "$deal" }]
+    if (req.body.type == 'filter') {
+
+        start = new Date(req.body.sdate);
+        end = new Date(req.body.edate);
+
+        console.log(start)
+        filter = [{
+            $match: {
+                "name": req.body.id
+            }
+        }, { $unwind: "$deal" }, {
+            $match: {
+
+                "deal.date": {
+                    $lt: end,
+                    $gte: start
+                }
+            }
+        }]
+
+    } else if (req.body.type == '2months') {
+        start.setMonth(start.getMonth() - 2);
+
+
+        filter = [{
+            $match: {
+                "name": req.body.id
+            }
+        }, { $unwind: "$deal" }, {
+            $match: {
+
+                "deal.date": {
+                    $lt: end,
+                    $gte: start
+                }
+            }
+        }]
+    } else if (req.body.type == '5months') {
+        start.setMonth(start.getMonth() - 5);
+
+        filter = [{
+            $match: {
+                "name": req.body.id
+            }
+        }, { $unwind: "$deal" }, {
+            $match: {
+
+                "deal.date": {
+                    $lt: end,
+                    $gte: start
+                }
+            }
+        }]
+
+    } else if (req.body.type == 'year') {
+        start.setFullYear(start.getFullYear() - 1);
+        (start)
+
+        filter = [{
+            $match: {
+                "name": req.body.id
+            }
+        }, { $unwind: "$deal" }, {
+            $match: {
+
+                "deal.date": {
+                    $lt: end,
+                    $gte: start
+                }
+            }
+        }]
+    } else {
+        start = "Beginning"
+
+        filter = [{
+            $match: {
+                "name": req.body.id
+            }
+        }, { $unwind: "$deal" }]
+
+    }
+    Sellers.findOne({
+        name: req.body.id
+    }).then(name => {
+
+        Sellers.aggregate(filter).then(data => {
+
+            Names.find().then(names => {
+                res.render('individualsalesandpurchase', {
+                    mainpath: '/stockmanagement',
+                    category: 'purchase',
+                    subpath: '',
+                    data: data,
+                    names: names,
+                    errorMessage: message,
+                    start: start,
+                    end: end,
+                    name: name
+                })
+            }).catch(err => console.log(err));
+
+        }).catch(err => console.log(err));
     }).catch(err => console.log(err));
 
 }
@@ -854,18 +946,161 @@ exports.individualsales = (req, res) => {
     } else {
         message = null;
     }
-    Buyers.findOne({ name: req.params.id }).then(docs => {
+    var start = new Date()
+    var end = new Date()
+    end.setDate(end.getDate() + 1)
+    start.setMonth(start.getMonth() - 1);
+    Buyers.findOne({
+        name: req.params.id
+    }).then(name => {
+        Buyers.aggregate([{
+            $match: {
+                "name": req.params.id
+            }
+        }, { $unwind: "$deal" }, {
+            $match: {
 
-        res.render('individualsalesandpurchase', {
-            mainpath: '/stockmanagement',
-            category: 'sales',
-            subpath: '',
-            data: docs,
-            errorMessage: message
+                "deal.date": {
+                    $lt: end,
+                    $gte: start
+                }
+            }
+        }]).then(docs => {
+            Names.find().then(names => {
+                res.render('individualsalesandpurchase', {
+                    mainpath: '/stockmanagement',
+                    category: 'sales',
+                    subpath: '',
+                    data: docs,
+                    errorMessage: message,
+                    start: start,
+                    end: end,
+                    name: name,
+                    names: names
+                })
+            }).catch(err => console.log(err));
+        }).catch(err => console.log(err));
+    })
 
-        })
 
-    }).catch(err => console.log(err));
+}
+exports.individualsalesfilter = (req, res) => {
+
+    let message = req.flash('error');
+    if (message.length > 0) {
+        message = message[0];
+    } else {
+        message = null;
+    }
+    var end = new Date()
+    var start = new Date()
+
+    var filter = [{
+        $match: {
+            "name": req.params.id
+        }
+    }, { $unwind: "$deal" }]
+    if (req.body.type == 'filter') {
+
+        start = new Date(req.body.sdate);
+        end = new Date(req.body.edate);
+
+        console.log(start)
+        filter = [{
+            $match: {
+                "name": req.body.id
+            }
+        }, { $unwind: "$deal" }, {
+            $match: {
+
+                "deal.date": {
+                    $lt: end,
+                    $gte: start
+                }
+            }
+        }]
+
+    } else if (req.body.type == '2months') {
+        start.setMonth(start.getMonth() - 2);
+
+
+        filter = [{
+            $match: {
+                "name": req.body.id
+            }
+        }, { $unwind: "$deal" }, {
+            $match: {
+
+                "deal.date": {
+                    $lt: end,
+                    $gte: start
+                }
+            }
+        }]
+    } else if (req.body.type == '5months') {
+        start.setMonth(start.getMonth() - 5);
+
+        filter = [{
+            $match: {
+                "name": req.body.id
+            }
+        }, { $unwind: "$deal" }, {
+            $match: {
+
+                "deal.date": {
+                    $lt: end,
+                    $gte: start
+                }
+            }
+        }]
+
+    } else if (req.body.type == 'year') {
+        start.setFullYear(start.getFullYear() - 1);
+        (start)
+
+        filter = [{
+            $match: {
+                "name": req.body.id
+            }
+        }, { $unwind: "$deal" }, {
+            $match: {
+
+                "deal.date": {
+                    $lt: end,
+                    $gte: start
+                }
+            }
+        }]
+    } else {
+        start = "Beginning"
+
+        filter = [{
+            $match: {
+                "name": req.params.id
+            }
+        }, { $unwind: "$deal" }]
+
+    }
+    Buyers.findOne({
+        name: req.body.id
+    }).then(name => {
+        Buyers.aggregate(filter).then(data => {
+
+            Names.find().then(names => {
+                res.render('individualsalesandpurchase', {
+                    mainpath: '/stockmanagement',
+                    category: 'sales',
+                    data: data,
+                    names: names,
+                    errorMessage: message,
+                    start: start,
+                    end: end,
+
+                })
+            }).catch(err => console.log(err));
+
+        }).catch(err => console.log(err));
+    })
 
 }
 exports.updateindividualsales = (req, res) => {
@@ -875,9 +1110,10 @@ exports.updateindividualsales = (req, res) => {
         useLetters: true
     });
 
-    Buyers.findOne({ name: req.body.id }).then(docs => {
+    Buyers.findOneAndUpdate({ name: req.body.id }).then(docs => {
         if (docs) {
-
+            docs.total = docs.total - parseInt(req.body.paid) + totalpayment,
+                docs.save()
             docs.updateOne({
 
                     $push: {
@@ -888,6 +1124,10 @@ exports.updateindividualsales = (req, res) => {
                             kilogram: req.body.kilogram,
                             price: req.body.price,
                             total: parseInt(req.body.price * req.body.kilogram),
+                            paid: req.body.paid,
+                            Remaining: docs.total,
+                            through: req.body.through,
+                            hint: req.body.hint
 
                         }
                     }
@@ -899,89 +1139,50 @@ exports.updateindividualsales = (req, res) => {
             )
         }
     }).then(docs => {
-        Buyerspayment.findOne({ name: req.body.id }).then(docs => {
-            if (!docs) {
-
-            } else {
-
-                docs.total = parseInt(docs.total) + parseInt(req.body.remaining)
-                if (req.body.paid && req.body.paid != 0) {
-                    docs.updateOne({
-                            $push: {
-                                "paid": {
-                                    id: arrayid,
-                                    date: req.body.date,
-                                    amount: req.body.paid,
-                                    agent: "not defined",
-                                    typee: "bank",
-                                    message: req.body.bags + "bags",
-                                    remaining: parseInt(req.body.price * req.body.kilogram) - parseInt(req.body.paid),
-                                }
-
-                            },
-
-                        }, { safe: true, upsert: true },
-                        function(err, model) {
-
-                        }
-                    )
-                }
-                docs.updateOne({
-
-                        $push: {
-                            "payment": {
-
-                                id: arrayid,
-                                date: req.body.date,
-                                amount: req.body.price * req.body.kilogram,
-                                agent: "not defined",
-                                typee: "bank",
-                                message: req.body.bags + " bags",
-                                remaining: parseInt(req.body.price * req.body.kilogram) - parseInt(req.body.paid),
-
-                            }
-                        }
-                    }, { safe: true, upsert: true },
-                    function(err, model) {
-
-                    }
-                )
-            }
-        }).then(docs => {
-
-            if (req.body.paid > 0) {
-                var transaction = new Transaction({
-                    id: arrayid,
-                    Date: req.body.date,
-                    amount: req.body.paid,
-                    types: "credit",
-                    comment: "Amount recieved from " + req.body.id,
-                    paymentmode: "bank",
-                    credit: req.body.paid
-
-                })
-                transaction.save((err, doc) => {
 
 
-                })
-                req.flash('error', "Recent marked payment is = " + req.body.paid)
-                res.redirect('/individualsales/' + req.body.id)
-            }
-        })
+        if (req.body.paid > 0) {
+            var transaction = new Transaction({
+                id: arrayid,
+                Date: req.body.date,
+                amount: req.body.paid,
+                types: "credit",
+                comment: "Amount recieved from " + req.body.id,
+                paymentmode: "bank",
+                credit: req.body.paid
+
+            })
+            transaction.save((err, doc) => {
+
+
+            })
+            req.flash('error', "Recent marked payment is = " + req.body.paid)
+            res.redirect('/individualsales/' + req.body.id)
+        }
+
 
 
     })
 
 }
 exports.updateindividualpuchase = (req, res) => {
+    var totalpayment
+    if (req.body.through == 'quantity') {
+        totalpayment = 0
 
+    } else {
+        totalpayment = parseInt(req.body.price * req.body.kilogram)
+
+    }
     const arrayid = generateUniqueId({
         length: 25,
         useLetters: true
     });
-    Sellers.findOne({ name: req.body.id }).then(docs => {
+    Sellers.findOneAndUpdate({ name: req.body.id }).then(docs => {
         if (docs) {
 
+            docs.total = docs.total - parseInt(req.body.paid) + totalpayment,
+                docs.save()
             docs.updateOne({
                     $push: {
                         "deal": {
@@ -990,8 +1191,11 @@ exports.updateindividualpuchase = (req, res) => {
                             bags: req.body.bags,
                             kilogram: req.body.kilogram,
                             price: req.body.price,
-                            total: parseInt(req.body.price * req.body.kilogram),
-
+                            total: totalpayment,
+                            paid: req.body.paid,
+                            Remaining: docs.total,
+                            through: req.body.through,
+                            hint: req.body.hint
                         }
                     }
                 }, { safe: true, upsert: true },
@@ -1002,79 +1206,31 @@ exports.updateindividualpuchase = (req, res) => {
             )
         }
     }).then(docs => {
-        Sellerpayment.findOne({ name: req.body.id }).then(docs => {
-            if (!docs) {
-
-            } else {
-
-                docs.total = parseInt(docs.total) + parseInt(req.body.remaining)
-                if (req.body.paid && req.body.paid != 0) {
-                    docs.updateOne({
-                            $push: {
-                                "paid": {
-                                    id: arrayid,
-                                    date: req.body.date,
-                                    amount: req.body.paid,
-                                    agent: "not defined",
-                                    typee: "bank",
-                                    message: req.body.bags + "bags",
-                                    remaining: parseInt(req.body.price * req.body.kilogram) - parseInt(req.body.paid),
-                                }
-
-                            },
-
-                        }, { safe: true, upsert: true },
-                        function(err, model) {
-
-                        }
-                    )
-                }
-                docs.updateOne({
-
-                        $push: {
-                            "payment": {
-
-                                id: arrayid,
-                                date: req.body.date,
-                                amount: req.body.price * req.body.kilogram,
-                                agent: "not defined",
-                                typee: "bank",
-                                message: req.body.bags + " bags",
-                                remaining: parseInt(req.body.price * req.body.kilogram) - parseInt(req.body.paid),
-
-                            }
-                        }
-                    }, { safe: true, upsert: true },
-                    function(err, model) {
-
-                    }
-                )
-            }
-        }).then(docs => {
-
-            if (req.body.paid > 0) {
-                var transaction = new Transaction({
-                    id: arrayid,
-                    Date: req.body.date,
-                    amount: req.body.paid,
-                    types: "credit",
-                    comment: "Amount recieved from " + req.body.id,
-                    paymentmode: "bank",
-                    credit: req.body.paid
-
-                })
-                transaction.save((err, doc) => {
 
 
-                })
-                req.flash('error', "Recent marked payment is = " + req.body.paid)
-                res.redirect('/individualpurchase/' + req.body.id)
-            }
-        })
+        if (req.body.paid > 0) {
+            var transaction = new Transaction({
+                id: arrayid,
+                Date: req.body.date,
+                amount: req.body.paid,
+                types: "credit",
+                comment: "Amount recieved from " + req.body.id,
+                paymentmode: "bank",
+                credit: req.body.paid
+
+            })
+            transaction.save((err, doc) => {
 
 
-
+            })
+            req.flash('error', "Recent marked payment is = " + req.body.paid)
+            res.redirect('/individualpurchase/' + req.body.id)
+        }
     })
+
+
+
+
 
 }
 
@@ -1181,12 +1337,24 @@ exports.utilityform = (req, res) => {
 }
 
 exports.editorder = (req, res) => {
+    var totalpayment
+    if (req.body.through == 'quatity') {
+        totalpayment = 0
+
+    } else {
+        totalpayment = parseInt(req.body.editprize * req.body.editkilogram)
+
+    }
+
 
     if (req.body.section == "sales") {
-
+        var totalpayment
         var name
-        Buyers.findOne({ id: req.body.objectid }).then(docs => {
+        Buyers.findOneAndUpdate({ id: req.body.objectid }).then(docs => {
             name = docs.name
+
+            docs.total = docs.total - (parseInt(req.body.previoustotal) + parseInt(req.body.editpaid)) + totalpayment + parseInt(req.body.previouspaid)
+            docs.save()
             Buyers.findOneAndUpdate({ id: req.body.objectid, deal: { $elemMatch: { id: req.body.arrayid } } }, {
 
                         $set: {
@@ -1195,26 +1363,26 @@ exports.editorder = (req, res) => {
                             'deal.$.bags': req.body.editbags,
                             'deal.$.kilogram': req.body.editkilogram,
                             'deal.$.price': req.body.editprize,
-                            'deal.$.total': parseInt(req.body.editprize * req.body.editkilogram),
+                            'deal.$.total': totalpayment,
                             'deal.$.outumn': req.body.autumn,
                             'deal.$.moisture': req.body.moisture,
-                            'deal.$.careoff': req.body.Careoff,
-
-
+                            'deal.$.paid': req.body.editpaid,
+                            'deal.$.Remaining': docs.total,
+                            'deal.$.hint': req.body.hint
                         }
                     }, // list fields you like to change
                     { 'new': true, 'safe': true, 'upsert': true })
                 .then(docs => {
                     if (req.body.types == "seperate") {
-                        req.flash('error', "Please edit the accounts of ecent editted deal")
+                        req.flash('error', "Successfully added")
                         res.redirect('/salesmanagement')
 
                     } else if (req.body.types == "detailedsalesandpurchase") {
-                        req.flash('error', "Please edit the accounts of ecent editted deal")
+                        req.flash('error', "Successfully added")
                         res.redirect('/accountmanagement')
 
                     } else {
-                        req.flash('error', "Please edit the accounts of ecent editted deal")
+                        req.flash('error', "Successfully added")
                         res.redirect('/individualsales/' + name)
                             // res.redirect('/individualsales/' + name)
                     }
@@ -1223,10 +1391,12 @@ exports.editorder = (req, res) => {
 
     } else {
 
-        var name
-        Sellers.findOne({ id: req.body.objectid }).then(docs => {
-            name = docs.name
 
+        var name
+        Sellers.findOneAndUpdate({ id: req.body.objectid }).then(docs => {
+
+            docs.total = docs.total - (parseInt(req.body.previoustotal) + parseInt(req.body.editpaid)) + (totalpayment + parseInt(req.body.previouspaid))
+            docs.save()
             Sellers.findOneAndUpdate({ id: req.body.objectid, deal: { $elemMatch: { id: req.body.arrayid } } }, {
 
                         $set: {
@@ -1235,29 +1405,30 @@ exports.editorder = (req, res) => {
                             'deal.$.bags': req.body.editbags,
                             'deal.$.kilogram': req.body.editkilogram,
                             'deal.$.price': req.body.editprize,
-                            'deal.$.total': parseInt(req.body.editprize * req.body.editkilogram),
+                            'deal.$.total': totalpayment,
                             'deal.$.outumn': req.body.autumn,
                             'deal.$.moisture': req.body.moisture,
-                            'deal.$.careoff': req.body.Careoff,
-
-
+                            'deal.$.paid': req.body.editpaid,
+                            'deal.$.Remaining': docs.total,
+                            'deal.$.hint': req.body.hint
                         }
                     }, // list fields you like to change
                     { 'new': true, 'safe': true, 'upsert': true })
                 .then(docs => {
                     if (req.body.types == "seperate") {
-                        req.flash('error', "Please edit the accounts of ecent editted deal")
+                        req.flash('error', "Successfully added")
                         res.redirect('/purchasemanagement')
                     } else if (req.body.types == "detailedsalesandpurchase") {
-                        req.flash('error', "Please edit the accounts of ecent editted deal")
+                        req.flash('error', "Successfully added")
                         res.redirect('/accountmanagement')
 
                     } else {
-                        req.flash('error', "Please edit the accounts of ecent editted deal")
+                        req.flash('error', "Successfully added")
                         res.redirect('/individualpurchase/' + name)
                             // res.redirect('/individualsales/' + name)
                     }
                 })
+
         })
 
 
@@ -1287,552 +1458,10 @@ exports.getTransaction = (req, res) => {
 
 }
 
-exports.purchasepayment = (req, res) => {
-    const uid = generateUniqueId({
-        length: 25,
-        useLetters: true
-    });
-    var name = req.body.name.toUpperCase()
-    Sellerpayment.findOne({ name: name }).then(docs => {
-        console.log(docs)
-        if (!docs) {
 
-        } else {
 
 
-            var total = docs.total - req.body.amount;
-            docs.updateOne({
-                    "total": total,
-                    $push: {
-                        "paid": {
-                            id: uid,
-                            date: req.body.date,
-                            amount: req.body.amount,
-                            agent: req.body.agent,
-                            typee: req.body.through,
-                            message: "",
-                            remaining: total
-                        }
 
-                    },
-
-                }, { safe: true, upsert: true },
-                function(err, model) {
-                    var transaction = new Transaction({
-                        id: uid,
-                        Date: req.body.date,
-                        amount: req.body.amount,
-                        types: "debit",
-                        comment: "Payment updation to " + name,
-                        paymentmode: req.body.through,
-                        debit: req.body.amount,
-
-                    })
-                    transaction.save((err, doc) => {
-
-
-                    })
-                }
-            )
-        }
-    })
-
-    if (req.body.types == "seperate") {
-        res.redirect('/purchaseaccount')
-    } else {
-        res.redirect('/individualaccounts')
-
-    }
-}
-exports.salespayment = (req, res) => {
-    const uid = generateUniqueId({
-        length: 25,
-        useLetters: true
-    });
-    var name = req.body.name.toUpperCase()
-    Buyerspayment.findOne({ name: name }).then(docs => {
-
-        if (!docs) {
-            if (req.body.types == "seperate") {
-                return res.redirect('/salesaccount')
-            } else {
-                return res.redirect('/individualaccounts')
-
-            }
-        } else {
-
-            var total = docs.total - req.body.amount;
-            docs.updateOne({
-                    "total": total,
-
-                    $push: {
-                        "paid": {
-                            id: uid,
-                            date: req.body.date,
-                            amount: req.body.amount,
-                            agent: req.body.agent,
-                            typee: req.body.through,
-                            message: "",
-                            remaining: total
-                        }
-
-                    },
-
-                }, { safe: true, upsert: true },
-                function(err, model) {
-                    var transaction = new Transaction({
-                        id: uid,
-                        Date: req.body.date,
-                        amount: req.body.amount,
-                        types: "credit",
-                        comment: "Payment updation to " + name,
-                        paymentmode: req.body.through,
-                        credit: req.body.amount,
-
-                    })
-                    transaction.save((err, doc) => {
-
-
-                    })
-                }
-            )
-        }
-    })
-
-    if (req.body.types == "seperate") {
-        res.redirect('/salesaccount')
-    } else {
-        res.redirect('/individualaccounts')
-
-    }
-}
-exports.getsalesaccount = (req, res) => {
-    let message = req.flash('error');
-    if (message.length > 0) {
-        message = message[0];
-    } else {
-        message = null;
-    }
-    Buyerspayment.aggregate([{ $unwind: "$paid" }]).then(buyerspaid => {
-        Buyerspayment.aggregate([{ $unwind: "$payment" }]).then(buyerpayment => {
-
-            Names.find({ relation: "buyer" }).then(names => {
-
-                res.render('salesaccount', {
-                    mainpath: '/accountmanagement',
-                    subpath: '',
-                    errorMessage: message,
-                    names: names,
-                    buyerpayment: buyerpayment,
-                    buyerspaid: buyerspaid,
-                })
-            })
-        }).catch(err => console.log(err));
-    }).catch(err => console.log(err));
-
-}
-exports.getpurchaseaccount = (req, res) => {
-    let message = req.flash('error');
-    if (message.length > 0) {
-        message = message[0];
-    } else {
-        message = null;
-    }
-    Sellerpayment.aggregate([{ $unwind: "$paid" }]).then(sellerpaid => {
-        Sellerpayment.aggregate([{ $unwind: "$payment" }]).then(sellerpayment => {
-            Names.find({ relation: "seller" }).then(names => {
-
-                res.render('purchaseaccount', {
-                    mainpath: '/accountmanagement',
-                    subpath: '',
-                    errorMessage: message,
-                    names: names,
-                    sellerpayment: sellerpayment,
-                    sellerpaid: sellerpaid,
-
-                })
-            })
-        }).catch(err => console.log(err));
-    }).catch(err => console.log(err));
-
-}
-exports.individualpurchaseaccount = (req, res) => {
-    Sellerpayment.aggregate([{
-        $match: { name: req.params.id }
-    }, { $unwind: "$paid" }]).then(sellerpaid => {
-        Sellerpayment.aggregate([{
-            $match: { name: req.params.id }
-        }, { $unwind: "$payment" }]).then(sellerpayment => {
-            Names.find().then(names => {
-                res.render('individualsalespurchaseaccout', {
-                    mainpath: '/accountmanagement',
-                    paid: sellerpaid,
-                    payment: sellerpayment,
-                    mode: "purchase",
-                    names: names
-                })
-            })
-        })
-
-    }).catch(err => console.log(err));
-
-}
-exports.individualsalesaccount = (req, res) => {
-    Buyerspayment.aggregate([{
-        $match: { name: req.params.id }
-    }, { $unwind: "$paid" }]).then(buyerpaid => {
-        Buyerspayment.aggregate([{
-            $match: { name: req.params.id }
-        }, { $unwind: "$payment" }]).then(buyerpayment => {
-            Names.find().then(names => {
-                res.render('individualsalespurchaseaccout', {
-                    mainpath: '/accountmanagement',
-                    paid: buyerpaid,
-                    payment: buyerpayment,
-                    mode: "sales",
-                    names: names
-                })
-            })
-        })
-
-    }).catch(err => console.log(err));
-
-
-}
-exports.editaccount = (req, res) => {
-
-    if (req.body.section == "sales") {
-        if (req.body.mode == "paid") {
-            var name
-            Buyerspayment.findOne({ id: req.body.objectid }).then(docs => {
-                name = docs.name
-                Buyerspayment.findOneAndUpdate({ id: req.body.objectid, paid: { $elemMatch: { id: req.body.arrayid } } }, {
-
-                            $set: {
-                                'total': parseInt(req.body.totalrem - req.body.previous) + parseInt(req.body.amount),
-                                'paid.$.date': req.body.editdate,
-                                'paid.$.message': req.body.order,
-                                'paid.$.amount': req.body.amount,
-                                'paid.$.agent': req.body.Careoff,
-                                'paid.$.typee': req.body.through,
-                                'paid.$.remaining': parseInt(req.body.totalrem - req.body.previous) + parseInt(req.body.amount),
-
-
-                            }
-                        }, // list fields you like to change
-                        { 'new': true, 'safe': true, 'upsert': true })
-                    .then(docs => {
-                        Transaction.findOneAndUpdate({ id: req.body.arrayid }).then(docs => {
-                            if (docs) {
-                                docs.Date = req.body.editdate;
-                                docs.amount = req.body.amount;
-                                docs.comment = req.body.order;
-                                docs.credit = req.body.amount;
-                                docs.paymentmod = req.body.through;
-
-                                docs.save()
-                            }
-                        }).then(docs => {
-                            if (req.body.types == "seperate") {
-                                res.redirect('/salespayment')
-                            } else if (req.body.types == "purchasesalesaccount") {
-                                res.redirect('/individualaccounts')
-
-                            } else {
-                                res.redirect('/individualsalesaccount/' + name)
-                                    // res.redirect('/individualsales/' + name)
-                            }
-                        })
-
-                    })
-            })
-        } else {
-            Buyerspayment.findOne({ id: req.body.objectid }).then(docs => {
-                name = docs.name
-                Buyerspayment.findOneAndUpdate({ id: req.body.objectid, payment: { $elemMatch: { id: req.body.arrayid } } }, {
-
-                            $set: {
-                                'total': parseInt(req.body.totalrem - req.body.previous) + parseInt(req.body.amount),
-                                'payment.$.date': req.body.editdate,
-                                'payment.$.message': req.body.order,
-                                'payment.$.amount': req.body.amount,
-                                'payment.$.agent': req.body.Careoff,
-                                'payment.$.typee': req.body.through,
-                                'payment.$.remaining': parseInt(req.body.totalrem - req.body.previous) + parseInt(req.body.amount),
-
-
-                            }
-                        }, // list fields you like to change
-                        { 'new': true, 'safe': true, 'upsert': true })
-                    .then(docs => {
-                        if (req.body.types == "seperate") {
-                            res.redirect('/salespayment')
-                        } else if (req.body.types == "purchasesalesaccount") {
-                            res.redirect('/individualaccounts')
-
-                        } else {
-                            res.redirect('/individualsalesaccount/' + name)
-                                // res.redirect('/individualsales/' + name)
-                        }
-                    })
-            })
-        }
-
-    } else {
-
-        if (req.body.mode == "paid") {
-
-            var name
-            Sellerpayment.findOne({ id: req.body.objectid }).then(docs => {
-                name = docs.name
-                Sellerpayment.findOneAndUpdate({ id: req.body.objectid, paid: { $elemMatch: { id: req.body.arrayid } } }, {
-
-                            $set: {
-
-                                'total': parseInt(req.body.totalrem - req.body.previous) + parseInt(req.body.amount),
-                                'paid.$.date': req.body.editdate,
-                                'paid.$.message': req.body.order,
-                                'paid.$.amount': req.body.amount,
-                                'paid.$.agent': req.body.Careoff,
-                                'paid.$.typee': req.body.through,
-                                'paid.$.remaining': parseInt(req.body.totalrem - req.body.previous) + parseInt(req.body.amount),
-
-
-                            }
-                        }, // list fields you like to change
-                        { 'new': true, 'safe': true, 'upsert': true })
-                    .then(docs => {
-                        Transaction.findOneAndUpdate({ id: req.body.arrayid }).then(docs => {
-                            if (docs) {
-                                docs.Date = req.body.editdate;
-                                docs.amount = req.body.amount;
-                                docs.comment = req.body.order;
-                                docs.debit = req.body.amount;
-                                docs.paymentmod = req.body.through;
-
-                                docs.save()
-                            }
-                        }).then(docs => {
-                            if (req.body.types == "seperate") {
-                                res.redirect('/purchaseaccount')
-                            } else if (req.body.types == "purchasesalesaccount") {
-                                res.redirect('/individualaccounts')
-
-                            } else {
-                                res.redirect('/individualpurchaseaccount/' + name)
-                                    // res.redirect('/individualsales/' + name)
-                            }
-                        })
-
-                    })
-            })
-        } else {
-            Sellerpayment.findOne({ id: req.body.objectid }).then(docs => {
-                name = docs.name
-                Sellerpayment.findOneAndUpdate({ id: req.body.objectid, payment: { $elemMatch: { id: req.body.arrayid } } }, {
-
-                            $set: {
-                                'total': parseInt(req.body.totalrem - req.body.previous) + parseInt(req.body.amount),
-                                'payment.$.date': req.body.editdate,
-                                'payment.$.message': req.body.order,
-                                'payment.$.amount': req.body.amount,
-                                'payment.$.agent': req.body.Careoff,
-                                'payment.$.typee': req.body.through,
-                                'payment.$.remaining': parseInt(req.body.totalrem - req.body.previous) + parseInt(req.body.amount),
-
-                            }
-                        }, // list fields you like to change
-                        { 'new': true, 'safe': true, 'upsert': true })
-                    .then(docs => {
-
-                        if (req.body.types == "seperate") {
-                            res.redirect('/purchaseaccount')
-                        } else if (req.body.types == "purchasesalesaccount") {
-                            res.redirect('/individualaccounts')
-
-                        } else {
-                            res.redirect('/individualpurchaseaccount/' + name)
-                                // res.redirect('/individualsales/' + name)
-                        }
-                    })
-            })
-        }
-
-    }
-}
-exports.deletepurchaseaccount = (req, res) => {
-    var name
-    if (req.params.method == "paid") {
-
-
-        Sellerpayment.findOne({ id: req.params.objectid }).then(docs => {
-            name = docs.name
-            if (!docs) {
-
-            } else {
-
-                docs.updateOne({
-                        $pull: {
-                            "paid": {
-                                id: req.params.arrayid,
-
-                            }
-
-                        },
-
-                    }, { safe: true, upsert: true },
-                    function(err, model) {
-
-                    }
-                )
-
-            }
-        }).then((err, docs) => {
-                if (err) console.log(err)
-                Transaction.findOneAndRemove({ id: req.params.arrayid }).then(docs => {
-                    if (req.params.type == "seperate") {
-                        res.redirect('/purchaseaccount')
-                    } else if (req.params.type == "nonseperate") {
-                        res.redirect('/individualaccounts')
-
-                    } else {
-                        res.redirect('/individualpurchaseaccount/' + name)
-                    }
-                })
-
-
-            }
-
-        )
-    } else {
-        Sellerpayment.findOne({ id: req.params.objectid }).then(docs => {
-            name = docs.name
-            if (!docs) {
-
-            } else {
-
-                docs.updateOne({
-                        $pull: {
-                            "payment": {
-                                id: req.params.arrayid,
-
-                            }
-
-                        },
-
-                    }, { safe: true, upsert: true },
-                    function(err, model) {
-
-                    }
-                )
-
-            }
-        }).then((err, docs) => {
-                if (err) console.log(err)
-                Transaction.findOneAndRemove({ id: req.params.arrayid }).then(docs => {
-                    if (req.params.type == "seperate") {
-                        res.redirect('/purchaseaccount')
-                    } else if (req.params.type == "nonseperate") {
-                        res.redirect('/individualaccounts')
-
-                    } else {
-                        res.redirect('/individualpurchaseaccount/' + name)
-                    }
-                })
-
-
-            }
-
-        )
-    }
-
-};
-
-exports.deletesalesaccount = (req, res) => {
-    if (req.params.method == "paid") {
-        var name
-
-        Buyerspayment.findOne({ id: req.params.objectid }).then(docs => {
-            if (!docs) {
-
-            } else {
-                name = docs.name
-                docs.updateOne({
-                        $pull: {
-                            "paid": {
-                                id: req.params.arrayid,
-
-                            }
-
-                        },
-
-                    }, { safe: true, upsert: true },
-                    function(err, model) {
-
-                    }
-                )
-
-            }
-        }).then((err, docs) => {
-                if (err) console.log(err)
-                Transaction.findOneAndRemove({ id: req.params.arrayid }).then(docs => {
-                    if (req.params.type == "seperate") {
-                        res.redirect('/salesaccount')
-                    } else if (req.params.type == "nonseperate") {
-                        res.redirect('/individualaccounts')
-
-                    } else {
-                        res.redirect('/individualsalesaccount/' + name)
-                    }
-                })
-
-
-            }
-
-        )
-    } else {
-        Buyerspayment.findOne({ id: req.params.objectid }).then(docs => {
-            if (!docs) {
-
-            } else {
-                name = docs.name
-                docs.updateOne({
-                        $pull: {
-                            "payment": {
-                                id: req.params.arrayid,
-
-                            }
-
-                        },
-
-                    }, { safe: true, upsert: true },
-                    function(err, model) {
-
-                    }
-                )
-
-            }
-        }).then((err, docs) => {
-
-                if (err) console.log(err)
-                Transaction.findOneAndRemove({ id: req.params.arrayid }).then(docs => {
-                    if (req.params.type == "seperate") {
-                        res.redirect('/salesaccount')
-                    } else if (req.params.type == "nonseperate") {
-                        res.redirect('/individualaccounts')
-
-                    } else {
-                        res.redirect('/individualsalesaccount/' + name)
-                    }
-                })
-
-
-            }
-
-        )
-    }
-
-};
 exports.credittransaction = (req, res) => {
 
     var transaction = new Transaction({
@@ -1956,183 +1585,5 @@ exports.filterTransaction = (req, res) => {
 
         })
     })
-
-}
-exports.individualpurchasepayment = (req, res) => {
-    const uid = generateUniqueId({
-        length: 25,
-        useLetters: true
-    });
-    var name = req.body.name.toUpperCase()
-    if (req.body.type == "paid") {
-
-        Sellerpayment.findOne({ name: name }).then(docs => {
-
-            if (!docs) {
-
-            } else {
-
-
-                var total = docs.total - req.body.amount;
-                docs.updateOne({
-                        "total": total,
-                        $push: {
-                            "paid": {
-                                id: uid,
-                                date: req.body.date,
-                                amount: req.body.amount,
-                                agent: req.body.agent,
-                                typee: req.body.through,
-                                message: "amount paid",
-                                remaining: total
-                            }
-
-                        },
-
-                    }, { safe: true, upsert: true },
-                    function(err, model) {
-                        var transaction = new Transaction({
-                            id: uid,
-                            Date: req.body.date,
-                            amount: req.body.amount,
-                            types: "debit",
-                            comment: "Payment to " + name,
-                            paymentmode: req.body.through,
-                            debit: req.body.amount,
-
-                        })
-                        transaction.save((err, doc) => {
-
-
-                        })
-                    }
-                )
-            }
-        })
-    } else {
-        Sellerpayment.findOne({ name: name }).then(docs => {
-
-            if (!docs) {
-
-            } else {
-
-
-                var total = docs.total + req.body.amount;
-                docs.updateOne({
-                        "total": total,
-                        $push: {
-                            "payment": {
-                                id: uid,
-                                date: req.body.date,
-                                amount: req.body.amount,
-                                agent: req.body.agent,
-                                typee: req.body.through,
-                                message: "new payment",
-                                remaining: total
-                            }
-
-                        },
-
-                    }, { safe: true, upsert: true },
-                    function(err, model) {
-
-                    }
-                )
-            }
-        })
-    }
-
-
-    return res.redirect('/individualpurchaseaccount/' + name)
-
-
-}
-exports.inividualsalespayment = (req, res) => {
-    const uid = generateUniqueId({
-        length: 25,
-        useLetters: true
-    });
-    var name = req.body.name.toUpperCase()
-    if (req.body.type == "paid") {
-
-        Buyerspayment.findOne({ name: name }).then(docs => {
-            console.log(docs)
-            if (!docs) {
-
-            } else {
-
-
-                var total = docs.total - req.body.amount;
-                docs.updateOne({
-                        "total": total,
-                        $push: {
-                            "paid": {
-                                id: uid,
-                                date: req.body.date,
-                                amount: req.body.amount,
-                                agent: req.body.agent,
-                                typee: req.body.through,
-                                message: "amount paid",
-                                remaining: total
-                            }
-
-                        },
-
-                    }, { safe: true, upsert: true },
-                    function(err, model) {
-                        var transaction = new Transaction({
-                            id: uid,
-                            Date: req.body.date,
-                            amount: req.body.amount,
-                            types: "credit",
-                            comment: "Payment to " + name,
-                            paymentmode: req.body.through,
-                            credit: req.body.amount,
-
-                        })
-                        transaction.save((err, doc) => {
-
-
-                        })
-                    }
-                )
-            }
-        })
-    } else {
-        Buyerspayment.findOne({ name: name }).then(docs => {
-
-            if (!docs) {
-
-            } else {
-
-
-                var total = docs.total + req.body.amount;
-                docs.updateOne({
-                        "total": total,
-                        $push: {
-                            "payment": {
-                                id: uid,
-                                date: req.body.date,
-                                amount: req.body.amount,
-                                agent: req.body.agent,
-                                typee: req.body.through,
-                                message: "new payment",
-                                remaining: total
-                            }
-
-                        },
-
-                    }, { safe: true, upsert: true },
-                    function(err, model) {
-
-                    }
-                )
-            }
-        })
-    }
-
-
-    return res.redirect('/individualsalesaccount/' + name)
-
 
 }

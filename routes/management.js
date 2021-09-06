@@ -7,38 +7,34 @@ router.get('/transaction', managementController.getTransaction);
 router.post('/filterTransaction', managementController.filterTransaction);
 router.get('/accountmanagement', managementController.accountmanagement);
 
-router.get('/deletepurchase/:objectid/:arrayid/:type', managementController.deletepurchase);
+router.get('/deletepurchase/:objectid/:arrayid/:type/:total/:paid', managementController.deletepurchase);
 router.get('/salesmanagement', managementController.salesmanagement);
-router.get('/deletesales/:objectid/:arrayid/:type', managementController.deletesales);
+router.get('/deletesales/:objectid/:arrayid/:type/:total/:paid', managementController.deletesales);
 router.get('/purchasemanagement', managementController.purchasemanagement);
-router.get('/individualaccounts', managementController.individualaccounts);
+
 router.post('/detailedbuyerdata', managementController.postdetailedbuyerdata);
 router.post('/buyerform', managementController.postbuyerform);
 router.get('/individualpurchase/:id', managementController.individualpurchase);
 router.get('/individualsales/:id', managementController.individualsales);
+
+router.post('/individualsalesfilter', managementController.individualsalesfilter);
+router.post('/individualpurchasefilter', managementController.individualpurchasefilter);
 router.post('/updateindividualsales', managementController.updateindividualsales);
 router.post('/updateindividualpuchase', managementController.updateindividualpuchase);
 router.post('/filtrsales', managementController.filtrsales);
+router.post('/salesfilter', managementController.salesfilter);
+router.post('/purchasefilter', managementController.purchasefilter);
 router.get('/adduser', managementController.adduser);
 router.post('/adduser', managementController.postadduser);
 router.get('/utility', managementController.utility);
 router.post('/utilityform', managementController.utilityform);
 
 router.post('/editorder', managementController.editorder);
-router.post('/purchasepayment', managementController.purchasepayment);
-router.post('/salespayment', managementController.salespayment);
-router.get('/salesaccount', managementController.getsalesaccount);
-router.get('/purchaseaccount', managementController.getpurchaseaccount);
-router.get('/individualpurchaseaccount/:id', managementController.individualpurchaseaccount);
-router.get('/individualsalesaccount/:id', managementController.individualsalesaccount);
-router.post('/editaccount', managementController.editaccount);
-router.get('/deletesalesaccount/:method/:objectid/:arrayid/:type', managementController.deletesalesaccount);
-router.get('/deletepurchaseaccount/:method/:objectid/:arrayid/:type', managementController.deletepurchaseaccount);
+
 router.post('/credittransaction', managementController.credittransaction);
 router.post('/debittransaction', managementController.debittransaction);
 router.post('/editcredittransaction', managementController.editcredittransaction);
 router.post('/editdebittransaction', managementController.editdebittransaction);
 router.get('/deletetransaction/:id', managementController.deletetransaction);
-router.post('/inividualsalespayment', managementController.inividualsalespayment);
-router.post('/individualpurchasepayment', managementController.individualpurchasepayment);
+
 module.exports = router;

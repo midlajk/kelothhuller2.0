@@ -11,7 +11,7 @@ const flash = require('connect-flash');
 
 
 
-const PORT = process.env.PORT || 5050;
+const PORT = process.env.PORT || 500;
 const app = express();
 app.set('view engine', 'ejs');
 app.set('views', 'views');

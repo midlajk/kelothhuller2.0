@@ -20,18 +20,20 @@ module.exports = Transaction;
 var sellers = new Schema({
     id: String,
     name: String,
+    total:Number,
     deal: [{
         id: String,
-        orderid: String,
+        through: String,
         date: Date,
         bags: Number,
         kilogram: Number,
         price: Number,
         total: Number,
+        paid:Number,
+        Remaining:Number,
         outumn: String,
         moisture: String,
-        careoff: String,
-
+        hint: String,
     }]
 });
 
@@ -43,17 +45,20 @@ module.exports = Sellers;
 var buyers = new Schema({
     id: String,
     name: String,
+    total:Number,
     deal: [{
         id: String,
-        careoff: String,
+        hint: String,
         date: Date,
         bags: Number,
         kilogram: Number,
         price: Number,
         total: Number,
+        paid:Number,
+        Remaining:Number,
         outumn: String,
         moisture: String,
-
+        through: String,
 
     }]
 });
@@ -62,68 +67,6 @@ var Buyers =
     mongoose.model('Buyers', buyers);
 module.exports = Buyers;
 
-
-var buyerspayment = new Schema({
-    id: String,
-    name: String,
-    total: Number,
-    paid: [{
-        id: String,
-        date: Date,
-        order: String,
-        amount: Number,
-        agent: String,
-        message: String,
-        remaining: Number,
-        typee:String
-
-    }],
-    payment: [{
-        id: String,
-        date: Date,
-        amount: Number,
-        order: String,
-        message: String,
-        remaining: Number,
-        agent: String,
-        typee:String
-    }]
-});
-
-var Buyerspayment =
-    mongoose.model('Buyerspayment', buyerspayment);
-module.exports = Buyerspayment;
-
-var sellerp = new Schema({
-    id: String,
-    name: String,
-    total: Number,
-    paid: [{
-        id: String,
-        date: Date,
-        order: String,
-        amount: Number,
-        agent: String,
-        message: String,
-        remaining: Number,
-        typee:String
-    }],
-    payment: [{
-        id: String,
-        date: Date,
-        order: String,
-        amount: Number,
-        agent: String,
-        message: String,
-        remaining: Number,
-        typee:String
-
-    }]
-});
-
-var Sellerpayment =
-    mongoose.model('Sellerpayment', sellerp);
-module.exports = Sellerpayment;
 var users = new Schema({
     name: String,
     password: String,
