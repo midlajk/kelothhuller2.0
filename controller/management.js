@@ -37,7 +37,7 @@ exports.accountmanagement = (req, res) => {
         },
 
 
-    ]).then(data => {
+    ]).sort({ date: -1 }).exec((err, data) => {
         Sellers.aggregate([{ $unwind: "$deal" }, {
             $match: {
 
@@ -47,7 +47,7 @@ exports.accountmanagement = (req, res) => {
                 }
             },
 
-        }]).then(datas => {
+        }]).sort({ date: -1 }).exec((err, datas) => {
             Names.find().then(names => {
                 res.render('accountmanagement', {
                     mainpath: '/stockmanagement',
@@ -60,8 +60,8 @@ exports.accountmanagement = (req, res) => {
                     errorMessage: message
                 })
             }).catch(err => console.log(err));
-        }).catch(err => console.log(err));
-    }).catch(err => console.log(err));
+        })
+    })
 
 }
 
@@ -150,8 +150,8 @@ exports.filtrsales = (req, res) => {
 
     }
 
-    Buyers.aggregate(filter).then(data => {
-        Sellers.aggregate(filter).then(datas => {
+    Buyers.aggregate(filter).sort({ date: 1 }).exec((err, data) => {
+        Sellers.aggregate(filter).sort({ date: 1 }).exec((err, datas) => {
             Names.find().then(names => {
                 res.render('accountmanagement', {
                     mainpath: '/stockmanagement',
@@ -165,8 +165,8 @@ exports.filtrsales = (req, res) => {
                 })
             }).catch(err => console.log(err));
 
-        }).catch(err => console.log(err));
-    }).catch(err => console.log(err));
+        })
+    })
 
 }
 exports.postdetailedbuyerdata = (req, res) => {
@@ -294,10 +294,10 @@ exports.postdetailedbuyerdata = (req, res) => {
             })
         }
         if (req.body.type == "seperate") {
-            req.flash('error', "Recent marked payment is = " + req.body.paid)
+            req.flash('error', "successfully added")
             res.redirect('/purchasemanagement')
         } else {
-            req.flash('error', "Recent marked payment is = " + req.body.paid)
+            req.flash('error', "Successfully added")
             res.redirect('/accountmanagement')
 
         }
@@ -463,10 +463,10 @@ exports.postbuyerform = (req, res) => {
             })
         }
         if (req.body.type == "seperate") {
-            req.flash('error', "Recent marked payment is = " + req.body.paid)
+            req.flash('error', "Successfully added")
             res.redirect('/salesmanagement')
         } else {
-            req.flash('error', "Recent marked payment is = " + req.body.paid)
+            req.flash('error', "Successfully added")
             res.redirect('/accountmanagement')
         }
     })
@@ -537,7 +537,7 @@ exports.salesmanagement = (req, res) => {
         },
 
 
-    ]).then(datas => {
+    ]).sort({ date: 1 }).exec((err, datas) => {
         Names.find({ relation: "buyer" }).then(names => {
 
             res.render('salesmanagement', {
@@ -550,7 +550,7 @@ exports.salesmanagement = (req, res) => {
                 end: end,
             })
         }).catch(err => console.log(err));
-    }).catch(err => console.log(err));
+    })
 
 }
 exports.salesfilter = (req, res) => {
@@ -621,13 +621,13 @@ exports.salesfilter = (req, res) => {
             }
         }, totals]
     } else {
-        start = "Beginning"
+        start = "08/03/2000"
 
         filter = [{ $unwind: "$deal" }]
 
     }
 
-    Buyers.aggregate(filter).then(data => {
+    Buyers.aggregate(filter).sort({ date: 1 }).exec((err, data) => {
 
         Names.find().then(names => {
             res.render('salesmanagement', {
@@ -642,7 +642,7 @@ exports.salesfilter = (req, res) => {
             })
         }).catch(err => console.log(err));
 
-    }).catch(err => console.log(err));
+    })
 
 
 }
@@ -666,7 +666,7 @@ exports.purchasemanagement = (req, res) => {
             }
         },
 
-    }]).then(datas => {
+    }]).sort({ date: 1 }).exec((err, datas) => {
         Names.find({ relation: "seller" }).then(names => {
 
             res.render('purchasemanagement', {
@@ -679,7 +679,7 @@ exports.purchasemanagement = (req, res) => {
                 end: end,
             })
         }).catch(err => console.log(err));
-    }).catch(err => console.log(err));
+    })
 
 }
 exports.purchasefilter = (req, res) => {
@@ -750,13 +750,13 @@ exports.purchasefilter = (req, res) => {
             }
         }, totals]
     } else {
-        start = "Beginning"
+        start = "08/03/2000"
 
         filter = [{ $unwind: "$deal" }]
 
     }
 
-    Sellers.aggregate(filter).then(data => {
+    Sellers.aggregate(filter).sort({ date: 1 }).exec((err, data) => {
 
         Names.find().then(names => {
             res.render('purchasemanagement', {
@@ -770,7 +770,7 @@ exports.purchasefilter = (req, res) => {
             })
         }).catch(err => console.log(err));
 
-    }).catch(err => console.log(err));
+    })
 
 
 }
@@ -800,7 +800,7 @@ exports.individualpurchase = (req, res) => {
                     $gte: start
                 }
             }
-        }]).then(docs => {
+        }]).sort({ date: 1 }).exec((err, docs) => {
             Names.find().then(names => {
                 res.render('individualsalesandpurchase', {
                     mainpath: '/stockmanagement',
@@ -815,7 +815,7 @@ exports.individualpurchase = (req, res) => {
 
                 })
             }).catch(err => console.log(err));
-        }).catch(err => console.log(err));
+        })
     }).catch(err => console.log(err));
 }
 exports.individualpurchasefilter = (req, res) => {
@@ -906,7 +906,7 @@ exports.individualpurchasefilter = (req, res) => {
             }
         }]
     } else {
-        start = "Beginning"
+        start = "08/03/2000"
 
         filter = [{
             $match: {
@@ -919,7 +919,7 @@ exports.individualpurchasefilter = (req, res) => {
         name: req.body.id
     }).then(name => {
 
-        Sellers.aggregate(filter).then(data => {
+        Sellers.aggregate(filter).sort({ date: 1 }).exec((err, data) => {
 
             Names.find().then(names => {
                 res.render('individualsalesandpurchase', {
@@ -935,7 +935,7 @@ exports.individualpurchasefilter = (req, res) => {
                 })
             }).catch(err => console.log(err));
 
-        }).catch(err => console.log(err));
+        })
     }).catch(err => console.log(err));
 
 }
@@ -965,7 +965,7 @@ exports.individualsales = (req, res) => {
                     $gte: start
                 }
             }
-        }]).then(docs => {
+        }]).sort({ date: 1 }).exec((err, docs) => {
             Names.find().then(names => {
                 res.render('individualsalesandpurchase', {
                     mainpath: '/stockmanagement',
@@ -979,7 +979,7 @@ exports.individualsales = (req, res) => {
                     names: names
                 })
             }).catch(err => console.log(err));
-        }).catch(err => console.log(err));
+        })
     })
 
 
@@ -1072,7 +1072,7 @@ exports.individualsalesfilter = (req, res) => {
             }
         }]
     } else {
-        start = "Beginning"
+        start = "08/03/2000"
 
         filter = [{
             $match: {
@@ -1084,7 +1084,7 @@ exports.individualsalesfilter = (req, res) => {
     Buyers.findOne({
         name: req.body.id
     }).then(name => {
-        Buyers.aggregate(filter).then(data => {
+        Buyers.aggregate(filter).sort({ date: 1 }).exec((err, data) => {
 
             Names.find().then(names => {
                 res.render('individualsalesandpurchase', {
@@ -1099,7 +1099,7 @@ exports.individualsalesfilter = (req, res) => {
                 })
             }).catch(err => console.log(err));
 
-        }).catch(err => console.log(err));
+        })
     })
 
 }
@@ -1109,7 +1109,15 @@ exports.updateindividualsales = (req, res) => {
         length: 25,
         useLetters: true
     });
+    var totalpayment
 
+    if (req.body.through == 'quatity') {
+        totalpayment = 0
+
+    } else {
+        totalpayment = parseInt(req.body.price * req.body.kilogram)
+
+    }
     Buyers.findOneAndUpdate({ name: req.body.id }).then(docs => {
         if (docs) {
             docs.total = docs.total - parseInt(req.body.paid) + totalpayment,
@@ -1123,7 +1131,7 @@ exports.updateindividualsales = (req, res) => {
                             bags: req.body.bags,
                             kilogram: req.body.kilogram,
                             price: req.body.price,
-                            total: parseInt(req.body.price * req.body.kilogram),
+                            total: totalpayment,
                             paid: req.body.paid,
                             Remaining: docs.total,
                             through: req.body.through,
@@ -1156,7 +1164,7 @@ exports.updateindividualsales = (req, res) => {
 
 
             })
-            req.flash('error', "Recent marked payment is = " + req.body.paid)
+            req.flash('error', "Successfully added")
             res.redirect('/individualsales/' + req.body.id)
         }
 
@@ -1223,7 +1231,7 @@ exports.updateindividualpuchase = (req, res) => {
 
 
             })
-            req.flash('error', "Recent marked payment is = " + req.body.paid)
+            req.flash('error', "succeesfully added")
             res.redirect('/individualpurchase/' + req.body.id)
         }
     })
