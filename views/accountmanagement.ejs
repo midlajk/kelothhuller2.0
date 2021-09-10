@@ -116,7 +116,7 @@
                             <form id="buyerform" action="/detailedbuyerdata" method="POST">
                                 <tr>
                                     <td><input autofocus required tabindex="2" name="date" class="form-control " value="<%=todaydate%>" type="date" id="date"></td>
-                                    <td><input required class="p-1 form-control" style="width: 200px;" tabIndex="3" autocomplete="off" list="sellernames" type="text" name="buyer" id="customer">
+                                    <td><input required class="p-1 form-control" style="width: 200px;" tabIndex="3" oninput="set_user()" autocomplete="off" list="sellernames" type="text" name="buyer" id="customer">
                                         <datalist id="sellernames">
                                             <%for(let docs of names){%>
                                                 <option value="<%=docs.name%>"><%=docs.name%>:<%=docs.relation%></option>
@@ -424,11 +424,11 @@
             <ul class="floatingMenu">
 
                 <li>
-                    <a href="/purchasemanagement" class="btn btn-primary">Detailed Purchase report</a>
+                    <a href="/purchasemanagement" class="btn btn-primary"> Purchase report</a>
 
                 </li>
 
-                <li> <a href="/salesmanagement" class="btn btn-primary">Detailed Sales report</a>
+                <li> <a href="/salesmanagement" class="btn btn-primary"> Sales report</a>
 
                 </li>
 
@@ -512,6 +512,21 @@
             var x = document.getElementById("check")
             x.href = "/" + link + "/" + name
         }
+
+        function set_user() {
+            var st = document.getElementById("customer").value;
+            var content = st.split(':');
+            var type = content[1];
+
+            if (type == 'buyer') {
+                document.getElementById(
+                    "formaction").selectedIndex = "1";
+            } else {
+                document.getElementById(
+                    "formaction").selectedIndex = "0";
+            }
+
+        }
     </script>
 
 
@@ -573,6 +588,13 @@
         });
     </script>
     <script>
+        $(document).ready(function() {
+            $('#dataTable').DataTable({
+
+                "ordering": false,
+
+            });
+        });
         $(document).ready(function() {
 
             var totalpurchaseamount = 0;

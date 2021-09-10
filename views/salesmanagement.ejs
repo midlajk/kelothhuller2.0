@@ -163,14 +163,14 @@
                                     <td><input required class="p-1 form-control" tabIndex="6" type="number" step=".01" style="width: 125px;" name="price" id="price"></td>
                                     <td id="total"></td>
                                     <td><input required class="p-1 form-control" style="width: 150px;" tabIndex="7" type="number" step=".01" name="paid" id="paid"></td>
-                                    <td><select id="through" required tabindex="3" class="p-1 form-control" style="width: 100px;" name="through">
+                                    <td><select id="through" required tabindex="8" class="p-1 form-control" style="width: 100px;" name="through">
                                         <option value="bank">Bank</option>
                                         <option value="quatity">Quatity</option>
                                     </select></td>
-                                    <td><input class="p-1 form-control" style="width: 100px;" tabIndex="4" type="text" step=".01" name="hint" id="hint"></td>
+                                    <td><input class="p-1 form-control" style="width: 100px;" tabIndex="9" type="text" step=".01" name="hint" id="hint"></td>
                                     <input type="hidden" name="type" value="seperate">
                                     <td>
-                                        <button form="buyerform" tabIndex="8" class="btn btn-primary" type="submit">Submit</button></td>
+                                        <button form="buyerform" tabIndex="10" class="btn btn-primary" type="submit">Submit</button></td>
 
                                 </tr>
                             </form>
@@ -206,6 +206,9 @@
                                 <th id="totalamount"></th>
                                 <th id="totalpaid"></th>
                                 <th id="totalremaining"></th>
+                                <th>Through</th>
+                                <th>Hint</th>
+
                                 <th>Edit</th>
                             </tr>
                         </tfoot>
@@ -349,7 +352,7 @@
                             </div>
                             <div class="col-sm-6 mb-3 mb-sm-0">
                                 <label for="">Hint / careoff</label>
-                                <input type="text" tabindex="45" class="form-control form-control-user" id="editcareoff" name="Careoff">
+                                <input type="text" tabindex="45" class="form-control form-control-user" id="editcareoff" name="hint">
                             </div>
                             <div class="col-sm-6 mb-3 mb-sm-0">
                                 <label for="">Bags</label>
@@ -411,11 +414,7 @@
 
 
 
-                <li> <a href="/salesaccount" class="btn btn-primary">Sales payments</a>
 
-                </li>
-                <li> <a href="/individualaccounts" class="btn btn-primary">Payments</a>
-                </li>
                 <li>
                     <a href="#">Logout</a>
                 </li>
@@ -532,6 +531,13 @@
 
             });
         })
+        $(document).ready(function() {
+            $('#dataTable').DataTable({
+
+                "ordering": false,
+
+            });
+        });
         $(document).ready(function() {
 
 

@@ -354,7 +354,7 @@
                                         </div>
                                         <div class="col-sm-6 mb-3 mb-sm-0">
                                             <label for="">Hint / careoff</label>
-                                            <input type="text" tabindex="45" class="form-control form-control-user" id="editcareoff" name="Careoff">
+                                            <input type="text" tabindex="45" class="form-control form-control-user" id="editcareoff" name="hint">
                                         </div>
                                         <div class="col-sm-6 mb-3 mb-sm-0">
                                             <label for="">Bags</label>
@@ -412,27 +412,16 @@
             <ul class="floatingMenu">
 
                 <li>
-                    <%if(category =='sales'){%>
-                        <a href="/salesmanagement" class="btn btn-primary">Sales Report</a>
-                        <%}else{%>
-                            <a href="/purchasemanagement" class="btn btn-primary">Purchase Report</a>
-                            <%}%>
+
+                    <a href="/salesmanagement" class="btn btn-primary">Sales Report</a>
+
 
                 </li>
-
-
                 <li>
-                    <%if(category =='sales'){%>
-                        <a href="/salesaccount" class="btn btn-primary">Sales payments</a>
-                        <%}else{%>
-                            <a href="/purchaseaccount" class="btn btn-primary">Purchase payments </a>
-                            <%}%>
+                    <a href="/purchasemanagement" class="btn btn-primary">Purchase management</a></li>
 
-                </li>
 
-                <li> <a href="/individualaccounts" class="btn btn-primary">Payments</a>
-                </li>
-                <li> <a href="/accountmanagement" class="btn btn-primary">Detailed Sales and Purchase</a>
+                <li> <a href="/accountmanagement" class="btn btn-primary"> Sales and Purchase</a>
                 </li>
                 <li>
                     <a href="#">Logout</a>
@@ -443,6 +432,13 @@
     </div>
 
     <script type="text/javascript">
+        $(document).ready(function() {
+            $('#dataTable').DataTable({
+
+                "ordering": false,
+
+            });
+        });
         $(document).on('keypress', 'input,select', function(e) {
             if (e.which == 13) {
                 e.preventDefault();

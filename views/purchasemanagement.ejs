@@ -343,7 +343,7 @@
                             </div>
                             <div class="col-sm-6 mb-3 mb-sm-0">
                                 <label for="">Hint / careoff</label>
-                                <input type="text" tabindex="45" class="form-control form-control-user" id="editcareoff" name="Careoff">
+                                <input type="text" tabindex="45" class="form-control form-control-user" id="editcareoff" name="hint">
                             </div>
                             <div class="col-sm-6 mb-3 mb-sm-0">
                                 <label for="">Bags</label>
@@ -405,12 +405,7 @@
                 <li> <a href="/salesmanagement" class="btn btn-primary">Detailed Sales report</a>
 
                 </li>
-                <li> <a href="/purchaseaccount" class="btn btn-primary">Purchase payments </a>
 
-                </li>
-
-                <li> <a href="/individualaccounts" class="btn btn-primary">Payments</a>
-                </li>
                 <li>
                     <a href="#">Logout</a>
                 </li>
@@ -565,6 +560,13 @@
             document.getElementById('totalremaining').innerHTML = totalpurchaseremaining.toLocaleString();
 
 
+        });
+        $(document).ready(function() {
+            $('#dataTable').DataTable({
+
+                "ordering": false,
+
+            });
         });
     </script>
 
