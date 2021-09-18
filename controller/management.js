@@ -37,7 +37,7 @@ exports.accountmanagement = (req, res) => {
         },
 
 
-    ]).sort({ "deal.date": -1 }).exec((err, data) => {
+    ]).sort({ "deal.date": -1, "deal._id": -1 }).exec((err, data) => {
         Sellers.aggregate([{ $unwind: "$deal" }, {
             $match: {
 
@@ -47,7 +47,7 @@ exports.accountmanagement = (req, res) => {
                 }
             },
 
-        }]).sort({ "deal.date": -1 }).exec((err, datas) => {
+        }]).sort({ "deal.date": -1, "deal._id": -1 }).exec((err, datas) => {
             Names.find().then(names => {
                 res.render('accountmanagement', {
                     mainpath: '/stockmanagement',
@@ -150,8 +150,8 @@ exports.filtrsales = (req, res) => {
 
     }
 
-    Buyers.aggregate(filter).sort({ "deal.date": -1 }).exec((err, data) => {
-        Sellers.aggregate(filter).sort({ "deal.date": -1 }).exec((err, datas) => {
+    Buyers.aggregate(filter).sort({ "deal.date": -1, "deal._id": -1 }).exec((err, data) => {
+        Sellers.aggregate(filter).sort({ "deal.date": -1, "deal._id": -1 }).exec((err, datas) => {
             Names.find().then(names => {
                 res.render('accountmanagement', {
                     mainpath: '/stockmanagement',
@@ -177,7 +177,8 @@ exports.postdetailedbuyerdata = (req, res) => {
         totalpayment = 0
 
     } else {
-        totalpayment = parseInt(req.body.price * req.body.kilogram)
+
+        totalpayment = parseInt(req.body.total);
 
     }
 
@@ -279,13 +280,13 @@ exports.postdetailedbuyerdata = (req, res) => {
     }).then((err, docs) => {
         if (err) console.log(err)
         var paymentmode
-        if (req.body.paymentmode) {
-            paymentmode = req.body.paymentmode;
+        if (req.body.through) {
+            paymentmode = req.body.through
         } else {
             paymentmode = "bank";
         }
 
-        if (req.body.paid > 0) {
+        if (parseInt(req.body.paid) > 0) {
 
             var transaction = new Transaction({
                 id: arrayid,
@@ -318,7 +319,7 @@ exports.postdetailedbuyerdata = (req, res) => {
 
 }
 exports.deletepurchase = (req, res) => {
-    console.log("")
+
     var name
     Sellers.findOne({ id: req.params.objectid }).then((docs, err) => {
 
@@ -329,8 +330,6 @@ exports.deletepurchase = (req, res) => {
 
             }, { safe: true, upsert: true },
             function(err, model) {
-
-
 
             }
         )
@@ -369,7 +368,7 @@ exports.postbuyerform = (req, res) => {
     if (req.body.through == 'quatity') {
         totalpayment = 0
     } else {
-        totalpayment = parseInt(req.body.price * req.body.kilogram)
+        totalpayment = parseInt(req.body.total);
     }
     const objectid = generateUniqueId({
         length: 25,
@@ -467,13 +466,13 @@ exports.postbuyerform = (req, res) => {
         }
     }).then(docs => {
         var paymentmode
-        if (req.body.paymentmode) {
-            paymentmode = req.body.paymentmode;
+        if (req.body.through) {
+            paymentmode = req.body.through;
         } else {
             paymentmode = "bank";
         }
 
-        if (req.body.paid > 0) {
+        if (parseInt(req.body.paid) > 0) {
             var transaction = new Transaction({
                 id: arrayid,
                 Date: req.body.date,
@@ -574,7 +573,7 @@ exports.salesmanagement = (req, res) => {
         },
 
 
-    ]).sort({ "deal.date": -1 }).exec((err, datas) => {
+    ]).sort({ "deal.date": -1, "deal._id": -1 }).exec((err, datas) => {
 
         Names.find({ relation: "buyer" }).then(names => {
 
@@ -665,7 +664,7 @@ exports.salesfilter = (req, res) => {
 
     }
 
-    Buyers.aggregate(filter).sort({ "deal.date": -1 }).exec((err, data) => {
+    Buyers.aggregate(filter).sort({ "deal.date": -1, "deal._id": -1 }).exec((err, data) => {
 
         Names.find().then(names => {
             res.render('salesmanagement', {
@@ -704,7 +703,7 @@ exports.purchasemanagement = (req, res) => {
             }
         },
 
-    }]).sort({ "deal.date": -1 }).exec((err, datas) => {
+    }]).sort({ "deal.date": -1, "deal._id": -1 }).exec((err, datas) => {
         Names.find({ relation: "seller" }).then(names => {
 
             res.render('purchasemanagement', {
@@ -794,7 +793,7 @@ exports.purchasefilter = (req, res) => {
 
     }
 
-    Sellers.aggregate(filter).sort({ "deal.date": -1 }).exec((err, data) => {
+    Sellers.aggregate(filter).sort({ "deal.date": -1, "deal._id": -1 }).exec((err, data) => {
 
         Names.find().then(names => {
             res.render('purchasemanagement', {
@@ -838,7 +837,7 @@ exports.individualpurchase = (req, res) => {
                     $gte: start
                 }
             }
-        }]).sort({ "deal.date": -1 }).exec((err, docs) => {
+        }]).sort({ "deal.date": -1, "deal._id": -1 }).exec((err, docs) => {
             Names.find().then(names => {
                 res.render('individualsalesandpurchase', {
                     mainpath: '/stockmanagement',
@@ -957,7 +956,7 @@ exports.individualpurchasefilter = (req, res) => {
         name: req.body.id
     }).then(name => {
 
-        Sellers.aggregate(filter).sort({ "deal.date": -1 }).exec((err, data) => {
+        Sellers.aggregate(filter).sort({ "deal.date": -1, "deal._id": -1 }).exec((err, data) => {
 
             Names.find().then(names => {
                 res.render('individualsalesandpurchase', {
@@ -1003,7 +1002,7 @@ exports.individualsales = (req, res) => {
                     $gte: start
                 }
             }
-        }]).sort({ "deal.date": -1 }).exec((err, docs) => {
+        }]).sort({ "deal.date": -1, "deal._id": -1 }).exec((err, docs) => {
             Names.find().then(names => {
                 res.render('individualsalesandpurchase', {
                     mainpath: '/stockmanagement',
@@ -1122,7 +1121,7 @@ exports.individualsalesfilter = (req, res) => {
     Buyers.findOne({
         name: req.body.id
     }).then(name => {
-        Buyers.aggregate(filter).sort({ "deal.date": -1 }).exec((err, data) => {
+        Buyers.aggregate(filter).sort({ "deal.date": -1, "deal._id": -1 }).exec((err, data) => {
 
             Names.find().then(names => {
                 res.render('individualsalesandpurchase', {
@@ -1153,7 +1152,7 @@ exports.updateindividualsales = (req, res) => {
         totalpayment = 0
 
     } else {
-        totalpayment = parseInt(req.body.price * req.body.kilogram)
+        totalpayment = parseInt(req.body.total);
 
     }
     Buyers.findOne({ name: req.body.id }).then(docs => {
@@ -1195,9 +1194,7 @@ exports.updateindividualsales = (req, res) => {
             )
         }
     }).then(docs => {
-
-
-        if (req.body.paid > 0) {
+        if (parseInt(req.body.paid) > 0) {
             var transaction = new Transaction({
                 id: arrayid,
                 Date: req.body.date,
@@ -1210,13 +1207,12 @@ exports.updateindividualsales = (req, res) => {
             })
             transaction.save((err, doc) => {
 
-
             })
-            req.flash('error', "Successfully added")
-            res.redirect('/individualsales/' + req.body.id)
+
         }
 
-
+        req.flash('error', "Successfully added")
+        res.redirect('/individualsales/' + req.body.id)
 
     })
 
@@ -1227,7 +1223,7 @@ exports.updateindividualpuchase = (req, res) => {
         totalpayment = 0
 
     } else {
-        totalpayment = parseInt(req.body.price * req.body.kilogram)
+        totalpayment = parseInt(req.body.total);
 
     }
     const arrayid = generateUniqueId({
@@ -1273,7 +1269,7 @@ exports.updateindividualpuchase = (req, res) => {
     }).then(docs => {
 
 
-        if (req.body.paid > 0) {
+        if (parseInt(req.body.paid) > 0) {
             var transaction = new Transaction({
                 id: arrayid,
                 Date: req.body.date,
@@ -1288,9 +1284,10 @@ exports.updateindividualpuchase = (req, res) => {
 
 
             })
-            req.flash('error', "succeesfully added")
-            res.redirect('/individualpurchase/' + req.body.id)
+
         }
+        req.flash('error', "succeesfully added")
+        res.redirect('/individualpurchase/' + req.body.id)
     })
 
 
@@ -1408,13 +1405,13 @@ exports.editorder = (req, res) => {
         totalpayment = 0
 
     } else {
-        totalpayment = parseInt(req.body.editprize * req.body.editkilogram)
+        totalpayment = parseInt(req.body.edittotal)
 
     }
 
 
     if (req.body.section == "sales") {
-        var totalpayment
+
         var name
         Buyers.findOne({ id: req.body.objectid }).then(docs => {
             name = docs.name
