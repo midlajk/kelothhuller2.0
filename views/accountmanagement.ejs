@@ -195,8 +195,19 @@
                             } else{
                                 length= seller.length
                             }
+                            var totalsales = 0;
+                            var bagsales = 0;
+                            var salespaid = 0;
+                            var totalpurchase = 0;
+                            var bagpurchase = 0;
+                            var purchasepaid = 0;
+                            
                             for (var i = 0; i < length; i++){%>
-                                <%if(i < seller.length){%>
+                                <%if(i < seller.length){
+                                    totalpurchase = totalpurchase + seller[i].deal.total;
+                                    bagpurchase = bagpurchase + seller[i].deal.kilogram;
+                                    purchasepaid = purchasepaid + seller[i].deal.paid;
+                                      %>
                                     <tr id="purchase" class="purchase">
                                         <td>
                                             <%= moment(seller[i].deal.date).format( 'DD-MMM-YYYY') %>
@@ -237,7 +248,11 @@
 
                                     </tr>
                                     <%}%>
-                                        <%if(i < buyer.length){%>
+                                        <%if(i < buyer.length){
+                                            totalsales = totalsales + buyer[i].deal.total;
+                                            bagsales = bagsales + buyer[i].deal.kilogram;
+                                            salespaid = salespaid + buyer[i].deal.paid;
+                                            %>
                                             <tr class="sales" style="background: rgba(230, 230, 230, 0.918);">
                                                 <td>
                                                     <%= moment(buyer[i].deal.date).format( 'DD-MMM-YYYY') %>
@@ -447,7 +462,7 @@
         function editsales(i) {
             var obj = <%- JSON.stringify(buyer) %>;
 
-            document.getElementById("deletebutton").href = "/deletesales/" + obj[i].id + "/" + obj[i].deal.id + "/nonseperate/" + obj[i].deal.total + "/" + obj[i].deal.paid;
+            document.getElementById("deletebutton").href = "/deletesales/" + obj[i]._id + "/" + obj[i].deal._id + "/nonseperate/" + obj[i].deal.total + "/" + obj[i].deal.paid;
             var today = moment(obj[i].deal.date).format('YYYY-MM-DD');
             document.getElementById("editdate").value = today;
 
@@ -459,8 +474,8 @@
             document.getElementById('editpaid').value = obj[i].deal.paid
             document.getElementById('editremaining').innerText = obj[i].deal.Remaining.toLocaleString();
 
-            document.getElementById('objectid').value = obj[i].id;
-            document.getElementById('arrayid').value = obj[i].deal.id;
+            document.getElementById('objectid').value = obj[i]._id;
+            document.getElementById('arrayid').value = obj[i].deal._id;
             document.getElementById('section').value = "sales"
             document.getElementById('editoutumn').value = obj[i].deal.outumn;
             document.getElementById('editmoisture').value = obj[i].deal.moisture;
@@ -476,7 +491,7 @@
         function editpurchase(i) {
             var obj = <%- JSON.stringify(seller) %>;
 
-            document.getElementById("deletebutton").href = "/deletepurchase/" + obj[i].id + "/" + obj[i].deal.id + "/nonseperate/" + obj[i].deal.total + "/" + obj[i].deal.paid;
+            document.getElementById("deletebutton").href = "/deletepurchase/" + obj[i]._id + "/" + obj[i].deal._id + "/nonseperate/" + obj[i].deal.total + "/" + obj[i].deal.paid;
             var today = moment(obj[i].deal.date).format('YYYY-MM-DD');
             document.getElementById("editdate").value = today;
 
@@ -487,8 +502,8 @@
             document.getElementById('editkilogram').value = obj[i].deal.kilogram;
             document.getElementById('edittotal').value = obj[i].deal.total;
 
-            document.getElementById('objectid').value = obj[i].id;
-            document.getElementById('arrayid').value = obj[i].deal.id;
+            document.getElementById('objectid').value = obj[i]._id;
+            document.getElementById('arrayid').value = obj[i].deal._id;
             document.getElementById('editpaid').value = obj[i].deal.paid
             document.getElementById('editremaining').innerText = obj[i].deal.Remaining.toLocaleString();
             document.getElementById('editoutumn').value = obj[i].deal.outumn;
@@ -601,51 +616,23 @@
         });
         $(document).ready(function() {
 
-            var totalpurchaseamount = 0;
-            var totalpurchasekg = 0;
+
+            var totalpurchaseamount = <%= totalpurchase%>;
+            var totalpurchasekg = <%= bagpurchase%>;
             var totalpurchaseremaining = 0;
-            var totalpurchasepaid = 0;
+            var totalpurchasepaid = <%= purchasepaid%>;
 
-            var totalsalesamount = 0;
+            var totalsalesamount = <%= totalsales%>;
 
-            var totalsalespaid = 0;
+            var totalsalespaid = <%= salespaid%>;
 
-            var totalsaleskg = 0;
+            var totalsaleskg = <%= bagsales%>;
             var totalsalesremaining = 0;
-            $('#dataTable tbody tr td').each(function() {
 
-                if (this.className == 'totalpurchaseamount') {
-
-                    console.log(parseFloat(this.innerHTML))
-                    totalpurchaseamount += isNaN(this.innerHTML.replace(/,/g, '')) ? 0 : parseFloat(this.innerHTML.replace(/,/g, ''));
-                }
-                if (this.className == 'totalpurchasekg') {
-
-                    totalpurchasekg += isNaN(this.innerHTML.replace(/,/g, '')) ? 0 : parseInt(this.innerHTML.replace(/,/g, ''));
-                }
-
-
-                if (this.className == 'totalpurchasepaid') {
-                    totalpurchasepaid += isNaN(this.innerHTML.replace(/,/g, '')) ? 0 : parseFloat(this.innerHTML.replace(/,/g, ''));
-                }
-
-                if (this.className == 'totalsaleskg') {
-                    totalsaleskg += isNaN(this.innerHTML.replace(/,/g, '')) ? 0 : parseInt(this.innerHTML.replace(/,/g, ''));
-                }
-
-                if (this.className == 'totalsalesamount') {
-                    totalsalesamount += isNaN(this.innerHTML.replace(/,/g, '')) ? 0 : parseFloat(this.innerHTML.replace(/,/g, ''));
-                }
-                if (this.className == 'totalsalespaid') {
-                    totalsalespaid += isNaN(this.innerHTML.replace(/,/g, '')) ? 0 : parseFloat(this.innerHTML.replace(/,/g, ''));
-                }
-
-            });
-
-            var remainingbags = totalpurchasekg - totalsaleskg;
-            var expectedrevenue = totalsalesamount - totalpurchaseamount;
-            totalpurchaseremaining = totalpurchaseamount - totalpurchasepaid;
-            totalsalesremaining = totalsalesamount - totalsalespaid;
+            var remainingbags = parseInt(totalpurchasekg - totalsaleskg);
+            var expectedrevenue = parseInt(totalsalesamount - totalpurchaseamount);
+            totalpurchaseremaining = parseInt(totalpurchaseamount - totalpurchasepaid);
+            totalsalesremaining = parseInt(totalsalesamount - totalsalespaid);
             document.getElementById('totalpurchaseamount').innerText = totalpurchaseamount.toLocaleString();
             document.getElementById('totalpurchasepaid').innerText = totalpurchasepaid.toLocaleString();
             document.getElementById('totalpurchaseremaining').innerText = totalpurchaseremaining.toLocaleString();
@@ -657,7 +644,7 @@
             document.getElementById('totalsaleskg').innerText = totalsaleskg.toLocaleString();
             document.getElementById('totalsalesamount').innerText = totalsalesamount.toLocaleString();
             document.getElementById('totalsalesamountgot').innerText = totalsalespaid.toLocaleString();
-            document.getElementById('totalsalespending').innerText = totalsalesremaining;
+            document.getElementById('totalsalespending').innerText = totalsalesremaining.toLocaleString();
 
             document.getElementById('remainingkg').innerText = remainingbags.toLocaleString();
         });

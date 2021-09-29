@@ -138,9 +138,9 @@
 
                                 <th>Kilogram</th>
                                 <th>Price</th>
-
-                                <th>Total amount</th>
                                 <th>Amount paid</th>
+                                <th>Total amount</th>
+
                                 <th>Through</th>
                                 <th>Hint</th>
                                 <th>Submit</th>
@@ -161,9 +161,10 @@
 
                                     <td><input required class="form-control price-control" tabIndex="5" type="number" step=".01" name="kilogram" style="width: 125px;" id="kilogram"></td>
                                     <td><input required class="p-1 form-control price-control" tabIndex="6" type="number" step=".01" style="width: 125px;" name="price" id="price"></td>
-                                    <td><input required class="p-1" tabIndex="7" type="number" step=".01" style="width: 150px;" name="total" id="total"></td>
+                                    <td><input required class="p-1 form-control" style="width: 150px;" tabIndex="7" type="number" step=".01" name="paid" id="paid"></td>
+                                    <td><input required class="p-1" tabIndex="8" type="number" step=".01" style="width: 150px;" name="total" id="total"></td>
 
-                                    <td><input required class="p-1 form-control" style="width: 150px;" tabIndex="8" type="number" step=".01" name="paid" id="paid"></td>
+
                                     <td><select id="through" required class="p-1 form-control" style="width: 100px;" name="through">
                                         <option value="bank">Bank</option>
                                         <option value="quatity">Quatity</option>
@@ -191,8 +192,9 @@
 
                                 <th>Kilogram</th>
                                 <th>Prize</th>
-                                <th>Total</th>
                                 <th>Paid</th>
+                                <th>Total</th>
+
                                 <th>Remaining</th>
                                 <th>Through</th>
                                 <th>Hint</th>
@@ -206,8 +208,9 @@
 
                                 <th id="totalkg"></th>
                                 <th>Prize</th>
-                                <th id="totalamount"></th>
                                 <th id="totalpaid"></th>
+                                <th id="totalamount"></th>
+
                                 <th id="totalremaining"></th>
                                 <th>Through</th>
                                 <th>Hint</th>
@@ -217,7 +220,15 @@
                         </tfoot>
                         <tbody>
 
-                            <%for (var i = 0; i < buyer.length; i++){%>
+                            <%
+                            var bag = 0;
+                            var total = 0;
+                            var paid = 0;
+                            for (var i = 0; i < buyer.length; i++){
+                                bag = bag + buyer[i].deal.kilogram;
+                                total = total + buyer[i].deal.total;
+                                paid = paid + buyer[i].deal.paid;
+                                %>
                                 <%if(buyer[i].deal.through == 'quatity'){%>
                                     <tr id="sales" style="color: rgb(204, 68, 68);" class="sales">
                                         <%}else{%>
@@ -242,15 +253,16 @@
                                                     <td class="">
                                                         <%=buyer[i].deal.price%>
                                                     </td>
+                                                    <td style="color: red;" class="totalsalespaid">
+                                                        <%=buyer[i].deal.paid.toLocaleString()%>
+                                                    </td>
                                                     <td class="totalsalesamount">
 
                                                         <%=buyer[i].deal.total.toLocaleString()%>
 
 
                                                     </td>
-                                                    <td style="color: red;" class="totalsalespaid">
-                                                        <%=buyer[i].deal.paid.toLocaleString()%>
-                                                    </td>
+
                                                     <td class="">
                                                         <%=buyer[i].deal.Remaining.toLocaleString()%>
                                                     </td>
@@ -466,7 +478,7 @@
         function editsales(i) {
             var obj = <%- JSON.stringify(buyer) %>;
 
-            document.getElementById("deletebutton").href = "/deletesales/" + obj[i].id + "/" + obj[i].deal.id + "/seperate/" + obj[i].deal.total + "/" + obj[i].deal.paid;
+            document.getElementById("deletebutton").href = "/deletesales/" + obj[i]._id + "/" + obj[i].deal._id + "/seperate/" + obj[i].deal.total + "/" + obj[i].deal.paid;
             var today = moment(obj[i].deal.date).format('YYYY-MM-DD');
             document.getElementById("editdate").value = today;
 
@@ -481,8 +493,8 @@
             document.getElementById('editprize').value = obj[i].deal.price;
             document.getElementById('editpaid').value = obj[i].deal.paid
             document.getElementById('editremaining').innerText = obj[i].deal.Remaining.toLocaleString();
-            document.getElementById('objectid').value = obj[i].id;
-            document.getElementById('arrayid').value = obj[i].deal.id;
+            document.getElementById('objectid').value = obj[i]._id;
+            document.getElementById('arrayid').value = obj[i].deal._id;
             document.getElementById('previoustotal').value = obj[i].deal.total;
             document.getElementById('previouspaid').value = obj[i].deal.paid;
             document.getElementById('thre').value = obj[i].deal.through;
@@ -543,42 +555,22 @@
         });
         $(document).ready(function() {
 
-
-            var totalsalesamount = 0;
-
-            var totalsalespaid = 0;
-
-            var totalsaleskg = 0;
-            var totalsalesremaining = 0;
-            $('#dataTable tbody tr td').each(function() {
+            var kilogram = <%= bag %>;
+            var total = <%= total%>;
+            var paid = <%= paid %>;
+            var remaining = parseInt(total - paid)
 
 
-                if (this.className == 'totalsaleskg') {
-                    totalsaleskg += isNaN(this.innerHTML.replace(/,/g, '')) ? 0 : parseInt(this.innerHTML.replace(/,/g, ''));
-                }
 
-                if (this.className == 'totalsalesamount') {
-                    totalsalesamount += isNaN(this.innerHTML.replace(/,/g, '')) ? 0 : parseFloat(this.innerHTML.replace(/,/g, ''));
-                }
-                if (this.className == 'totalsalespaid') {
-                    totalsalespaid += isNaN(this.innerHTML.replace(/,/g, '')) ? 0 : parseFloat(this.innerHTML.replace(/,/g, ''));
-                }
+            document.getElementById('totalsaleskg').innerText = kilogram.toLocaleString();
+            document.getElementById('totalsalesamount').innerText = total.toLocaleString();
+            document.getElementById('totalsalesamountgot').innerText = paid.toLocaleString();
+            document.getElementById('totalsalespending').innerText = remaining.toLocaleString();
 
-            });
-
-
-            totalsalesremaining = totalsalesamount - totalsalespaid;
-
-
-            document.getElementById('totalsaleskg').innerText = totalsaleskg.toLocaleString();
-            document.getElementById('totalsalesamount').innerText = totalsalesamount.toLocaleString();
-            document.getElementById('totalsalesamountgot').innerText = totalsalespaid.toLocaleString();
-            document.getElementById('totalsalespending').innerText = totalsalesremaining;
-
-            document.getElementById('totalkg').innerHTML = totalsaleskg.toLocaleString();
-            document.getElementById('totalamount').innerHTML = totalsalesamount.toLocaleString();
-            document.getElementById('totalpaid').innerHTML = totalsalespaid.toLocaleString();
-            document.getElementById('totalremaining').innerHTML = totalsalesremaining.toLocaleString();
+            document.getElementById('totalkg').innerHTML = kilogram.toLocaleString();
+            document.getElementById('totalamount').innerHTML = total.toLocaleString();
+            document.getElementById('totalpaid').innerHTML = paid.toLocaleString();
+            document.getElementById('totalremaining').innerHTML = remaining.toLocaleString();
         });
         $(document).ready(function() {
             $('#submit').click(function() {

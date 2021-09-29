@@ -170,7 +170,7 @@ exports.filtrsales = (req, res) => {
 
 }
 exports.postdetailedbuyerdata = (req, res) => {
-
+    console.log("here")
     var totalpayment
     var price;
     if (req.body.through == 'quatity') {
@@ -182,15 +182,8 @@ exports.postdetailedbuyerdata = (req, res) => {
 
     }
 
-    const objectid = generateUniqueId({
-        length: 25,
-        useLetters: true
-    });
-    const arrayid = generateUniqueId({
-        length: 25,
-        useLetters: true
-    });
-
+    const objectid = new mongoose.Types.ObjectId()
+    const arrayid = new mongoose.Types.ObjectId()
     var name = req.body.buyer.toUpperCase();
     console.log(name)
     Sellers.findOne({ name: name }).then((docs, err) => {
@@ -214,6 +207,7 @@ exports.postdetailedbuyerdata = (req, res) => {
                     $push: {
 
                         "deal": {
+                            _id: arrayid,
                             id: arrayid,
                             date: req.body.date,
                             kilogram: req.body.kilogram,
@@ -230,13 +224,13 @@ exports.postdetailedbuyerdata = (req, res) => {
                 function(err, model) {
 
 
-
                 }
             )
 
         } else {
 
             var sellers = new Sellers({
+                _id: objectid,
                 id: objectid,
                 name: name,
                 total: totalpayment - parseInt(req.body.paid),
@@ -255,7 +249,7 @@ exports.postdetailedbuyerdata = (req, res) => {
 
             })
             sellers.save(function(err, doc) {
-
+                console.log(doc)
             })
 
             Names.findOne({ $and: [{ name: name }, { relation: "seller" }] }).then(docs => {
@@ -320,8 +314,7 @@ exports.postdetailedbuyerdata = (req, res) => {
 }
 exports.deletepurchase = (req, res) => {
 
-    var name
-    Sellers.findOne({ id: req.params.objectid }).then((docs, err) => {
+    Sellers.findOne({ _id: req.params.objectid }).then((docs, err) => {
 
         name = docs.name
         var maintotal = docs.total - parseInt(req.params.total) + parseInt(req.params.paid)
@@ -336,7 +329,7 @@ exports.deletepurchase = (req, res) => {
         docs.updateOne({
                 $pull: {
                     "deal": {
-                        id: req.params.arrayid
+                        _id: req.params.arrayid
                     }
                 }
             }, { safe: true, upsert: true },
@@ -370,15 +363,8 @@ exports.postbuyerform = (req, res) => {
     } else {
         totalpayment = parseInt(req.body.total);
     }
-    const objectid = generateUniqueId({
-        length: 25,
-        useLetters: true
-    });
-    const arrayid = generateUniqueId({
-        length: 25,
-        useLetters: true
-    });
-
+    const objectid = new mongoose.Types.ObjectId()
+    const arrayid = new mongoose.Types.ObjectId()
     var name = req.body.buyer.toUpperCase();
     console.log(name)
     Buyers.findOne({ name: name }).then(docs => {
@@ -397,6 +383,7 @@ exports.postbuyerform = (req, res) => {
             docs.updateOne({
                     $push: {
                         "deal": {
+                            _id: arrayid,
                             id: arrayid,
                             date: req.body.date,
                             bags: req.body.bags,
@@ -419,10 +406,12 @@ exports.postbuyerform = (req, res) => {
 
         } else {
             var buyers = new Buyers({
+                _id: objectid,
                 id: objectid,
                 name: name,
                 total: totalpayment - parseInt(req.body.paid),
                 deal: [{
+                    _id: arrayid,
                     id: arrayid,
                     date: req.body.date,
                     bags: req.body.bags,
@@ -505,7 +494,7 @@ exports.postbuyerform = (req, res) => {
 }
 exports.deletesales = (req, res) => {
     var name
-    Buyers.findOne({ id: req.params.objectid }).then((docs, err) => {
+    Buyers.findOne({ _id: req.params.objectid }).then((docs, err) => {
         name = docs.name
 
         docs.updateOne({
@@ -522,7 +511,7 @@ exports.deletesales = (req, res) => {
         docs.updateOne({
                 $pull: {
                     "deal": {
-                        id: req.params.arrayid
+                        _id: req.params.arrayid
                     }
                 }
             }, { safe: true, upsert: true },
@@ -1142,10 +1131,8 @@ exports.individualsalesfilter = (req, res) => {
 }
 exports.updateindividualsales = (req, res) => {
 
-    const arrayid = generateUniqueId({
-        length: 25,
-        useLetters: true
-    });
+
+    const arrayid = new mongoose.Types.ObjectId()
     var totalpayment
 
     if (req.body.through == 'quatity') {
@@ -1173,6 +1160,7 @@ exports.updateindividualsales = (req, res) => {
 
                     $push: {
                         "deal": {
+                            _id: arrayid,
                             id: arrayid,
                             date: req.body.date,
                             bags: req.body.bags,
@@ -1226,10 +1214,8 @@ exports.updateindividualpuchase = (req, res) => {
         totalpayment = parseInt(req.body.total);
 
     }
-    const arrayid = generateUniqueId({
-        length: 25,
-        useLetters: true
-    });
+
+    const arrayid = new mongoose.Types.ObjectId()
     Sellers.findOne({ name: req.body.id }).then(docs => {
         if (docs) {
             var maintotal = docs.total - parseInt(req.body.paid) + totalpayment;
@@ -1247,6 +1233,7 @@ exports.updateindividualpuchase = (req, res) => {
             docs.updateOne({
                     $push: {
                         "deal": {
+                            _id: arrayid,
                             id: arrayid,
                             date: req.body.date,
                             bags: req.body.bags,
@@ -1413,7 +1400,7 @@ exports.editorder = (req, res) => {
     if (req.body.section == "sales") {
 
         var name
-        Buyers.findOne({ id: req.body.objectid }).then(docs => {
+        Buyers.findOne({ _id: req.body.objectid }).then(docs => {
             name = docs.name
 
             var maintotal = docs.total - (parseInt(req.body.previoustotal) + parseInt(req.body.editpaid)) + totalpayment + parseInt(req.body.previouspaid)
@@ -1426,7 +1413,7 @@ exports.editorder = (req, res) => {
 
                 }
             )
-            Buyers.findOneAndUpdate({ id: req.body.objectid, deal: { $elemMatch: { id: req.body.arrayid } } }, {
+            Buyers.findOneAndUpdate({ _id: req.body.objectid, deal: { $elemMatch: { _id: req.body.arrayid } } }, {
 
                         $set: {
 
@@ -1476,7 +1463,7 @@ exports.editorder = (req, res) => {
 
 
         var name
-        Sellers.findOneAndUpdate({ id: req.body.objectid }).then(docs => {
+        Sellers.findOne({ _id: req.body.objectid }).then(docs => {
             name = docs.name;
             var maintotal = docs.total - (parseInt(req.body.previoustotal) + parseInt(req.body.editpaid)) + totalpayment + parseInt(req.body.previouspaid)
 
@@ -1488,7 +1475,7 @@ exports.editorder = (req, res) => {
 
                 }
             )
-            Sellers.findOneAndUpdate({ id: req.body.objectid, deal: { $elemMatch: { id: req.body.arrayid } } }, {
+            Sellers.findOneAndUpdate({ _id: req.body.objectid, deal: { $elemMatch: { _id: req.body.arrayid } } }, {
 
                         $set: {
 

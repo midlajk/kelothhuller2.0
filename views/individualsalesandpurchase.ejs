@@ -51,7 +51,7 @@
                 </div>
             </div>
 
-            <a href="#" class="col-xl-3 col-md-6 mb-4">
+            <a href="#" style="text-decoration: none;" class="col-xl-3 col-md-6 mb-4">
                 <div class="card border-left-info shadow h-100 py-2">
                     <div class="card-body">
                         <div class="row no-gutters align-items-center">
@@ -139,11 +139,18 @@
 
                                 <th>Kilogram</th>
                                 <th>Price</th>
-                                <th>Total amount</th>
-                                <th>Amount paid</th>
-                                <th>Through</th>
-                                <th>hint</th>
-                                <th>Submit</th>
+                                <%if(category =='sales'){%>
+                                    <th>Amount paid</th>
+                                    <th>Total amount</th>
+
+                                    <%}else{%>
+                                        <th>Total amount</th>
+                                        <th>Amount paid</th>
+                                        <%}%>
+
+                                            <th>Through</th>
+                                            <th>hint</th>
+                                            <th>Submit</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -153,19 +160,25 @@
 
                                     <td><input required class="form-control price-control" tabIndex="2" type="number" step=".01" name="kilogram" style="width: 125px;" id="kilogram"></td>
                                     <td><input required class="p-1 form-control price-control" tabIndex="3" type="number" step=".01" style="width: 125px;" name="price" id="price"></td>
+                                    <%if(category =='sales'){%>
+                                        <td><input required class="p-1 form-control" style="width: 150px;" tabIndex="4" type="number" step=".01" name="paid" id="paid"></td>
+                                        <td><input required class="p-1" tabIndex="5" type="number" step=".01" style="width: 150px;" name="total" id="total"></td>
 
-                                    <td><input required class="p-1" tabIndex="4" type="number" step=".01" style="width: 150px;" name="total" id="total"></td>
-                                    <td><input required class="p-1 form-control" style="width: 150px;" tabIndex="5" type="number" step=".01" name="paid" id="paid"></td>
-                                    <td><select id="through" required class="p-1 form-control" style="width: 100px;" name="through">
+                                        <%}else{%>
+                                            <td><input required class="p-1" tabIndex="4" type="number" step=".01" style="width: 150px;" name="total" id="total"></td>
+                                            <td><input required class="p-1 form-control" style="width: 150px;" tabIndex="5" type="number" step=".01" name="paid" id="paid"></td>
+                                            <%}%>
+
+                                                <td><select id="through" required class="p-1 form-control" style="width: 100px;" name="through">
                                         <option value="bank">Bank</option>
                                         <option value="quatity">Quatity</option>
                                     </select></td>
-                                    <td><input class="p-1 form-control" style="width: 100px;" tabIndex="6" type="text" step=".01" name="hint" id="hint"></td>
-                                    <td>
-                                        <button form="buyerform" tabIndex="7" class="btn btn-primary" id="submit" type="submit">Submit</button>
-                                        <div id="button-spinner" style="margin-left: 10px; width: 25px; height: 25px; display: none" class="spinner-border"></div>
-                                        <input required type="hidden" name="id" value="<%=name.name%>">
-                                    </td>
+                                                <td><input class="p-1 form-control" style="width: 100px;" tabIndex="6" type="text" step=".01" name="hint" id="hint"></td>
+                                                <td>
+                                                    <button form="buyerform" tabIndex="7" class="btn btn-primary" id="submit" type="submit">Submit</button>
+                                                    <div id="button-spinner" style="margin-left: 10px; width: 25px; height: 25px; display: none" class="spinner-border"></div>
+                                                    <input required type="hidden" name="id" value="<%=name.name%>">
+                                                </td>
 
                                 </tr>
                             </form>
@@ -183,14 +196,19 @@
 
                                 <th>kilogram</th>
                                 <th>Price</th>
-                                <th>Total</th>
-                                <th>Paid</th>
+                                <%if(category =='sales'){%>
+                                    <th>Paid</th>
+                                    <th>Total</th>
+                                    <%}else{%>
+                                        <th>Total</th>
+                                        <th>Paid</th>
+                                        <%}%>
 
-                                <th>Remaining</th>
-                                <th>Through</th>
+                                            <th>Remaining</th>
+                                            <th>Through</th>
 
-                                <th>Hint</th>
-                                <th>Edit</th>
+                                            <th>Hint</th>
+                                            <th>Edit</th>
 
                             </tr>
                         </thead>
@@ -202,21 +220,35 @@
 
                                     <th id="totalbag"></th>
                                     <th>Price</th>
-                                    <th id="totalamount">Total</th>
-                                    <th id="totalpai">Paid</th>
+                                    <%if(category =='sales'){%>
+                                        <th id="totalpai">Paid</th>
+                                        <th id="totalamount">Total</th>
 
-                                    <th id="totalremaining">Remaining</th>
-                                    <th>Through</th>
+                                        <%}else{%>
+                                            <th id="totalamount">Total</th>
+                                            <th id="totalpai">Paid</th>
+                                            <%}%>
 
-                                    <th>Hint</th>
-                                    <th>Edit</th>
+
+                                                <th id="totalremaining">Remaining</th>
+                                                <th>Through</th>
+
+                                                <th>Hint</th>
+                                                <th>Edit</th>
                                 </tr>
                         </tfoot>
                         <tbody>
 
 
 
-                            <%for (var i =0; i < data.length; i++){%>
+                            <% var kilogram = 0;
+                            var paid = 0;
+                             var total = 0;
+                            for (var i =0; i < data.length; i++){
+                                kilogram = kilogram + data[i].deal.kilogram
+                                paid = paid + data[i].deal.paid
+                                total = kilogram + data[i].deal.total
+                                %>
                                 <tr id="purchase" class="purchase">
                                     <td>
                                         <%= moment(data[i].deal.date).format( 'DD-MMM-YYYY') %>
@@ -230,29 +262,43 @@
                                     <td class="">
                                         <%=data[i].deal.price%>
                                     </td>
-                                    <td class="totalamount">
+                                    <%if(category =='sales'){%>
+                                        <td class="totalpaid">
+                                            <%=data[i].deal.paid.toLocaleString()%>
 
-                                        <%=data[i].deal.total.toLocaleString()%>
+                                        </td>
+                                        <td class="totalamount">
 
-                                    </td>
-                                    <td class="totalpaid">
-                                        <%=data[i].deal.paid.toLocaleString()%>
+                                            <%=data[i].deal.total.toLocaleString()%>
 
-                                    </td>
-                                    <td>
+                                        </td>
 
-                                        <%=data[i].deal.Remaining.toLocaleString()%>
-                                    </td>
-                                    <td>
+                                        <%}else{%>
+                                            <td class="totalamount">
 
-                                        <%=data[i].deal.through%>
-                                    </td>
-                                    <td>
+                                                <%=data[i].deal.total.toLocaleString()%>
 
-                                        <%=data[i].deal.hint%>
-                                    </td>
-                                    <td>
-                                        <a href="#" onclick="edit('<%=i%>')" class=" btn btn-primary ">edit</a></td>
+                                            </td>
+                                            <td class="totalpaid">
+                                                <%=data[i].deal.paid.toLocaleString()%>
+
+                                            </td>
+                                            <%}%>
+
+                                                <td>
+
+                                                    <%=data[i].deal.Remaining.toLocaleString()%>
+                                                </td>
+                                                <td>
+
+                                                    <%=data[i].deal.through%>
+                                                </td>
+                                                <td>
+
+                                                    <%=data[i].deal.hint%>
+                                                </td>
+                                                <td>
+                                                    <a href="#" onclick="edit('<%=i%>')" class=" btn btn-primary ">edit</a></td>
                                 </tr>
                                 <%}%>
                         </tbody>
@@ -484,9 +530,9 @@
 
 
             '<%if(category =="sales"){%>'
-            document.getElementById("deletebutton").href = "/deletesales/" + obj[i].id + "/" + obj[i].deal.id + "/indivdual/" + obj[i].deal.total + "/" + obj[i].deal.paid;
+            document.getElementById("deletebutton").href = "/deletesales/" + obj[i]._id + "/" + obj[i].deal._id + "/indivdual/" + obj[i].deal.total + "/" + obj[i].deal.paid;
             '<%}else{%>'
-            document.getElementById("deletebutton").href = "/deletepurchase/" + obj[i].id + "/" + obj[i].deal.id + "/indivdual/" + obj[i].deal.total + "/" + obj[i].deal.paid;
+            document.getElementById("deletebutton").href = "/deletepurchase/" + obj[i]._id + "/" + obj[i].deal._id + "/indivdual/" + obj[i].deal.total + "/" + obj[i].deal.paid;
             '<%}%>'
             // document.getElementById("deletebutton").href = "/deletesales/ " + obj.id + "/ " + obj[i].deal.id + "/indivdual ";
 
@@ -500,8 +546,8 @@
             document.getElementById('editmoisture').value = obj[i].deal.moisture;
             document.getElementById('editcareoff').value = obj[i].deal.hint;
             document.getElementById('editprize').value = obj[i].deal.price;
-            document.getElementById('objectid').value = obj[i].id;
-            document.getElementById('arrayid').value = obj[i].deal.id;
+            document.getElementById('objectid').value = obj[i]._id;
+            document.getElementById('arrayid').value = obj[i].deal._id;
             document.getElementById('previoustotal').value = obj[i].deal.total;
             document.getElementById('previouspaid').value = obj[i].deal.paid;
             document.getElementById('editpaid').value = obj[i].deal.paid
@@ -592,38 +638,18 @@
     </script>
     <script>
         $(document).ready(function() {
-
-            var totalamount = 0;
-            var totalkilogram = 0;
-            var totalpaid = 0;
-            var Remaining = 0;
-
-            $('#dataTable tbody tr td').each(function() {
-
-                if (this.className == 'totalamount') {
-                    totalamount += isNaN(this.innerHTML.replace(/,/g, '')) ? 0 : parseInt(this.innerHTML.replace(/,/g, ''));
-                }
-                if (this.className == 'totalkilogram') {
-                    totalkilogram += isNaN(this.innerText.replace(/,/g, '')) ? 0 : parseInt(this.innerText.replace(/,/g, ''));
-                }
-                if (this.className == 'totalpaid') {
-                    totalpaid += isNaN(this.innerText.replace(/,/g, '')) ? 0 : parseInt(this.innerText.replace(/,/g, ''));
-                }
-
-
-
-            });
-            Remaining = totalamount - totalpaid;
-
-            document.getElementById('totalbagpurchase').innerText = totalkilogram.toLocaleString();
-            document.getElementById('totalpurchaseamount').innerText = totalamount.toLocaleString();
-            document.getElementById('totalpaid').innerText = totalpaid.toLocaleString()
-            document.getElementById('totalamountremaining').innerText = Remaining.toLocaleString();
-            document.getElementById('totalbag').innerHTML = totalkilogram.toLocaleString();
-            document.getElementById('totalamount').innerHTML = totalamount.toLocaleString();
-            document.getElementById('totalpai').innerHTML = totalpaid.toLocaleString()
-            document.getElementById('totalremaining').innerHTML = Remaining.toLocaleString();
-
+            var kilogram = <%= kilogram %>;
+            var total = <%= total%>;
+            var paid = <%= paid %>;
+            var remaining = parseInt(total - paid)
+            document.getElementById('totalbagpurchase').innerText = kilogram.toLocaleString();
+            document.getElementById('totalpurchaseamount').innerText = total.toLocaleString()
+            document.getElementById('totalpaid').innerText = paid.toLocaleString()
+            document.getElementById('totalamountremaining').innerText = remaining.toLocaleString()
+            document.getElementById('totalbag').innerHTML = kilogram.toLocaleString();
+            document.getElementById('totalamount').innerHTML = total.toLocaleString();
+            document.getElementById('totalpai').innerHTML = paid.toLocaleString();
+            document.getElementById('totalremaining').innerHTML = remaining.toLocaleString();
         });
         $(document).ready(function() {
             $('#submit').click(function() {

@@ -91,7 +91,7 @@
                             <%for (var i =0; i < seller.length i++){%>
                                 <tr>
                                     <td>
-                                        <%= moment(doc[i].deal.date).format( 'MMM-DD-YYYY') %>
+                                        <%= moment(doc[i].deal.date).format( 'DD-MMM-YYYY') %>
 
                                     </td>
                                     <td>
@@ -211,7 +211,7 @@
                             <%for (let doc of buyer){%>
                                 <tr>
                                     <td>
-                                        <%= moment(doc.deal.date).format( 'MMM-DD-YYYY') %>
+                                        <%= moment(doc.deal.date).format( 'DD-MMM-YYYY') %>
 
                                     </td>
                                     <td>

@@ -43,7 +43,7 @@
                             <%for (let doc of docs){%>
                                 <tr>
                                     <td>
-                                        <%= moment(doc.work.date).format( 'MMM-DD-YYYY') %>
+                                        <%= moment(doc.work.date).format( 'DD-MMM-YYYY') %>
                                     </td>
                                     <td>
                                         <%=doc.work.loadof%>
@@ -64,7 +64,7 @@
                                     <%for (let dic of dics){%>
                                         <tr>
                                             <td>
-                                                <%= moment(dic.payed.date).format( 'MMM-DD-YYYY') %>
+                                                <%= moment(dic.payed.date).format( 'DD-MMM-YYYY') %>
                                             </td>
                                             <td>
 

@@ -208,7 +208,13 @@
                         </tfoot>
                         <tbody>
 
-                            <%for (var i = 0; i < seller.length; i++){%>
+                            <% var bag = 0;
+                            var total = 0;
+                            var paid = 0;
+                            for (var i = 0; i < seller.length; i++){
+                                bag = bag + seller[i].deal.kilogram;
+                                total = total + seller[i].deal.total;
+                                paid = paid + seller[i].deal.paid; %>
                                 <%if(seller[i].deal.through == 'quatity'){%>
                                     <tr id="purchase" style="color: rgb(201, 119, 119);" class="purchase">
                                         <%}else{%>
@@ -451,7 +457,7 @@
         function editpurchase(i) {
             var obj = <%- JSON.stringify(seller) %>;
 
-            document.getElementById("deletebutton").href = "/deletepurchase/" + obj[i].id + "/" + obj[i].deal.id + "/seperate/" + obj[i].deal.total + "/" + obj[i].deal.paid;
+            document.getElementById("deletebutton").href = "/deletepurchase/" + obj[i]._id + "/" + obj[i].deal._id + "/seperate/" + obj[i].deal.total + "/" + obj[i].deal.paid;
             var today = moment(obj[i].deal.date).format('YYYY-MM-DD');
             document.getElementById("editdate").value = today;
 
@@ -463,8 +469,8 @@
             document.getElementById('edittotal').value = obj[i].deal.total;
             document.getElementById('editpaid').value = obj[i].deal.paid
             document.getElementById('editremaining').innerText = obj[i].deal.Remaining.toLocaleString();
-            document.getElementById('objectid').value = obj[i].id;
-            document.getElementById('arrayid').value = obj[i].deal.id;
+            document.getElementById('objectid').value = obj[i]._id;
+            document.getElementById('arrayid').value = obj[i].deal._id;
             document.getElementById('editoutumn').value = obj[i].deal.outumn;
             document.getElementById('editmoisture').value = obj[i].deal.moisture;
             document.getElementById('editcareoff').value = obj[i].deal.hint;
@@ -521,35 +527,12 @@
         })
         $(document).ready(function() {
 
-            var totalpurchaseamount = 0;
-            var totalpurchasekg = 0;
+
+            var totalpurchaseamount = <%= total%>;
+            var totalpurchasekg = <%= bag %>;
+            var totalpurchasepaid = <%= paid %>;
             var totalpurchaseremaining = 0;
-            var totalpurchasepaid = 0;
-
-            $('#dataTable tbody tr td').each(function() {
-
-                if (this.className == 'totalpurchaseamount') {
-
-                    console.log(parseFloat(this.innerHTML))
-                    totalpurchaseamount += isNaN(this.innerHTML.replace(/,/g, '')) ? 0 : parseFloat(this.innerHTML.replace(/,/g, ''));
-                }
-                if (this.className == 'totalpurchasekg') {
-
-                    totalpurchasekg += isNaN(this.innerHTML.replace(/,/g, '')) ? 0 : parseInt(this.innerHTML.replace(/,/g, ''));
-                }
-
-
-                if (this.className == 'totalpurchasepaid') {
-                    totalpurchasepaid += isNaN(this.innerHTML.replace(/,/g, '')) ? 0 : parseFloat(this.innerHTML.replace(/,/g, ''));
-                }
-
-
-
-
-            });
-
-
-            totalpurchaseremaining = totalpurchaseamount - totalpurchasepaid;
+            totalpurchaseremaining = parseInt(totalpurchaseamount - totalpurchasepaid);
 
             document.getElementById('totalpurchaseamount').innerText = totalpurchaseamount.toLocaleString();
             document.getElementById('totalpurchasepaid').innerText = totalpurchasepaid.toLocaleString();
