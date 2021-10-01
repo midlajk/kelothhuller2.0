@@ -1,45 +1,113 @@
 require('../model/employeemodel')
+require('../model/accountsmodal')
 const mongoose = require('mongoose');
 var fs = require('fs');
+const Transaction = mongoose.model('Transaction');
+
 const Loaderskooli = mongoose.model('Loaderskooli');
 const Loaders = mongoose.model('Loaders');
 const Employees = mongoose.model('Employees');
-exports.viewkooli = (req, res) => {
-    Loaderskooli.aggregate([{ $unwind: "$order" }]).then(docs => {
-        res.render('viewkooli', {
-            docs: docs,
-            mainpath: '/viewkooli'
-        })
-    })
+const Attendance = mongoose.model('Attendance');
 
-}
-exports.indidualkooli = (req, res) => {
-    Loaders.aggregate([{
-            "$match": { "name": req.params.id }
-        },
-        { $unwind: "$work" },
-
-
-    ]).then(docs => {
-        Loaders.aggregate([{
-                "$match": { "name": req.params.id }
-            },
-            { $unwind: "$payed" },
-
-
-        ]).then(dics => {
-            res.render('indidualkooli', {
-                docs: docs,
-                dics: dics
-            })
-        })
-    })
-
-}
 exports.viewattendance = (req, res) => {
-    res.render('viewattendance', {
-        mainpath: '/viewattedance'
+    var start = new Date()
+    var end = new Date()
+    end.setDate(end.getDate() + 1)
+    start.setMonth(start.getMonth() - 1);
+    Attendance.aggregate([{
+        $match: {
+
+            "date": {
+                $lt: end,
+                $gte: start
+            }
+        }
+    }]).sort({ "date": -1 }).exec((err, docs) => {
+
+        res.render('viewattendance', {
+            mainpath: '/viewattedance',
+            docs: docs,
+            start: start,
+            end: end
+        })
     })
+
+}
+exports.viewattendancefilter = (req, res) => {
+    start = new Date(req.body.sdate);
+    end = new Date(req.body.edate);
+    Attendance.aggregate([{
+        $match: {
+
+            "date": {
+                $lt: end,
+                $gte: start
+            }
+        }
+    }]).sort({ "date": -1 }).exec((err, docs) => {
+
+        res.render('viewattendance', {
+            mainpath: '/viewattedance',
+            docs: docs,
+            start: start,
+            end: end
+        })
+    })
+
+}
+exports.viewattendanceperson = (req, res) => {
+    var start = new Date()
+    var end = new Date()
+    end.setDate(end.getDate() + 1)
+    start.setMonth(start.getMonth() - 1);
+    Employees.aggregate([{
+        $match: {
+            "name": req.params.id
+        }
+    }, { $unwind: "$leave" }, {
+        $match: {
+
+            "leave.date": {
+                $lt: end,
+                $gte: start
+            }
+        }
+    }]).sort({ "leave.date": -1 }).exec((err, docs) => {
+
+        res.render('viewindividualattendance', {
+            mainpath: '/viewattedance',
+            docs: docs,
+            start: start,
+            end: end
+        })
+    })
+
+}
+exports.viewattendanceindividual = (req, res) => {
+    start = new Date(req.body.sdate);
+    end = new Date(req.body.edate);
+    Employees.aggregate([{
+        $match: {
+            "name": req.body.id
+        }
+    }, { $unwind: "$leave" }, {
+        $match: {
+
+            "leave.date": {
+                $lt: end,
+                $gte: start
+            }
+        }
+    }]).sort({ "leave.date": -1 }).exec((err, docs) => {
+
+        res.render('viewindividualattendance', {
+            mainpath: '/viewattedance',
+            docs: docs,
+            start: start,
+            end: end
+        })
+    })
+
 }
 exports.Editemployee = (req, res) => {
     Employees.find().then(docs => {
@@ -67,9 +135,86 @@ exports.postaddemployee = (req, res) => {
 
 }
 exports.markattendance = (req, res) => {
-    res.render('markattendance', {
-        mainpath: '/markattendance'
+    let message = req.flash('error');
+    if (message.length > 0) {
+        message = message[0];
+    } else {
+        message = null;
+    }
+    Employees.find().then(docs => {
+        res.render('markattendance', {
+            mainpath: '/markattendance',
+            docs: docs,
+            errorMessage: message,
+        })
     })
+
+}
+exports.postmarkattendance = (req, res) => {
+    date = new Date(req.body.sdate)
+    console.log(date)
+    Attendance.findOne({ sdate: req.body.sdate }).then(docs => {
+
+        if (docs) {
+            req.flash('error', "Already marked attendance of " + req.body.sdate)
+            res.redirect('/employee/markattendance')
+        } else {
+            var attendance = new Attendance({
+                sdate: req.body.sdate,
+                date: date,
+                name: req.body.list
+
+            })
+            attendance.save((ree, doc) => {
+                name = req.body.list;
+                if (Array.isArray(name)) {
+                    for (i = 0; i < name.length; i++) {
+                        Employees.findOne({ name: name[i] }).then(docs => {
+                            if (docs) {
+                                docs.updateOne({
+
+                                        $push: {
+                                            "leave": {
+                                                date: date,
+                                            }
+                                        }
+                                    }, { safe: true, upsert: true },
+                                    function(err, model) {
+
+                                    }
+                                )
+                            }
+                        })
+                    }
+                } else {
+                    Employees.findOne({ name: name }).then(docs => {
+                        if (docs) {
+
+
+                            docs.updateOne({
+
+                                    $push: {
+                                        "leave": {
+                                            date: date,
+                                        }
+                                    }
+                                }, { safe: true, upsert: true },
+                                function(err, model) {
+
+                                }
+                            )
+                        }
+                    })
+                }
+                req.flash('error', "Successfully marked the attendance of " + req.body.sdate)
+                res.redirect('/employee/markattendance')
+            })
+
+        }
+
+    })
+
+
 }
 exports.addkooli = (req, res) => {
     Loaders.find().then(docs => {
@@ -82,24 +227,28 @@ exports.addkooli = (req, res) => {
 
 }
 exports.postaddkooli = (req, res) => {
+
+    const arrayid = new mongoose.Types.ObjectId()
     let arrProps = Object.entries(req.body);
     s = process(0);
     var workers
     var seller = req.body.seller.toUpperCase()
+
 
     function process(index) {
         if (index < (arrProps.length)) {
             // Call the callback once you complete execution of doStuff
             doStuff(arrProps[index], () => process(index + 1));
         } else {
-
-            Loaderskooli.findOne({ seller: seller }).then(docs => {
+            console.log(req.body.seller.toUpperCase())
+            Loaderskooli.findOne({ seller: req.body.seller.toUpperCase() }).then(docs => {
 
                 if (docs) {
 
                     docs.updateOne({
                             $push: {
                                 "order": {
+                                    _id: arrayid,
                                     product: req.body.type,
                                     total: (req.body.kooli * req.body.bags),
                                     kooli: (req.body.kooli * req.body.bags) / workers,
@@ -117,6 +266,7 @@ exports.postaddkooli = (req, res) => {
                     var loaderskooli = new Loaderskooli({
                         seller: seller,
                         order: [{
+                            _id: arrayid,
                             product: req.body.type,
                             total: (req.body.kooli * req.body.bags),
                             kooli: (req.body.kooli * req.body.bags) / workers,
@@ -167,6 +317,7 @@ exports.postaddkooli = (req, res) => {
                         docs.updateOne({
                                 $push: {
                                     "work": {
+                                        _id: arrayid,
                                         product: req.body.type,
                                         kooli: kooli,
                                         numberofsack: req.body.bags,
@@ -183,6 +334,7 @@ exports.postaddkooli = (req, res) => {
                         var loaders = new Loaders({
                             name: name,
                             work: [{
+                                _id: arrayid,
                                 product: req.body.type,
                                 kooli: kooli,
                                 numberofsack: req.body.bags,
@@ -212,6 +364,7 @@ exports.postaddkooli = (req, res) => {
                     docs.updateOne({
                             $push: {
                                 "work": {
+                                    _id: arrayid,
                                     product: req.body.type,
                                     kooli: kooli,
                                     numberofsack: req.body.bags,
@@ -228,6 +381,7 @@ exports.postaddkooli = (req, res) => {
                     var loaders = new Loaders({
                         name: name,
                         work: [{
+                            _id: arrayid,
                             product: req.body.type,
                             kooli: kooli,
                             numberofsack: req.body.bags,
@@ -250,4 +404,332 @@ exports.postaddkooli = (req, res) => {
         callback()
 
     }
+}
+exports.viewkooli = (req, res) => {
+    var start = new Date()
+    var end = new Date()
+    end.setDate(end.getDate() + 1)
+    start.setMonth(start.getMonth() - 1);
+    Loaderskooli.aggregate([{ $unwind: "$order" }, {
+        $match: {
+
+            "order.date": {
+                $lt: end,
+                $gte: start
+            }
+        }
+    }]).sort({ "order.date": -1, "order._id": -1 }).exec((err, docs) => {
+        Loaders.find().distinct('name').then(loaders => {
+            Loaderskooli.find().distinct('seller').then(loads => {
+                res.render('viewkooli', {
+                    docs: docs,
+                    mainpath: '/viewkooli',
+                    start: start,
+                    end: end,
+                    individual: false,
+                    loaders: loaders,
+                    loads: loads
+                })
+            })
+        })
+    })
+
+}
+exports.koolifilter = (req, res) => {
+    start = new Date(req.body.sdate);
+    end = new Date(req.body.edate);
+    Loaderskooli.aggregate([{ $unwind: "$order" }, {
+        $match: {
+
+            "order.date": {
+                $lt: end,
+                $gte: start
+            }
+        }
+    }]).sort({ "order.date": -1, "order._id": -1 }).exec((err, docs) => {
+        Loaders.find().distinct('name').then(loaders => {
+            Loaderskooli.find().distinct('seller').then(loads => {
+                res.render('viewkooli', {
+                    docs: docs,
+                    mainpath: '/viewkooli',
+                    start: start,
+                    end: end,
+                    individual: false,
+                    loaders: loaders,
+                    loads: loads
+                })
+            })
+        })
+    })
+
+}
+exports.individualloads = (req, res) => {
+    var start = new Date()
+    var end = new Date()
+    end.setDate(end.getDate() + 1)
+    start.setMonth(start.getMonth() - 1);
+    Loaderskooli.aggregate([{
+        $match: {
+            "seller": req.params.id
+        }
+    }, { $unwind: "$order" }, {
+        $match: {
+
+            "order.date": {
+                $lt: end,
+                $gte: start
+            }
+        }
+    }]).sort({ "order.date": -1, "order._id": -1 }).exec((err, docs) => {
+        Loaders.find().distinct('name').then(loaders => {
+            Loaderskooli.find().distinct('seller').then(loads => {
+                res.render('viewkooli', {
+                    docs: docs,
+                    mainpath: '/viewkooli',
+                    start: start,
+                    end: end,
+                    individual: true,
+                    names: req.params.id,
+                    loaders: loaders,
+                    loads: loads
+                })
+            })
+        })
+    })
+
+}
+exports.individualloadsfilter = (req, res) => {
+    start = new Date(req.body.sdate);
+    end = new Date(req.body.edate);
+    Loaderskooli.aggregate([{
+        $match: {
+            "seller": req.body.id
+        }
+    }, { $unwind: "$order" }, {
+        $match: {
+
+            "order.date": {
+                $lt: end,
+                $gte: start
+            }
+        }
+    }]).sort({ "order.date": -1, "order._id": -1 }).exec((err, docs) => {
+        Loaders.find().distinct('name').then(loaders => {
+            Loaderskooli.find().distinct('seller').then(loads => {
+                res.render('viewkooli', {
+                    docs: docs,
+                    mainpath: '/viewkooli',
+                    start: start,
+                    end: end,
+                    individual: true,
+                    names: req.body.id,
+                    loaders: loaders,
+                    loads: loads
+                })
+            })
+        })
+    })
+}
+exports.indidualkooli = (req, res) => {
+    var start = new Date()
+    var end = new Date()
+    end.setDate(end.getDate() + 1)
+    start.setMonth(start.getMonth() - 1);
+    name = req.params.id.toUpperCase();
+    Loaders.aggregate([{
+            "$match": { "name": name }
+        },
+        { $unwind: "$work" }, {
+            $match: {
+
+                "work.date": {
+                    $lt: end,
+                    $gte: start
+                }
+            }
+        }
+
+
+    ]).sort({ "work.date": -1, "work._id": -1 }).exec((err, docs) => {
+
+        Loaders.aggregate([{
+                "$match": { "name": name }
+            },
+            { $unwind: "$payed" }, {
+                $match: {
+
+                    "payed.date": {
+                        $lt: end,
+                        $gte: start
+                    }
+                }
+            }
+
+        ]).then(dics => {
+            Loaders.find().distinct('name').then(loaders => {
+
+
+                res.render('indidualkooli', {
+                    docs: docs,
+                    dics: dics,
+                    mainpath: '/viewkooli',
+                    names: name,
+                    start: start,
+                    end: end,
+                    loaders: loaders,
+
+                })
+
+            })
+        })
+    })
+
+}
+exports.indidualkoolifilter = (req, res) => {
+    start = new Date(req.body.sdate);
+    end = new Date(req.body.edate);
+    name = req.params.id
+    Loaders.aggregate([{
+            "$match": { "name": name }
+        },
+        { $unwind: "$work" }, {
+            $match: {
+
+                "work.date": {
+                    $lt: end,
+                    $gte: start
+                }
+            }
+        }
+
+
+    ]).sort({ "work.date": -1, "work._id": -1 }).exec((err, docs) => {
+
+        Loaders.aggregate([{
+                "$match": { "name": name }
+            },
+            { $unwind: "$payed" }, {
+                $match: {
+
+                    "payed.date": {
+                        $lt: end,
+                        $gte: start
+                    }
+                }
+            }
+
+
+        ]).then(dics => {
+            Loaders.find().distinct('name').then(loaders => {
+
+
+                res.render('indidualkooli', {
+                    docs: docs,
+                    dics: dics,
+                    mainpath: '/viewkooli',
+                    names: name,
+                    start: start,
+                    end: end,
+                    loaders: loaders,
+
+                })
+
+            })
+        })
+    })
+
+}
+exports.addloaderpayment = (req, res) => {
+    const arrayid = new mongoose.Types.ObjectId()
+    name = req.body.id.toUpperCase()
+    date = new Date(req.body.date)
+    Loaders.findOne({ name: name }).then(docs => {
+
+        if (docs) {
+
+            docs.updateOne({
+                    $push: {
+                        "payed": {
+                            _id: arrayid,
+                            date: date,
+                            amount: req.body.amount,
+                            hint: req.body.hint,
+
+                        }
+                    }
+                }, { safe: true, upsert: true },
+                function(err, model) {
+                    var transaction = new Transaction({
+                        id: arrayid,
+                        Date: date,
+                        amount: req.body.amount,
+                        types: "debit",
+                        comment: "payment to loader " + req.body.id,
+                        paymentmode: req.body.hint,
+                        debit: req.body.amount,
+
+                    })
+                    transaction.save((err, docs) => {
+                        if (err) console.log(err)
+                    })
+                })
+        } else {
+            if (req.body.category == 'all') {
+                res.redirect('/employee/indidualkooli/' + name)
+            } else {
+
+            }
+        }
+
+    }).then(docs => {
+        res.redirect('/employee/indidualkooli/' + name)
+    }).catch(err => {
+        console.log(err)
+    })
+
+}
+exports.deleteload = (req, res) => {
+    name = req.params.name.toUpperCase()
+
+    Loaderskooli.findOne({ seller: name }).then(docs => {
+
+            if (docs) {
+
+                docs.updateOne({
+                        $pull: {
+                            "order": {
+                                _id: req.params.id,
+
+
+                            }
+                        }
+                    }, { safe: true, upsert: true },
+                    function(err, model) {
+
+                        Loaders.find().then(docs => {
+                            for (let doc of docs) {
+                                doc.updateOne({
+                                        $pull: {
+                                            "work": {
+                                                _id: req.params.id,
+
+
+                                            }
+                                        }
+                                    }, { safe: true, upsert: true },
+                                    function(err, model) {})
+                            }
+                        })
+                    })
+            } else {
+
+            }
+
+        })
+        .then(docs => {
+            res.redirect('/employee/viewkooli')
+        }).catch(err => {
+            console.log(err)
+        })
+
 }

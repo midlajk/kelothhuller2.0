@@ -9,24 +9,41 @@
         <!-- DataTales Example -->
         <div class="card shadow mb-4">
             <div class="card-header py-3">
-                <h6 class="m-0 font-weight-bold text-primary">Mark attendance
-                </h6>
+                <h6 class="m-0 font-weight-bold text-primary">Mark Leaves of
+                    <%=todaydate%>
+                </h6> <br>
+                <% if (errorMessage) { %>
+                    <h5 class="text-center">
+                        <%= errorMessage %>
+                    </h5>
+
+                    <% } %>
+                        <a class="float-right btn btn-info" href="/employee/viewattendance">View attendance</a>
             </div>
             <div class="card-body">
                 <div class="table-responsive">
-                    <table class="table" id="dataTable" width="100%" cellspacing="0">
+                    <table class="table" width="100%">
 
-                        <form id="buyerform" action="">
-                            <tr>
-                                <td colspan="6">
-                                    <h4>Name</h4>
-                                </td>
-                                <td><input style=" height: 25px; width: 25px;" tabIndex="2" type="checkbox" name="" id=""></td>
-                            </tr>
+                        <form id="attendance_form" method="POST" action="/employee/markattendance">
+                            <input type="date" name="sdate" class="form-control form-group form-action" value="<%=todaydate%>">
+                            <%for(let doc of docs){%>
+                                <tr>
+                                    <td colspan="6">
+                                        <h4>
+                                            <%=doc.name%>
+                                        </h4>
+                                    </td>
+                                    <td><input style=" height: 25px; width: 25px;" tabIndex="2" type="checkbox" name="list" value="<%=doc.name%>" id=""></td>
+                                </tr>
+
+                                <%}%>
 
                         </form>
 
-                    </table><button class="btn btn-primary col-sm-12 mb-3 mb-sm-0">Submit</button>
+                    </table>
+
+                    <input type="submit" form="attendance_form" class="btn btn-primary btn-outline-info" value="submit">
+
                 </div>
             </div>
         </div>

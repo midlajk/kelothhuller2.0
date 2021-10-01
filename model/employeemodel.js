@@ -47,7 +47,10 @@ var employees = new Schema({
     place: String,
     careoff: String,
     duty: String,
-    salary: String
+    salary: String,
+    leave: [{
+        date: Date
+    }]
 
 
 });
@@ -55,3 +58,12 @@ var employees = new Schema({
 var Employees =
     mongoose.model('Employees', employees);
 module.exports = Employees;
+var attendance = new Schema({
+    sdate: String,
+    date: Date,
+    name: []
+});
+
+var Attendance =
+    mongoose.model('Attendance', attendance);
+module.exports = Attendance;

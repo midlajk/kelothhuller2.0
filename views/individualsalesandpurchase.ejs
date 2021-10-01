@@ -488,19 +488,7 @@
 
             });
         });
-        $(document).on('keypress', 'input,select', function(e) {
-            if (e.which == 13) {
-                e.preventDefault();
-                var $next = $('[tabIndex=' + (+this.tabIndex + 1) + ']');
 
-                if (!$next.length) {
-                    $next = $('[tabIndex=1]');
-                }
-                $next.focus().click();
-            }
-
-
-        });
 
         function check_user() {
             var st = document.getElementById("mylistofsellers").value;

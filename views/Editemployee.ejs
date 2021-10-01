@@ -47,7 +47,7 @@
                                     <td><input required class="p-1 form-control" tabIndex="6" type="number" step=".01" placeholder="Minimum salary" style="width: 125px;" name="salary"></td>
 
                                     <td>
-                                        <button form="adloari" type="submit" class="btn btn-success">Submit</button>
+                                        <button form="ademployee" type="submit" class="btn btn-success">Submit</button>
                                     </td>
                                 </tr>
                             </form>
@@ -116,17 +116,5 @@
             </div>
         </div>
     </div>
-    <script type="text/javascript">
-        $(document).on('keypress', 'input,select', function(e) {
-            if (e.which == 13) {
-                e.preventDefault();
-                var $next = $('[tabIndex=' + (+this.tabIndex + 1) + ']');
-                console.log($next.length);
-                if (!$next.length) {
-                    $next = $('[tabIndex=1]');
-                }
-                $next.focus().click();
-            }
-        });
-    </script>
+
     <%- include('./includes/end.ejs') %>

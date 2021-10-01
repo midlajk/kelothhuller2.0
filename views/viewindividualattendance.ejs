@@ -7,21 +7,20 @@
         <!-- DataTales Example -->
         <div class="card shadow mb-4">
             <div class="card-header py-3">
-                <h6 class="m-0 font-weight-bold text-primary">Attendance from
-                    <%=moment(start).format( 'DD-MM-YYYY')%> to
-                        <%=moment(end).format( 'DD-MM-YYYY')%>
+                <h6 class="m-0 font-weight-bold text-primary">Attendance of
+                    <%=docs[0].name%> from
+                        <%=moment(start).format( 'DD-MM-YYYY')%> to
+                            <%=moment(end).format( 'DD-MM-YYYY')%>
                 </h6>
-                <a class="float-right btn btn-danger ml-2" href="" href="" data-toggle="modal" data-target="#filtermodel">Filter</a>
-                <a class="float-right btn btn-info" href="/employee/markattendance">Mark attendance</a>
+                <a class="float-right btn btn-danger ml-2" href="" data-toggle="modal" data-target="#filtermodel">Filter</a>
+                <a class="float-right btn btn-info" href="/employee/viewattendance">View All</a>
             </div>
             <div class="card-body">
                 <div class="table-responsive">
                     <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
                         <thead>
                             <tr>
-                                <th>Date</th>
-                                <th>Total absence</th>
-                                <th>Absents</th>
+                                Leaves
 
 
 
@@ -29,45 +28,33 @@
                         </thead>
                         <tfoot>
                             <tr>
-                                <tr>
-                                    <th>Date</th>
-                                    <th>Total absence</th>
-                                    <th>Absents</th>
 
-
-
-
-                                </tr>
                         </tfoot>
                         <tbody>
-                            <%for(let doc of docs){%>
-                                <tr>
-                                    <td>
-                                        <%=moment(doc.date).format( 'DD-MM-YYYY')%>
 
-                                    </td>
-                                    <td>
-                                        <%=doc.name.length%>
+                            <tr>
+                                <td>
+                                    <% var total = 0;
+                                     for(let doc of docs){
+                                         total++;
+                                          %>
 
-                                    </td>
-                                    <td>
-                                        <%for(let docss of doc.name){%>
-                                            <a class="" href="/employee/viewattendance/<%=docss%>">
-                                                <%=docss%>
-                                            </a>,
+                                        <%=moment(doc.leave.date).format( 'DD-MM-YYYY')%> ,
                                             <%}%>
-                                    </td>
+                                </td>
 
-                                </tr>
-                                <%}%>
+                            </tr>
+
                         </tbody>
                     </table>
+                    <h6>total absence =
+                        <%=total%>
+                    </h6>
                 </div>
             </div>
         </div>
 
     </div>
-
     <div class="modal fade" id="filtermodel" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
         <div class="modal-dialog" role="document">
             <div class="modal-content">
@@ -78,7 +65,7 @@
                     </a>
                 </div>
                 <div class="modal-body">
-                    <form id="form1" action="/employee/viewattendancefilter" method="POST">
+                    <form id="form1" action="/employee/viewattendanceindividual" method="POST">
                         <div class="form-group row">
                             <div class="col-sm-12 mb-3 mb-sm-0">
                                 <label for="">From date</label>
@@ -90,7 +77,7 @@
                                 <label for="">To date</label>
                                 <input type="date" value="<%=todaydate%>" name="edate" class="form-control form-control-user" id="exampleFirstName" placeholder="Date">
                             </div>
-
+                            <input type="hidden" name="id" value="<%=docs[0].name%>">
 
                         </div>
 
@@ -117,4 +104,5 @@
             });
         });
     </script>
+
     <%- include('./includes/end.ejs') %>

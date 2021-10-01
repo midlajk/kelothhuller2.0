@@ -18,18 +18,21 @@
                                 <form action="/employee/addkooli" method="POST" id="addloading">
                                     <div class="form-group row">
                                         <div class="col-sm-12 mb-3 mb-sm-0">
-                                            <input tabindex="2" required type="date" name="date" class="form-control form-control-user" id="exampleFirstName" placeholder="Date">
+                                            <label for="">Date</label>
+                                            <input tabindex="2" required type="date" value="<%=todaydate%>" name="date" class="form-control form-control-user" id="exampleFirstName" placeholder="Date">
                                         </div>
 
                                     </div>
                                     <div class="form-group row">
                                         <div class="col-sm-12 mb-3 mb-sm-0">
+                                            <label for="">Seller or buyer</label>
                                             <input tabindex="3" required type="text" name="seller" class="form-control form-control-user" id="exampleFirstName" placeholder="Seller or Buyer name">
                                         </div>
 
                                     </div>
                                     <div class="form-group row">
                                         <div class="col-sm-12 mb-3 mb-sm-0">
+                                            <label for="">Product</label>
                                             <select tabindex="4" required class="form-control form-control-user" name="type" id="">
                                                <option value="coffee">Coffee</option>
                                                <option value="pepper">Pepper</option>
@@ -39,10 +42,12 @@
 
                                     </div>
                                     <div class="form-group ">
-                                        <input tabindex="5" required type="number" step=".01" name="kooli" value="8" class="form-control form-control-user col-sm-10 mb-3 mb-sm-0" id="exampleInputEmail" placeholder="kooli">
+                                        <label for="">Kooli</label>
+                                        <input tabindex="5" required type="number" step=".01" name="kooli" value="8" class="form-control form-control-user col-sm-12 mb-3 mb-sm-0" id="exampleInputEmail" placeholder="kooli">
                                     </div>
                                     <div class="form-group row">
                                         <div class="col-sm-12 mb-3 mb-sm-0">
+                                            <label for="">Bags</label>
                                             <input tabindex="6" required type="number" step=".01" name="bags" class="form-control form-control-user" id="exampleFirstName" placeholder="No of Bags">
                                         </div>
 
@@ -57,7 +62,7 @@
 
 
                                     <input type="button" tabindex="7" value="Add worker" id="addRow" class="btn btn-success mb-3"></input>
-                                    <button type="submit" form="addloading" class="btn btn-primary btn-user btn-block col-sm-12 mb-3 mb-sm-0 ">
+                                    <button style="display: none;" id="submitbtn" type="submit" form="addloading" class="btn btn-primary btn-user btn-block col-sm-12 mb-3 mb-sm-0 ">
             Add Kooli
           </button>
                                     <hr>
@@ -90,7 +95,7 @@
             html += '</div>';
 
             $('#newRow').append(html);
-
+            $('#submitbtn').show();
         });
         $(document).on('click', '#removeRow', function() {
             $(this).closest('#inputFormRow').remove();
@@ -109,16 +114,11 @@
         // remove row
     </script>
     <script type="text/javascript">
-        $(document).on('keypress', 'input,select', function(e) {
-            if (e.which == 13) {
-                e.preventDefault();
-                var $next = $('[tabIndex=' + (+this.tabIndex + 1) + ']');
-                console.log($next.length);
-                if (!$next.length) {
-                    $next = $('[tabIndex=1]');
-                }
-                $next.focus().click();
-            }
+        $(document).ready(function() {
+            $('#submitbtn').click(function() {
+                $('#submitbtn').hide();
+
+            });
         });
     </script>
     <%- include('./includes/end.ejs') %>
