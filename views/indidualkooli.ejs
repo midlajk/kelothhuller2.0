@@ -262,7 +262,7 @@
                                         <%=dic.payed.message%>
                                     </td>
                                     <td>
-                                        <a href="" class="btn btn-danger">Delete</a></td>
+                                        <a href="/employee/deletepayment/<%=dic.payed._id%>/<%=dic.name%>/individual" class="btn btn-danger">Delete</a></td>
 
                                 </tr>
                                 <%}
@@ -368,14 +368,8 @@
                         var column = this;
 
                     });
-                }
-            });
-        });
-        $(document).ready(function() {
-            $('#MyTable').DataTable({
-
+                },
                 "ordering": false,
-
             });
         });
     </script>

@@ -733,3 +733,34 @@ exports.deleteload = (req, res) => {
         })
 
 }
+exports.deletepayment = (req, res) => {
+    c
+    name = req.params.name.toUpperCase()
+    Loaders.findOne({ name: name }).then(docs => {
+
+        docs.updateOne({
+                $pull: {
+                    "payed": {
+                        _id: req.params.arrayid,
+
+
+                    }
+                }
+            }, { safe: true, upsert: true },
+            function(err, model) {
+                Transaction.findByIdAndDelete(req.params.arrayid).then((err, docs) => {
+
+                    if (req.params.type == 'individual') {
+                        res.redirect('/employee/indidualkooli/' + name)
+                    } else {
+
+                    }
+                })
+
+            })
+
+    }).catch(err => {
+        console.log(err)
+    })
+
+}

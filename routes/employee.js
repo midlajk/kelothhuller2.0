@@ -11,6 +11,7 @@ router.get('/indidualkooli/:id', employeeController.indidualkooli);
 router.get('/deleteload/:id/:name', employeeController.deleteload);
 router.post('/indidualkoolifilter', employeeController.indidualkoolifilter);
 router.post('/addloaderpayment', employeeController.addloaderpayment);
+router.get('/deletepayment/:arrayid/:name/:type', employeeController.deletepayment);
 router.get('/viewattendance', employeeController.viewattendance);
 router.get('/viewattendance/:id', employeeController.viewattendanceperson);
 router.post('/viewattendanceindividual', employeeController.viewattendanceindividual);
