@@ -85,12 +85,6 @@ var lorirent = new Schema({
         product: String,
         driver: String,
         rent: Number,
-    }],
-    paid: [{
-        date: Date,
-        amount: Number,
-        paymentto: String,
-        content: String
     }]
 
 });

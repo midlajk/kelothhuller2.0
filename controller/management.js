@@ -1331,25 +1331,43 @@ exports.postadduser = (req, res) => {
 }
 
 exports.utility = (req, res) => {
-    Utility.aggregate([{ $unwind: "$detail" }]).then(docs => {
-        res.render('utilitybill', {
-            mainpath: '/adduser',
-            docs: docs
+    var start = new Date()
+    var end = new Date()
+    end.setDate(end.getDate() + 1)
+    start.setMonth(start.getMonth() - 1);
+    Utility.aggregate([{ $unwind: "$detail" }, {
+        $match: {
 
+            "detail.date": {
+                $lt: end,
+                $gte: start
+            }
+        }
+    }]).sort({ "detail.date": -1, "detail._id": -1 }).exec((err, data) => {
+        Utility.find().distinct('name').then(utitlity => {
+            res.render('utilitybill', {
+                mainpath: '/adduser',
+                docs: data,
+                start: start,
+                end: end,
+                individual: false,
+                utitlity: utitlity,
+
+            })
         })
+
     })
-
-
 
 }
 exports.utilityform = (req, res) => {
     var name = req.body.billto.toUpperCase()
+    date = new Date(req.body.date)
     Utility.findOne({ name: name }).then(docs => {
         if (docs) {
             docs.updateOne({
                     $push: {
                         "detail": {
-                            date: req.body.date,
+                            date: date,
                             payment: req.body.payment,
                             amount: req.body.amount
 
@@ -1357,15 +1375,20 @@ exports.utilityform = (req, res) => {
                     }
                 }, { safe: true, upsert: true },
                 function(err, model) {
-                    console.log(err);
-                    res.redirect('/utility')
+                    if (err) console.log(err)
+                    if (req.body.type == 'individual') {
+                        res.redirect('/indivual_utility/' + name)
+                    } else {
+                        res.redirect('/utility')
+                    }
+
                 }
             )
         } else {
             var utility = new Utility({
                 name: name,
                 detail: [{
-                    date: req.body.date,
+                    date: date,
                     payment: req.body.payment,
                     amount: req.body.amount
                 }]

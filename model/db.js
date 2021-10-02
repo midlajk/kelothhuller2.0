@@ -19,3 +19,5 @@ db.on('error', console.error.bind(console, 'MongoDB connection error:'));
 
 require('./accountsmodal');
 
+require('./employeemodel');
+require('./borrow_salary');

@@ -1,0 +1,16 @@
+const path = require('path');
+const express = require('express');
+const router = express.Router();
+const mongoose = require('mongoose');
+const borrowcontroller = require('../controller/borrows_salary');
+router.get('/borrows', borrowcontroller.borrows);
+router.post('/borrows', borrowcontroller.borrowform);
+router.get('/indivdualborrows/:id', borrowcontroller.indivdualborrows);
+router.post('/filterborrows', borrowcontroller.filterborrows);
+router.post('/indivdualborrowsfilter', borrowcontroller.indivdualborrowsfilter);
+router.get('/salary', borrowcontroller.salary);
+router.post('/salary', borrowcontroller.salaryform);
+router.get('/indivdualsalary/:id', borrowcontroller.indivdualsalary);
+router.post('/filtersalary', borrowcontroller.filtersalary);
+router.post('/indivdualsalaryfilter', borrowcontroller.indivdualsalaryfilter);
+module.exports = router;

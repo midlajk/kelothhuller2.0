@@ -5,5 +5,10 @@ const mongoose = require('mongoose');
 const accountController = require('../controller/account');
 router.get('/addlorirent', accountController.addlorirent);
 router.post('/addlorirent', accountController.postaddlorirent);
-
+router.post('/fliteraddlorirent', accountController.fliteraddlorirent);
+router.get('/addindividuallorirent/:id', accountController.addindividuallorirent);
+router.post('/fliterindividualaddlorirent', accountController.fliterindividualaddlorirent);
+router.post('/filterutility', accountController.filterutility);
+router.get('/indivual_utility/:id', accountController.indivual_utility);
+router.post('/filterindividualutility', accountController.filterindividualutility);
 module.exports = router;

@@ -50,6 +50,13 @@ var employees = new Schema({
     salary: String,
     leave: [{
         date: Date
+    }],
+    detail: [{
+        date: Date,
+        payment: String,
+        amount: Number,
+
+
     }]
 
 

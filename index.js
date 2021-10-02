@@ -59,10 +59,11 @@ const accounts = require('./routes/account');
 const employeeroute = require('./routes/employee');
 const managementroutes = require('./routes/management');
 const mainroutes = require('./routes/main');
+const borrows = require('./routes/borrows_salary');
 app.use(managementroutes);
 app.use(mainroutes);
 app.use('/employee',employeeroute);
 app.use(accounts);
-
+app.use('/paymentcontroller',borrows);
 
 app.listen(PORT)
