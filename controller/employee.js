@@ -119,9 +119,10 @@ exports.Editemployee = (req, res) => {
 
 }
 exports.postaddemployee = (req, res) => {
+    name = req.body.name.toUpperCase()
     var employee = new Employees({
 
-        name: req.body.name,
+        name: name,
         phone: req.body.number,
         place: req.body.place,
         careoff: req.body.careof,

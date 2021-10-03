@@ -13,4 +13,5 @@ router.post('/salary', borrowcontroller.salaryform);
 router.get('/indivdualsalary/:id', borrowcontroller.indivdualsalary);
 router.post('/filtersalary', borrowcontroller.filtersalary);
 router.post('/indivdualsalaryfilter', borrowcontroller.indivdualsalaryfilter);
+router.post('/addsalary', borrowcontroller.addsalary);
 module.exports = router;

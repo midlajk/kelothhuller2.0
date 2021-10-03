@@ -57,6 +57,11 @@ var employees = new Schema({
         amount: Number,
 
 
+    }],
+    payment: [{
+        date: Date,
+        hint: String,
+        amount: Number,
     }]
 
 

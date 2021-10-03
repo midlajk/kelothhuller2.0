@@ -163,18 +163,20 @@ exports.borrowform = (req, res) => {
 exports.salary = (req, res) => {
 
     Employees.aggregate([{ $unwind: "$detail" }]).sort({ "detail.date": -1, "detail._id": -1 }).exec((err, data) => {
-        console.log(data)
-        Employees.find().distinct('name').then(borrevers => {
-            res.render('salary', {
-                mainpath: '/salary',
-                docs: data,
-                individual: false,
-                borrevers: borrevers,
-                filter: false
+        Employees.aggregate([{ $unwind: "$payment" }]).sort({ "payment.date": -1, "payment._id": -1 }).exec((err, dics) => {
+            Employees.find().distinct('name').then(borrevers => {
+                res.render('salary', {
+                    mainpath: '/salary',
+                    docs: data,
+                    individual: false,
+                    borrevers: borrevers,
+                    filter: false,
+                    dics: dics
 
+                })
             })
-        })
 
+        })
     })
 
 }
@@ -190,16 +192,28 @@ exports.filtersalary = (req, res) => {
                 $gte: start
             }
         }
-    }]).sort({ "detail.date": -1, "detail._id": -1 }).exec((err, data) => {
-        Employees.find().distinct('name').then(borrevers => {
-            res.render('salary', {
-                mainpath: '/salary',
-                docs: data,
-                start: start,
-                end: end,
-                individual: false,
-                borrevers: borrevers,
+    }]).sort({ "detail.date": -1, "detail._id": -1 }).exec((err, dics) => {
+        Employees.aggregate([{ $unwind: "$payment" }, {
+            $match: {
 
+                "payment.date": {
+                    $lt: end,
+                    $gte: start
+                }
+            }
+        }]).sort({ "payment.date": -1, "payment._id": -1 }).exec((err, dics) => {
+            Employees.find().distinct('name').then(borrevers => {
+                res.render('salary', {
+                    mainpath: '/salary',
+                    docs: data,
+                    start: start,
+                    end: end,
+                    individual: false,
+                    borrevers: borrevers,
+                    filter: true,
+                    dics: dics
+
+                })
             })
         })
 
@@ -207,21 +221,28 @@ exports.filtersalary = (req, res) => {
 
 }
 exports.indivdualsalary = (req, res) => {
-    var name = req.params.id.toUpperCase()
+    var name = req.params.id
     Employees.aggregate([{
         $match: {
-            "name": req.params.id.toUpperCase()
+            "name": req.params.id
         }
     }, { $unwind: "$detail" }]).sort({ "detail.date": -1, "detail._id": -1 }).exec((err, data) => {
-        Employees.find().distinct('name').then(borrevers => {
-            res.render('salary', {
-                mainpath: '/salary',
-                docs: data,
-                individual: true,
-                borrevers: borrevers,
-                filter: false,
-                id: name
+        Employees.aggregate([{
+            $match: {
+                "name": req.params.id
+            }
+        }, { $unwind: "$payment" }]).sort({ "payment.date": -1, "payment._id": -1 }).exec((err, dics) => {
+            Employees.find().distinct('name').then(borrevers => {
+                res.render('salary', {
+                    mainpath: '/salary',
+                    docs: data,
+                    individual: true,
+                    borrevers: borrevers,
+                    filter: false,
+                    id: name,
+                    dics: dics
 
+                })
             })
         })
 
@@ -231,8 +252,12 @@ exports.indivdualsalary = (req, res) => {
 exports.indivdualsalaryfilter = (req, res) => {
     var start = new Date(req.body.sdate)
     var end = new Date(req.body.edate)
-
-    Employees.aggregate([{ $unwind: "$detail" }, {
+    name = req.body.id
+    Employees.aggregate([{
+        $match: {
+            "name": name
+        }
+    }, { $unwind: "$detail" }, {
         $match: {
 
             "detail.date": {
@@ -241,15 +266,31 @@ exports.indivdualsalaryfilter = (req, res) => {
             }
         }
     }]).sort({ "detail.date": -1, "detail._id": -1 }).exec((err, data) => {
-        Employees.find().distinct('name').then(borrevers => {
-            res.render('salary', {
-                mainpath: '/salary',
-                docs: data,
-                start: start,
-                end: end,
-                individual: true,
-                borrevers: borrevers,
+        Employees.aggregate([{
+            $match: {
+                "name": name
+            }
+        }, { $unwind: "$payment" }, {
+            $match: {
 
+                "payment.date": {
+                    $lt: end,
+                    $gte: start
+                }
+            }
+        }]).sort({ "payment.date": -1, "payment._id": -1 }).exec((err, dics) => {
+            Employees.find().distinct('name').then(borrevers => {
+                res.render('salary', {
+                    mainpath: '/salary',
+                    docs: data,
+                    start: start,
+                    end: end,
+                    individual: true,
+                    borrevers: borrevers,
+                    filter: true,
+                    id: name,
+                    dics: dics
+                })
             })
         })
 
@@ -257,12 +298,12 @@ exports.indivdualsalaryfilter = (req, res) => {
 
 }
 exports.salaryform = (req, res) => {
-    console.log("here")
-    var name = req.body.billto.toUpperCase()
+
+    var name = req.body.billto
     date = new Date(req.body.date)
     var amount = req.body.amount;
 
-    console.log(name)
+
     Employees.findOne({ name: name }).then(docs => {
 
         if (docs) {
@@ -271,6 +312,52 @@ exports.salaryform = (req, res) => {
                         "detail": {
                             date: date,
                             payment: req.body.payment,
+                            amount: amount,
+
+
+                        }
+                    }
+                }, { safe: true, upsert: true },
+                function(err, model) {
+                    if (err) console.log(err)
+                    if (req.body.type == 'individual') {
+                        res.redirect('/paymentcontroller/indivdualsalary/' + name)
+                    } else {
+                        res.redirect('/paymentcontroller/salary')
+                    }
+
+                }
+            )
+        } else {
+
+
+            res.redirect('/paymentcontroller/salary')
+
+
+        }
+
+    }).catch(err => {
+        console.log(err)
+    })
+
+
+
+}
+exports.addsalary = (req, res) => {
+
+    var name = req.body.id
+    date = new Date(req.body.date)
+    var amount = req.body.amount;
+
+
+    Employees.findOne({ name: name }).then(docs => {
+
+        if (docs) {
+            docs.updateOne({
+                    $push: {
+                        "payment": {
+                            date: date,
+                            hint: req.body.hint,
                             amount: amount,
 
 
