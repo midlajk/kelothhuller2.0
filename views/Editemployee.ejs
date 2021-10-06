@@ -9,45 +9,52 @@
         <!-- DataTales Example -->
         <div class="card shadow mb-4">
             <div class="card-header py-3">
-                <h6 class="m-0 font-weight-bold text-primary">List of loads
-                </h6>
+                <a class="btn btn-success float-right mr-2" href="/paymentcontroller/salary">Salary Manage</a>
+                <h5>List of Employees
+                </h5>
+                <% if (errorMessage) { %>
+                    <h5 class="text-center">
+                        <%= errorMessage %>
+                    </h5>
 
+                    </p>
+                    <% } %>
             </div>
             <div class="card-body">
                 <div class="table-responsive">
-                    <table class="table table-bordered" id="" width="100%" cellspacing="0">
-                        <thead>
-                            <tr>
-                                <th>Name</th>
-                                <th>Phone</th>
-                                <th>Place</th>
-                                <th>careof</th>
-                                <th>Duty</th>
-                                <th>Minimum salary</th>
-                                <th>Edit</th>
+                    <table id="" width="100%" cellspacing="0">
 
-                            </tr>
-                        </thead>
 
                         <tbody>
+                            <tr>
+                                <td>Name</td>
+                                <td>Phone</td>
+                                <td>Place</td>
+                                <td>careoff</td>
+                                <td>Duty</td>
+                                <td>Minimum salary</td>
+
+
+                            </tr>
                             <form id="ademployee" action="/employee/postaddemployee" method="POST">
                                 <tr>
 
-                                    <td><input required class="p-1 form-control" style="width: 200px;" tabIndex="2" type="text" placeholder="Employee name" name="name"></td>
+                                    <td><input autofocus required class="p-1 form-control" style="width: 150px;" tabIndex="2" type="text" name="name"></td>
 
-                                    <td><input required class="p-1 form-control" style="width: 200px;" tabIndex="3" type="text" placeholder="Employee number" name="number"></td>
-                                    <td><input class="form-control" tabIndex="4" type="text" name="place" placeholder="Employee place" style="width: 150px;"></td>
-                                    <td><input class="p-1 form-control" tabIndex="5" type="text" placeholder="Employee careof" style="width: 125px;" name="careof"></td>
-                                    <td><select required class="p-1 form-control" tabIndex="6" placeholder="Minimum salary" style="width: 125px;" name="duty"> <option value="loader">loader</option> 
+                                    <td><input class="p-1 form-control" style="width: 200px;" tabIndex="3" type="text" name="number"></td>
+                                    <td><input class="form-control" tabIndex="4" type="text" name="place" style="width: 150px;"></td>
+                                    <td><input class="p-1 form-control" tabIndex="5" type="text" style="width: 125px;" name="careof"></td>
+                                    <td><select required class="p-1 form-control" tabIndex="6" style="width: 125px;" name="duty"> <option value="loader">loader</option> 
                                         <option value="operator">Operator</option> <option value="manager">Manager</option>
                                     <option value="tester">Tester</option>
                                     <option value="driver">Driver</option>
                                     <option value="assistant">Assistant</option></select></td>
 
-                                    <td><input required class="p-1 form-control" tabIndex="6" type="number" step=".01" placeholder="Minimum salary" style="width: 125px;" name="salary"></td>
+                                    <td><input class="p-1 form-control" tabIndex="7" type="number" style="width: 125px;" name="salary"></td>
 
                                     <td>
-                                        <button form="ademployee" type="submit" class="btn btn-success">Submit</button>
+                                        <button form="ademployee" tabIndex="8" type="submit" class="btn btn-success" id="submit">Submit</button>
+                                        <div id="button-spinner" style="margin-left: 10px; width: 25px; height: 25px; display: none" class="spinner-border"></div>
                                     </td>
                                 </tr>
                             </form>
@@ -63,10 +70,10 @@
                             <tr>
                                 <th>Name</th>
                                 <th>Phone</th>
-                                <th>Place</th>
-                                <th>careof</th>
-                                <th>Duty</th>
+                                <th>Careof</th>
                                 <th>Salary</th>
+                                <th>Pending payment</th>
+                                <th>Pending Borrowal</th>
                                 <th>Edit</th>
 
                             </tr>
@@ -75,10 +82,10 @@
                             <tr>
                                 <th>Name</th>
                                 <th>Phone</th>
-                                <th>Place</th>
-                                <th>careof</th>
-                                <th>Duty</th>
+                                <th>Careof</th>
                                 <th>Salary</th>
+                                <th>Pending payment</th>
+                                <th>Pending Borrowal</th>
                                 <th>Edit</th>
 
                             </tr>
@@ -87,26 +94,29 @@
                             <%for(var i = 0; i < docs.length; i++){%>
                                 <tr>
                                     <td>
-                                        <%=docs[i].name%>
+                                        <a href="/paymentcontroller/indivdualsalary/<%=docs[i].name%>">
+                                            <%=docs[i].name%>
+                                        </a>
+
                                     </td>
                                     <td>
                                         <%=docs[i].phone%>
                                     </td>
                                     <td>
-                                        <%=docs[i].place%>
-                                    </td>
-
-                                    <td>
-                                        <%=docs[i].careof%>
-                                    </td>
-                                    <td>
-                                        <%=docs[i].duty%>
+                                        <%=docs[i].careoff%>
                                     </td>
                                     <td>
                                         <%=docs[i].salary%>
                                     </td>
+                                    <td>
 
-                                    <td>Edit</td>
+                                    </td>
+                                    <td>
+
+                                    </td>
+
+                                    <td>
+                                        <a href="#" onclick="edit('<%=i%>')" class=" btn btn-primary ">edit</a></td>
                                 </tr>
                                 <%}%>
 
@@ -116,5 +126,89 @@
             </div>
         </div>
     </div>
+    <div class="modal fade" id="editmodel" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel"><span id="editcustomers"></span> <span id="edittype"></span></h5>
+                    <a class="close" type="button" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">×</span>
+                    </a>
+                </div>
+                <div class="modal-body">
+                    <form id="editform" action="/employee/Editemployee" method="POST">
+                        <div class="form-group row">
 
+                            <div class="col-sm-6 mb-3 mb-sm-0">
+                                <label for="">Name</label>
+                                <input type="text" tabindex="43" class="form-control form-control-user" id="editname" name="names">
+                            </div>
+                            <div class="col-sm-6 mb-3 mb-sm-0">
+                                <label for="">Phone</label>
+                                <input tabindex="44" class="form-control form-control-user" id="editphone" name="number">
+                            </div>
+                            <div class="col-sm-6 mb-3 mb-sm-0">
+                                <label for="">Place</label>
+                                <input type="text" tabindex="45" class="form-control form-control-user" id="editplace" name="place">
+                            </div>
+                            <div class="col-sm-6 mb-3 mb-sm-0">
+                                <label for="">careoff</label>
+                                <input type="text" tabindex="46" class="form-control form-control-user" id="editcareoff" name="careof">
+                            </div>
+
+                            <div class="col-sm-6 mb-3 mb-sm-0">
+                                <label for="">Duty</label>
+                                <input type="text" tabindex="47" class="form-control form-control-user price-control" id="editduty" name="duty">
+                            </div>
+                            <div class="col-sm-6 mb-3 mb-sm-0">
+                                <label for="">Salary</label>
+                                <input type="number" tabindex="48" class="form-control form-control-user price-control" id="editsalary" name="salary">
+                            </div>
+
+                            <input type="hidden" value="" name="objectid" id="objectid">
+                        </div>
+                    </form>
+
+                </div>
+                <div class="modal-footer">
+                    <a id="deletebutton" class="btn btn-danger" onclick="return confirm('are you sure you want to delete this?')">Delete</a>
+
+                    <button tabindex="51" form="editform" class="btn btn-primary" type="submit">Edit Deal</button>
+                </div>
+            </div>
+
+        </div>
+    </div>
+    <script>
+        function edit(i) {
+
+            var obj = <%- JSON.stringify(docs) %>;
+
+            document.getElementById("deletebutton").href = "/employee/deleteemployee/" + obj[i]._id
+
+            // document.getElementById("deletebutton").href = "/deletesales/ " + obj.id + "/ " + obj[i].deal.id + "/indivdual ";
+
+
+            // document.getElementById('editcustomers').innerText = obj.name;
+            document.getElementById('editname').value = obj[i].name
+            document.getElementById('editphone').value = obj[i].phone
+            document.getElementById('editplace').value = obj[i].place
+            document.getElementById('editcareoff').value = obj[i].careoff
+            document.getElementById('editduty').value = obj[i].duty
+            document.getElementById('editsalary').value = obj[i].salary
+
+            document.getElementById('objectid').value = obj[i]._id;
+
+
+            $('#editmodel').modal('show')
+
+        }
+        $(document).ready(function() {
+            $('#submit').click(function() {
+                $('#submit').hide();
+                $('#button-spinner').show();
+
+            });
+        });
+    </script>
     <%- include('./includes/end.ejs') %>

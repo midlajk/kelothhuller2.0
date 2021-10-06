@@ -1,6 +1,8 @@
 require('../model/borrow_salary')
 require('../model/employeemodel')
+require('../model/accountsmodal')
 const mongoose = require('mongoose');
+const Transaction = mongoose.model('Transaction');
 const Borrowed = mongoose.model('Borrowed');
 const Employees = mongoose.model('Employees');
 var fs = require('fs');
@@ -43,6 +45,7 @@ exports.filterborrows = (req, res) => {
                 end: end,
                 individual: false,
                 borrevers: borrevers,
+                filter: true,
 
             })
         })
@@ -93,7 +96,7 @@ exports.indivdualborrowsfilter = (req, res) => {
                 end: end,
                 individual: true,
                 borrevers: borrevers,
-
+                filter: true,
             })
         })
 
@@ -101,59 +104,126 @@ exports.indivdualborrowsfilter = (req, res) => {
 
 }
 exports.borrowform = (req, res) => {
+    const arrayid = new mongoose.Types.ObjectId()
+    var name = req.body.billto.toUpperCase()
+    date = new Date(req.body.date)
+    var amount
+    var amounts
+    var credit
+    var method
+    var debit
+    var type
+    if (req.body.type == 'credit') {
+        type = "returns"
+        amounts = -req.body.amount;
+        amount = req.body.amount;
+        debit = 0;
+        credit = req.body.amount;
+        debit = req.body.amount;
+        method = "B.R. of"
+    } else {
+        type = "borrow"
+        amounts = req.body.amount;
+        credit = 0;
+        amount = req.body.amount;
+        method = "borrowal of "
+        debit = req.body.amount;
 
-        var name = req.body.billto.toUpperCase()
-        date = new Date(req.body.date)
-        var amount
-        if (req.body.type == 'credit') {
-            amount = req.body.amount;
-        } else {
-            amount = -req.body.amount;
-        }
-        Borrowed.findOne({ name: name }).then(docs => {
+    }
+    Borrowed.findOne({ name: name }).then(docs => {
 
-            if (docs) {
-                docs.updateOne({
-                        $push: {
-                            "detail": {
-                                date: date,
-                                payment: req.body.payment,
-                                amount: amount,
-                                type: req.body.type
+        if (docs) {
+            docs.updateOne({
+                    $push: {
+                        "detail": {
+                            _id: arrayid,
+                            date: date,
+                            payment: req.body.payment,
+                            amount: amounts,
+                            typee: type
 
-                            }
                         }
-                    }, { safe: true, upsert: true },
-                    function(err, model) {
-                        if (err) console.log(err)
-                        if (req.body.type == 'individual') {
-                            res.redirect('/paymentcontroller/indivdualborrows/' + name)
-                        } else {
-                            res.redirect('/paymentcontroller/borrows')
-                        }
-
                     }
-                )
-            } else {
-                var borrowe = new Borrowed({
-                    name: name,
-                    detail: [{
-                        date: date,
-                        payment: req.body.payment,
+                }, { safe: true, upsert: true },
+                function(err, model) {
+                    var transaction = new Transaction({
+                        _id: arrayid,
+                        Date: date,
                         amount: amount,
-                        typee: req.body.type
-                    }]
+                        types: req.body.type,
+                        comment: method + name,
+                        paymentmode: "bank or cash",
+                        debit: debit,
+                        credit: credit,
+                        section: "Borrowal"
 
-                })
-                borrowe.save((err, docs) => {
-                    console.log(err)
-                    res.redirect('/paymentcontroller/borrows')
-                })
+                    })
+                    transaction.save((err, doc) => {})
+                    if (err) console.log(err)
+                    if (req.body.type == 'individual') {
+                        res.redirect('/paymentcontroller/indivdualborrows/' + name)
+                    } else {
+                        res.redirect('/paymentcontroller/borrows')
+                    }
 
+                }
+            )
+        } else {
+            var borrowe = new Borrowed({
+                name: name,
+                detail: [{
+                    date: date,
+                    payment: req.body.payment,
+                    amount: amount,
+                    typee: req.body.type
+                }]
+
+            })
+            borrowe.save((err, docs) => {
+                console.log(err)
+                res.redirect('/paymentcontroller/borrows')
+            })
+
+        }
+
+    }).catch(err => {
+        console.log(err)
+    })
+
+
+
+}
+
+exports.deleteborrow = (req, res) => {
+
+        Borrowed.findById(req.params.objectid).then((docs, err) => {
+            docs.updateOne({
+                    $pull: {
+                        "detail": {
+                            _id: req.params.arrayid
+                        }
+                    }
+                }, { safe: true, upsert: true },
+                function(err, model) {
+
+                    Transaction.findByIdAndDelete(req.params.arrayid).then((err, docs) => {
+
+                    })
+                }
+            )
+
+        }).then(docs => {
+            if (req.params.section == 'borrowmanage') {
+                res.redirect('/paymentcontroller/borrows')
+            } else {
+                var section = req.params.section.split('_')[0];
+                var name = req.params.section.split('_')[1];
+                if (section == 'borrow') {
+                    res.redirect('/paymentcontroller/indivdualborrows/' + name)
+                } else {
+
+                }
             }
-
-        }).catch(err => {
-            console.log(err)
         })
 
 
@@ -183,7 +253,7 @@ exports.salary = (req, res) => {
 exports.filtersalary = (req, res) => {
     var start = new Date(req.body.sdate)
     var end = new Date(req.body.edate)
-
+    console.log("here")
     Employees.aggregate([{ $unwind: "$detail" }, {
         $match: {
 
@@ -192,7 +262,7 @@ exports.filtersalary = (req, res) => {
                 $gte: start
             }
         }
-    }]).sort({ "detail.date": -1, "detail._id": -1 }).exec((err, dics) => {
+    }]).sort({ "detail.date": -1, "detail._id": -1 }).exec((err, data) => {
         Employees.aggregate([{ $unwind: "$payment" }, {
             $match: {
 
@@ -233,6 +303,7 @@ exports.indivdualsalary = (req, res) => {
             }
         }, { $unwind: "$payment" }]).sort({ "payment.date": -1, "payment._id": -1 }).exec((err, dics) => {
             Employees.find().distinct('name').then(borrevers => {
+                Borrowed.fin
                 res.render('salary', {
                     mainpath: '/salary',
                     docs: data,
@@ -299,17 +370,18 @@ exports.indivdualsalaryfilter = (req, res) => {
 }
 exports.salaryform = (req, res) => {
 
-    var name = req.body.billto
+    var name = req.body.billto.toUpperCase()
     date = new Date(req.body.date)
     var amount = req.body.amount;
 
-
+    const arrayid = new mongoose.Types.ObjectId()
     Employees.findOne({ name: name }).then(docs => {
 
         if (docs) {
             docs.updateOne({
                     $push: {
                         "detail": {
+                            _id: arrayid,
                             date: date,
                             payment: req.body.payment,
                             amount: amount,
@@ -319,19 +391,34 @@ exports.salaryform = (req, res) => {
                     }
                 }, { safe: true, upsert: true },
                 function(err, model) {
-                    if (err) console.log(err)
-                    if (req.body.type == 'individual') {
-                        res.redirect('/paymentcontroller/indivdualsalary/' + name)
-                    } else {
-                        res.redirect('/paymentcontroller/salary')
-                    }
+                    var transaction = new Transaction({
+                        _id: arrayid,
+                        Date: req.body.date,
+                        amount: amount,
+                        types: "debit",
+                        comment: "S.P to " + name,
+                        paymentmode: "bank or cash",
+                        debit: req.body.paid,
+                        section: "salary"
+
+                    })
+                    transaction.save((err, doc) => {
+
+                        if (err) console.log(err)
+                        if (req.body.type == 'individual') {
+                            res.redirect('/paymentcontroller/indivdualsalary/' + name)
+                        } else {
+                            res.redirect('/paymentcontroller/salary')
+                        }
+                    })
+
 
                 }
             )
         } else {
 
-
-            res.redirect('/paymentcontroller/salary')
+            req.flash('error', "No employye named " + name + "f ound please add profile first")
+            res.redirect('/employee/Editemployee')
 
 
         }
@@ -345,7 +432,7 @@ exports.salaryform = (req, res) => {
 }
 exports.addsalary = (req, res) => {
 
-    var name = req.body.id
+    var name = req.body.id.toUpperCase()
     date = new Date(req.body.date)
     var amount = req.body.amount;
 
@@ -376,14 +463,84 @@ exports.addsalary = (req, res) => {
             )
         } else {
 
-
-            res.redirect('/paymentcontroller/salary')
+            req.flash('error', "No employee named " + name + " found please add profile first")
+            res.redirect('/employee/Editemployee')
 
 
         }
 
     }).catch(err => {
         console.log(err)
+    })
+
+
+
+}
+exports.deletesalary = (req, res) => {
+
+    Employees.findById(req.params.objectid).then((docs, err) => {
+        docs.updateOne({
+                $pull: {
+                    "detail": {
+                        _id: req.params.arrayid
+                    }
+                }
+            }, { safe: true, upsert: true },
+            function(err, model) {
+                Transaction.findByIdAndDelete(req.params.arrayid).then((err, docs) => {
+
+                })
+
+
+            }
+        )
+
+    }).then(docs => {
+        if (req.params.section == 'salarymanage') {
+            res.redirect('/paymentcontroller/salary')
+        } else {
+            var section = req.params.section.split('_')[0];
+            var name = req.params.section.split('_')[1];
+            if (section == 'salary') {
+                res.redirect('/paymentcontroller/indivdualsalary/' + name)
+            } else {
+
+            }
+        }
+    })
+
+
+
+}
+exports.deletesalarypayment = (req, res) => {
+
+    Employees.findById(req.params.objectid).then((docs, err) => {
+        docs.updateOne({
+                $pull: {
+                    "payment": {
+                        _id: req.params.arrayid
+                    }
+                }
+            }, { safe: true, upsert: true },
+            function(err, model) {
+                console.log(err);
+
+
+            }
+        )
+
+    }).then(docs => {
+        if (req.params.section == 'salarymanage') {
+            res.redirect('/paymentcontroller/salary')
+        } else {
+            var section = req.params.section.split('_')[0];
+            var name = req.params.section.split('_')[1];
+            if (section == 'salary') {
+                res.redirect('/paymentcontroller/indivdualsalary/' + name)
+            } else {
+
+            }
+        }
     })
 
 

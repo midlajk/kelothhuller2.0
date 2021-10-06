@@ -75,159 +75,178 @@
 
         <!-- DataTales Example -->
         <div class="card shadow mb-4" id="loadingdeatils">
+
             <div class="card-header py-3">
-                <div class="card-header py-3">
+
+                <a class="float-right btn btn-danger ml-2" href="" href="" data-toggle="modal" data-target="#filtermodel">Filter</a>
+                <button class="btn btn-success float-right" id="paymentbutton">View payments</button>
+                <%if(!individual){%> <a class="btn btn-primary float-right mr-2" href="/employee/Editemployee">Employee List</a>
+                    <%}else{%>
+                        <a class="btn btn-primary float-right mr-2" href="/paymentcontroller/salary">Complete Salary </a>
+                        <%}%>
+
+                            <h5 class="">Salary Paid
+                                <%if(individual){%>
+                                    of
+                                    <%=id%>
+                                        <%}%>
+                                            <%if(filter){%>
+                                                from
+                                                <%=moment(start).format( 'DD-MM-YYYY')%> to
+                                                    <%=moment(end).format( 'DD-MM-YYYY')%>
+                                                        <%}%>
+                            </h5>
+                            <br>
+                            <form action="" method="GET" id="checkword">
+                                <div id="inputFormRow" class="form-group row">
 
 
-                    <a class="float-right btn btn-danger ml-2" href="" href="" data-toggle="modal" data-target="#filtermodel">Filter</a>
-                    <button class="btn btn-success float-right" id="paymentbutton">View payment</button>
-                    <h6 class="m-0 font-weight-bold text-primary">Salary Paid
-                        <%if(individual){%>
-                            of
-                            <%=id%>
-                                <%}%>
-                                    <%if(filter){%>
-                                        from
-                                        <%=moment(start).format( 'DD-MM-YYYY')%> to
-                                            <%=moment(end).format( 'DD-MM-YYYY')%>
-                                                <%}%>
-                    </h6>
-                    <br>
-                    <form action="" method="GET" id="checkword">
-                        <div id="inputFormRow" class="form-group row">
+                                    <div class="col-sm-12 mb-3 mb-sm-0 input-group" id="seller_buyer">
 
+                                        <select class="form-control form-control-user js-example-basic-single" id="list_sellers" onchange="check_user()">
+                                            <option value="">Search names</option>
+                                              <%for(let docs of borrevers){%>
+                                                <option value="<%=docs%>"><%=docs%></option>
+                                              <%}%>
+                                         </select>
 
-                            <div class="col-sm-12 mb-3 mb-sm-0 input-group" id="seller_buyer">
+                                        <div class="input-group-append">
+                                            <input type="submit" class="btn btn-primary" value="Search name"></input>
+                                        </div>
+                                    </div>
 
-                                <input type="text" oninput="check_user()" class="form-control form-control-user" id="list_sellers" placeholder="Search names" name="list_sellers" list="browsers" autocomplete="off">
-                                <datalist id="browsers">
-                                <%for(let docs of borrevers){%>
-                                    <option value="<%=docs%>">
-                                    <%}%>
-                            </datalist>
-                                <div class="input-group-append">
-                                    <input type="submit" class="btn btn-primary" value="Search name"></input>
                                 </div>
-                            </div>
+                            </form>
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table width="100%" cellspacing="0">
 
-                        </div>
-                    </form>
-                </div>
-                <div class="card-body">
-                    <div class="table-responsive">
-                        <table class="table table-bordered" width="100%" cellspacing="0">
-                            <thead>
+                        <tbody>
+                            <tr>
+                                <td>Date</td>
+                                <%if(!individual){%>
+                                    <td>Name</td>
+                                    <%}%>
+                                        <td>Amount</tf>
+
+                                            <td>Hint</td>
+
+
+                            </tr>
+                            <form id="utility" action="/paymentcontroller/salary" method="POST">
                                 <tr>
-                                    <th>date</th>
+                                    <td><input required tabindex="1" name="date" class="form-control" style="max-width: 175px;" type="date" value="<%=todaydate%>" id=""></td>
                                     <%if(!individual){%>
-                                        <th>Name</th>
-                                        <%}%>
-                                            <th>Amount</th>
+                                        <td>
+                                            <input required autofocus autocomplete="off" class="p-1 form-control" style="max-width: 200px;" tabIndex="2" list="names" type="text" name="billto" id="paidname">
+                                            <datalist id="names">
+                                                <%for(let docs of borrevers){%>
+                                                    <option value="<%=docs%>">
+                                                    <%}%>
+                                            </datalist>
+                                        </td>
 
-                                            <th>Hint</th>
-                                            <th>Edit</th>
+
+                                        <%}else{%> <input type="hidden" name="type" value="individual">
+                                            <input type="hidden" name="billto" value="<%=id%>">
+                                            <%}%>
+                                                <td><input required class="form-control" tabIndex="3" type="number" step=".01" name="amount" style="max-width: 175px;"></td>
+
+                                                <td>
+                                                    <input class="p-1 form-control" style="max-width: 200px;" tabIndex="4" type="text" name="payment" id=""></td>
+
+
+                                                <td><button form="utility" tabIndex="5" class="btn btn-primary" id="submit" type="submit">Submit</button>
+                                                    <div id="button-spinner" style="margin-left: 10px; width: 25px; height: 25px; display: none" class="spinner-border"></div>
+                                                </td>
+
 
                                 </tr>
-                            </thead>
-                            <tbody>
-                                <form id="utility" action="/paymentcontroller/salary" method="POST">
-                                    <tr>
-                                        <td><input required tabindex="1" name="date" class="form-control" type="date" value="<%=todaydate%>" id=""></td>
-                                        <%if(!individual){%>
-                                            <td><input required autofocus autocomplete="off" class="p-1 form-control" style="width: 200px;" tabIndex="2" type="text" name="billto" id=""></td>
-
-                                            <%}else{%> <input type="hidden" name="type" value="individual">
-                                                <input type="hidden" name="billto" value="<%=id%>">
-                                                <%}%>
-                                                    <td><input autofocus required class="form-control" tabIndex="3" type="number" step=".01" name="amount" style="width: 125px;"></td>
-
-                                                    <td>
-                                                        <input class="p-1 form-control" style="width: 200px;" tabIndex="4" type="text" name="payment" id=""></td>
-
-
-                                                    <td><button form="utility" tabIndex="5" class="btn btn-primary" type="submit">Submit</button></td>
-
-                                    </tr>
-                                </form>
-                            </tbody>
-                        </table>
-                    </div>
+                            </form>
+                        </tbody>
+                    </table>
                 </div>
+            </div>
 
-                <div class="card-body">
-                    <div class="table-responsive">
-                        <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
-                            <thead>
-                                <tr>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                        <thead>
+                            <tr>
+                                <th>Date</th>
+                                <%if(!individual){%>
+                                    <th>Name</th>
+                                    <%}%>
+                                        <th>Amount</th>
+
+                                        <th>Hint</th>
+                                        <th>Edit</th>
+
+                            </tr>
+                        </thead>
+                        <tfoot>
+                            <tr>
+
+                                <%if(!individual){%>
                                     <th>Date</th>
-                                    <%if(!individual){%>
-                                        <th>Name</th>
-                                        <%}%>
-                                            <th>Amount</th>
+                                    <th>Total amount paid</th>
+                                    <th colspan="2" id="total" class="badge-info">
 
-                                            <th>Hint</th>
-                                            <th>Edit</th>
 
-                                </tr>
-                            </thead>
-                            <tfoot>
-                                <tr>
+                                    </th>
 
-                                    <%if(!individual){%>
-                                        <th>Date</th>
+                                    <%}else{%>
                                         <th>Total amount paid</th>
                                         <th colspan="2" id="total" class="badge-info">
 
-
                                         </th>
+                                        <%}%>
 
-                                        <%}else{%>
-                                            <th>Total amount paid</th>
-                                            <th colspan="2" id="total" class="badge-info">
+                                            <th>Edit</th>
 
-                                            </th>
-                                            <%}%>
+                            </tr>
+                        </tfoot>
+                        <tbody>
 
-                                                <th>Edit</th>
-
-                                </tr>
-                            </tfoot>
-                            <tbody>
-
-                                <%
+                            <%
                             var total = 0;
                             for(var i=0; i < docs.length; i++){
-                                total = parseInt(total+docs[i].detail.amount)
+                                total = parseInt(total)+parseInt(docs[i].detail.amount)
                                 %>
-                                    <tr>
+                                <tr>
+                                    <td>
+                                        <%= moment(docs[i].detail.date).format( 'DD-MMM-YYYY') %>
+
+                                    </td>
+                                    <%if(!individual){%>
                                         <td>
-                                            <%= moment(docs[i].detail.date).format( 'DD-MMM-YYYY') %>
-
+                                            <a href="/paymentcontroller/indivdualsalary/<%=docs[i].name%>">
+                                                <%=docs[i].name%>
+                                            </a>
                                         </td>
-                                        <%if(!individual){%>
+                                        <%}%>
+
                                             <td>
-                                                <a href="/paymentcontroller/indivdualsalary/<%=docs[i].name%>">
-                                                    <%=docs[i].name%>
-                                                </a>
+                                                <%=docs[i].detail.amount%>
                                             </td>
-                                            <%}%>
 
-                                                <td>
-                                                    <%=docs[i].detail.amount%>
-                                                </td>
-
-                                                <td>
-                                                    <%=docs[i].detail.payment%>
-                                                </td>
-                                                <td><a href="" onclick="return confirm('Are you sure')" class="btn btn-danger">Delete</a></td>
-                                    </tr>
-                                    <%}%>
-                            </tbody>
-                        </table>
-                    </div>
+                                            <td>
+                                                <%=docs[i].detail.payment%>
+                                            </td>
+                                            <%if(!individual){%>
+                                                <td><a href="/paymentcontroller/deletesalary/<%=docs[i]._id%>/<%=docs[i].detail._id%>/salarymanage" onclick="return confirm('Are you sure')" class="btn btn-danger">Delete</a></td>
+                                                <%}else{%>
+                                                    <td><a href="/paymentcontroller/deletesalary/<%=docs[i]._id%>/<%=docs[i].detail._id%>/salary_<%=id%>" onclick="return confirm('Are you sure')" class="btn btn-danger">Delete</a></td>
+                                                    <%}%>
+                                </tr>
+                                <%}%>
+                        </tbody>
+                    </table>
                 </div>
-
             </div>
+
+
 
 
         </div>
@@ -236,7 +255,7 @@
                 <a class="float-right btn btn-danger ml-2" href="" href="" data-toggle="modal" data-target="#filtermodel">Filter</a>
                 <button class="btn btn-success float-right" id="loadingbutton">View Paid</button>
 
-                <h6 class="m-0 font-weight-bold text-primary">Salary Payments
+                <h5 class="">Salary Payments
                     <%if(individual){%>
                         of
                         <%=id%>
@@ -246,41 +265,40 @@
                                     <%=moment(start).format( 'DD-MM-YYYY')%> to
                                         <%=moment(end).format( 'DD-MM-YYYY')%>
                                             <%}%>
-                </h6>
-                <br>
+                                                </h6>
+                                                <br>
 
             </div>
             <div class="card-body">
                 <div class="table-responsive">
-                    <table class="table table-bordered" width="100%" cellspacing="0">
-                        <thead>
-                            <tr>
-                                <th>Date</th>
-                                <%if(!individual){%>
-                                    <th>Name</th>
-                                    <%}%>
-                                        <th>Amount</th>
-                                        <th>hint</th>
-                                        <th>Submit</th>
-                            </tr>
-                        </thead>
+                    <table width="100%" cellspacing="0">
+
                         <tbody>
+                            <tr>
+                                <td>Date</td>
+                                <%if(!individual){%>
+                                    <td>Name</td>
+                                    <%}%>
+                                        <td>Amount</td>
+                                        <td>hint</td>
+
+                            </tr>
                             <form id="buyerform" action="/paymentcontroller/addsalary" method="POST">
                                 <tr>
-                                    <td><input required tabindex="1" name="date" class="form-control" value="<%=todaydate%>" type="date" id="date"></td>
+                                    <td><input required tabindex="1" name="date" class="form-control" style="max-width: 175px;" value="<%=todaydate%>" type="date" id="date"></td>
                                     <%if(!individual){%>
-                                        <td><input required autofocus autocomplete="off" class="p-1 form-control" style="width: 200px;" tabIndex="2" type="text" name="id" id=""></td>
+                                        <td><input required autofocus autocomplete="off" class="p-1 form-control" style="max-width: 200px;" tabIndex="2" type="text" name="id" list="names" id="paymentname"></td>
 
                                         <%}else{%> <input type="hidden" name="type" value="individual">
                                             <input type="hidden" name="id" value="<%=id%>">
                                             <%}%>
-                                                <td><input autofocus required class="form-control" tabIndex="3" type="number" step=".01" name="amount" id="kilogram"></td>
-                                                <td><input class="form-control" tabIndex="4" type="text" step=".01" name="hint" id="hint"></td>
+                                                <td><input autofocus required class="form-control" tabIndex="3" type="number" step=".01" name="amount" style="max-width: 175px;" id="kilogram"></td>
+                                                <td><input class="form-control" tabIndex="4" type="text" step=".01" style="max-width: 200px;" name="hint" id="hint"></td>
 
 
                                                 <td>
-                                                    <button form="buyerform" tabindex="5" class="btn btn-primary" id="submit" type="submit">Submit</button>
-                                                    <div id="button-spinner" style="margin-left: 10px; width: 25px; height: 25px; display: none" class="spinner-border"></div>
+                                                    <button form="buyerform" tabindex="5" class="btn btn-primary" id="submits" type="submit">Submit</button>
+                                                    <div id="button-spinners" style="margin-left: 10px; width: 25px; height: 25px; display: none" class="spinner-border"></div>
 
                                                 </td>
 
@@ -326,7 +344,7 @@
                                             </th>
                                             <%}%>
 
-                                                <th>hint</th>
+
                                                 <th>Edit</th>
 
 
@@ -336,7 +354,7 @@
 
                             <% payment = 0;
                             for (let dic of dics){
-                                payment =parseInt(payment+dic.payment.amount);
+                                payment =parseInt(payment)+parseInt(dic.payment.amount);
                                 %>
                                 <tr>
                                     <td>
@@ -356,8 +374,11 @@
                                             <td>
                                                 <%=dic.payment.hint%>
                                             </td>
-                                            <td>
-                                                <a href="" class="btn btn-danger">Delete</a></td>
+                                            <%if(!individual){%>
+                                                <td><a href="/paymentcontroller/deletesalarypayment/<%=dic._id%>/<%=dic.payment._id%>/salarymanage" onclick="return confirm('Are you sure')" class="btn btn-danger">Delete</a></td>
+                                                <%}else{%>
+                                                    <td><a href="/paymentcontroller/deletesalarypayment/<%=dic._id%>/<%=dic.payment._id%>/salary_<%=id%>" onclick="return confirm('Are you sure')" class="btn btn-danger">Delete</a></td>
+                                                    <%}%>
 
                                 </tr>
                                 <%}%>
@@ -409,10 +430,15 @@
         </div>
         <script>
             $("#paymentbutton").click(function() {
+
+                $('#paymentname').focus();
+
                 $('#paymentdetails').show();
                 $('#loadingdeatils').hide();
             })
             $("#loadingbutton").click(function() {
+
+                $('#paidname').focus();
                 $('#paymentdetails').hide();
                 $('#loadingdeatils').show();
             })
@@ -422,7 +448,7 @@
                 var total = <%= total%>;
                 var payment = <%= payment %>;
 
-                remaining = parseInt(total - payment);
+                remaining = parseInt(payment - total);
 
                 document.getElementById('totalsum').innerText = total.toLocaleString();
                 document.getElementById('totalpaid').innerText = payment.toLocaleString();
@@ -441,8 +467,36 @@
 
             function check_user() {
                 var st = document.getElementById("list_sellers").value;
-                var x = document.getElementById("checkword")
-                x.action = "/paymentcontroller/indivdualsalary/" + st
+
+                if (!st) {
+
+                } else {
+                    var x = document.getElementById("checkword")
+                    x.action = "/paymentcontroller/indivdualsalary/" + st
+                }
+
             }
+            $(document).ready(function() {
+                $('#submit').click(function() {
+                    $('#submit').hide();
+                    $('#button-spinner').show();
+
+                });
+            });
+            $(document).ready(function() {
+                $('#submits').click(function() {
+                    $('#submits').hide();
+                    $('#button-spinners').show();
+
+                });
+                $('#MyTable').DataTable({
+                    initComplete: function() {
+                        this.api().columns().every(function() {
+                            var column = this;
+
+                        });
+                    }
+                });
+            });
         </script>
         <%- include('./includes/end.ejs') %>

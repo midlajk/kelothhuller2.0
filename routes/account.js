@@ -11,4 +11,10 @@ router.post('/fliterindividualaddlorirent', accountController.fliterindividualad
 router.post('/filterutility', accountController.filterutility);
 router.get('/indivual_utility/:id', accountController.indivual_utility);
 router.post('/filterindividualutility', accountController.filterindividualutility);
+router.get('/getpayments', accountController.getpayments);
+router.post('/paidamountform', accountController.paidamountform);
+router.get('/individualpayments/:id', accountController.individualpayments);
+router.post('/filterpayments', accountController.filterpayments);
+router.post('/filterindividualpayments', accountController.filterindividualpayments);
+
 module.exports = router;

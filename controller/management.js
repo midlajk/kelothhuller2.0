@@ -1329,6 +1329,46 @@ exports.postadduser = (req, res) => {
 
 
 }
+exports.postedituser = (req, res) => {
+    var name = req.body.names.toUpperCase()
+    var password = req.body.password
+    Users.findOneAndUpdate({ name: name })
+        .then(userDoc => {
+            if (userDoc) {
+                return bcrypt
+                    .hash(password, 12)
+                    .then(hashedPassword => {
+                        userDoc.name = name;
+                        userDoc.role = req.body.role;
+                        userDoc.password = hashedPassword;
+                        userDoc.previlage = req.body.previlage;
+                        return userDoc.save();
+                    })
+            }
+
+
+        })
+        .then(result => {
+
+            res.redirect('/adduser')
+        });
+
+
+
+
+}
+exports.deleteuser = (req, res) => {
+
+    Users.findByIdAndDelete(req.params.id)
+        .then(userDoc => {
+            res.redirect('/adduser')
+        })
+
+
+
+
+
+}
 
 exports.utility = (req, res) => {
     var start = new Date()

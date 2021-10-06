@@ -26,6 +26,8 @@ router.post('/salesfilter', managementController.salesfilter);
 router.post('/purchasefilter', managementController.purchasefilter);
 router.get('/adduser', managementController.adduser);
 router.post('/adduser', managementController.postadduser);
+router.post('/postedituser', managementController.postedituser);
+router.get('/deleteuser/:id', managementController.deleteuser);
 router.get('/utility', managementController.utility);
 router.post('/utilityform', managementController.utilityform);
 

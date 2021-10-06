@@ -48,6 +48,8 @@ var employees = new Schema({
     careoff: String,
     duty: String,
     salary: String,
+    borrowed: Number,
+    returned: Number,
     leave: [{
         date: Date
     }],

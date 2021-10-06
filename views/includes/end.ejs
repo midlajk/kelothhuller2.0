@@ -54,6 +54,7 @@
 <script>
     $(document).ready(function() {
 
+
         $(document).on('keypress', 'input,select', function(e) {
             if (e.which == 13) {
                 e.preventDefault();
@@ -101,6 +102,10 @@
                 $('.floatingMenu').stop().slideToggle();
             }
         });
+
+    });
+    $(document).ready(function() {
+        $('.js-example-basic-single').select2();
     });
 </script>
 <!-- Bootstrap core JavaScript-->

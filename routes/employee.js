@@ -17,6 +17,8 @@ router.get('/viewattendance/:id', employeeController.viewattendanceperson);
 router.post('/viewattendanceindividual', employeeController.viewattendanceindividual);
 router.post('/viewattendancefilter', employeeController.viewattendancefilter);
 router.get('/Editemployee', employeeController.Editemployee);
+router.post('/Editemployee', employeeController.PostEditemployee);
+router.get('/deleteemployee/:id', employeeController.deleteemployee);
 router.post('/postaddemployee', employeeController.postaddemployee);
 router.get('/markattendance', employeeController.markattendance);
 router.post('/markattendance', employeeController.postmarkattendance);

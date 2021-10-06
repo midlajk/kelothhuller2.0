@@ -9,7 +9,8 @@ var transaction = new Schema({
     credit: Number,
     paymentmode: String,
     debit: Number,
-    mode:String
+    mode:String,
+    section:String
 
 
 });
@@ -119,3 +120,24 @@ var names = new Schema({
 var Names =
     mongoose.model('Names', names);
 module.exports = Names;
+var payments = new Schema({
+    name:String,
+    payment:[{
+        date:Date,
+        amount:Number,
+        hint:String,
+        
+    }],
+    paid:[{
+        date:Date,
+        amount:Number,
+        hint:String,
+        category:String
+    }]
+
+
+});
+
+var Payments =
+    mongoose.model('Payments', payments);
+    module.exports = Payments;

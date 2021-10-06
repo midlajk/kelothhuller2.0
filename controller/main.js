@@ -49,14 +49,7 @@ exports.postloginpage = (req, res) => {
 
 
 }
-exports.dashboard = (req, res) => {
 
-    res.render('index', {
-        mainpath: '/index',
-
-    })
-
-}
 exports.loginpage = (req, res) => {
     let message = req.flash('error');
     if (message.length > 0) {

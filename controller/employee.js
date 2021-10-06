@@ -56,6 +56,7 @@ exports.viewattendancefilter = (req, res) => {
 
 }
 exports.viewattendanceperson = (req, res) => {
+    console.log(req.params.id)
     var start = new Date()
     var end = new Date()
     end.setDate(end.getDate() + 1)
@@ -73,12 +74,13 @@ exports.viewattendanceperson = (req, res) => {
             }
         }
     }]).sort({ "leave.date": -1 }).exec((err, docs) => {
-
+        console.log(docs)
         res.render('viewindividualattendance', {
             mainpath: '/viewattedance',
             docs: docs,
             start: start,
-            end: end
+            end: end,
+            name: req.params.id
         })
     })
 
@@ -104,34 +106,88 @@ exports.viewattendanceindividual = (req, res) => {
             mainpath: '/viewattedance',
             docs: docs,
             start: start,
-            end: end
+            end: end,
+            name: req.body.id
         })
     })
 
 }
 exports.Editemployee = (req, res) => {
+    let message = req.flash('error');
+    if (message.length > 0) {
+        message = message[0];
+    } else {
+        message = null;
+    }
     Employees.find().then(docs => {
         res.render('Editemployee', {
             mainpath: '/editemployee',
-            docs: docs
+            docs: docs,
+            errorMessage: message
         })
     })
 
 }
-exports.postaddemployee = (req, res) => {
-    name = req.body.name.toUpperCase()
-    var employee = new Employees({
-
-        name: name,
-        phone: req.body.number,
-        place: req.body.place,
-        careoff: req.body.careof,
-        duty: req.body.duty,
-        salary: req.body.salary
-
+exports.PostEditemployee = (req, res) => {
+    name = req.body.names.toUpperCase()
+    Employees.findOne({ name: name }).then(docs => {
+        if (docs) {
+            req.flash('error', "user already exist")
+            return res.redirect('/employee/Editemployee')
+        } else {
+            Employees.findByIdAndUpdate(req.body.objectid).then(docs => {
+                docs.name = name;
+                docs.phone = req.body.number;
+                docs.place = req.body.place;
+                docs.careoff = req.body.careof;
+                docs.duty = req.body.duty;
+                docs.salary = req.body.salary;
+                docs.save()
+            }).then(docs => {
+                req.flash('error', "successfully editted")
+                return res.redirect('/employee/Editemployee')
+            })
+        }
     })
-    employee.save((ree, doc) => {
-        res.redirect('/employee/Editemployee')
+
+
+
+}
+exports.deleteemployee = (req, res) => {
+
+
+    Employees.findByIdAndDelete(req.params.id).then((err, docs) => {
+        if (err) console.log(err)
+        return res.redirect('/employee/Editemployee')
+    })
+
+
+}
+exports.postaddemployee = (req, res) => {
+    value = 0;
+    name = req.body.name.toUpperCase()
+    Employees.findOne({ name: name }).then(docs => {
+        if (docs) {
+            req.flash('error', "user already exist")
+            res.redirect('/employee/Editemployee')
+        } else {
+            var employee = new Employees({
+
+                name: name,
+                phone: req.body.number,
+                place: req.body.place,
+                careoff: req.body.careof,
+                duty: req.body.duty,
+                salary: req.body.salary,
+                borrowed: 0,
+                returned: 0
+            })
+            employee.save((ree, doc) => {
+                req.flash('error', "successfully added")
+                res.redirect('/employee/Editemployee')
+            })
+
+        }
     })
 
 }
@@ -170,7 +226,8 @@ exports.postmarkattendance = (req, res) => {
                 name = req.body.list;
                 if (Array.isArray(name)) {
                     for (i = 0; i < name.length; i++) {
-                        Employees.findOne({ name: name[i] }).then(docs => {
+                        var names = name[i].toUpperCase()
+                        Employees.findOne({ name: names }).then(docs => {
                             if (docs) {
                                 docs.updateOne({
 
@@ -188,7 +245,8 @@ exports.postmarkattendance = (req, res) => {
                         })
                     }
                 } else {
-                    Employees.findOne({ name: name }).then(docs => {
+                    var names = name.toUpperCase()
+                    Employees.findOne({ name: names }).then(docs => {
                         if (docs) {
 
 
