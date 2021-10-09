@@ -19,8 +19,7 @@ router.get('/individualsales/:id', managementController.individualsales);
 
 router.post('/individualsalesfilter', managementController.individualsalesfilter);
 router.post('/individualpurchasefilter', managementController.individualpurchasefilter);
-router.post('/updateindividualsales', managementController.updateindividualsales);
-router.post('/updateindividualpuchase', managementController.updateindividualpuchase);
+
 router.post('/filtrsales', managementController.filtrsales);
 router.post('/salesfilter', managementController.salesfilter);
 router.post('/purchasefilter', managementController.purchasefilter);

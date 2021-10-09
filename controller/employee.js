@@ -26,6 +26,7 @@ exports.viewattendance = (req, res) => {
 
         res.render('viewattendance', {
             mainpath: '/viewattedance',
+            paths: '/employee',
             docs: docs,
             start: start,
             end: end
@@ -48,6 +49,7 @@ exports.viewattendancefilter = (req, res) => {
 
         res.render('viewattendance', {
             mainpath: '/viewattedance',
+            paths: '/employee',
             docs: docs,
             start: start,
             end: end
@@ -56,7 +58,7 @@ exports.viewattendancefilter = (req, res) => {
 
 }
 exports.viewattendanceperson = (req, res) => {
-    console.log(req.params.id)
+
     var start = new Date()
     var end = new Date()
     end.setDate(end.getDate() + 1)
@@ -74,9 +76,10 @@ exports.viewattendanceperson = (req, res) => {
             }
         }
     }]).sort({ "leave.date": -1 }).exec((err, docs) => {
-        console.log(docs)
+
         res.render('viewindividualattendance', {
             mainpath: '/viewattedance',
+            paths: '/employee',
             docs: docs,
             start: start,
             end: end,
@@ -104,6 +107,7 @@ exports.viewattendanceindividual = (req, res) => {
 
         res.render('viewindividualattendance', {
             mainpath: '/viewattedance',
+            paths: '/employee',
             docs: docs,
             start: start,
             end: end,
@@ -129,12 +133,10 @@ exports.Editemployee = (req, res) => {
 
 }
 exports.PostEditemployee = (req, res) => {
+
     name = req.body.names.toUpperCase()
     Employees.findOne({ name: name }).then(docs => {
         if (docs) {
-            req.flash('error', "user already exist")
-            return res.redirect('/employee/Editemployee')
-        } else {
             Employees.findByIdAndUpdate(req.body.objectid).then(docs => {
                 docs.name = name;
                 docs.phone = req.body.number;
@@ -147,6 +149,10 @@ exports.PostEditemployee = (req, res) => {
                 req.flash('error', "successfully editted")
                 return res.redirect('/employee/Editemployee')
             })
+        } else {
+            req.flash('error', "user doesnt exist")
+            return res.redirect('/employee/Editemployee')
+
         }
     })
 
@@ -209,7 +215,7 @@ exports.markattendance = (req, res) => {
 }
 exports.postmarkattendance = (req, res) => {
     date = new Date(req.body.sdate)
-    console.log(date)
+
     Attendance.findOne({ sdate: req.body.sdate }).then(docs => {
 
         if (docs) {
@@ -276,11 +282,20 @@ exports.postmarkattendance = (req, res) => {
 
 }
 exports.addkooli = (req, res) => {
+    let message = req.flash('error');
+    if (message.length > 0) {
+        message = message[0];
+    } else {
+        message = null;
+    }
     Loaders.find().then(docs => {
-
-        res.render('addkooli', {
-            doc: docs,
-            mainpath: '/addkooli'
+        Loaderskooli.find().distinct('seller').then(loads => {
+            res.render('addkooli', {
+                doc: docs,
+                mainpath: '/addkooli',
+                errorMessage: message,
+                loads: loads
+            })
         })
     })
 
@@ -299,7 +314,7 @@ exports.postaddkooli = (req, res) => {
             // Call the callback once you complete execution of doStuff
             doStuff(arrProps[index], () => process(index + 1));
         } else {
-            console.log(req.body.seller.toUpperCase())
+
             Loaderskooli.findOne({ seller: req.body.seller.toUpperCase() }).then(docs => {
 
                 if (docs) {
@@ -343,6 +358,7 @@ exports.postaddkooli = (req, res) => {
                 }
 
             }).then(docs => {
+                req.flash('error', "succefully added")
                 res.redirect('/employee/addkooli')
             }).catch(err => {
                 console.log(err)
@@ -590,6 +606,12 @@ exports.individualloadsfilter = (req, res) => {
     })
 }
 exports.indidualkooli = (req, res) => {
+    let payment = req.flash('payment');
+    if (payment.length > 0) {
+        payment = payment[0];
+    } else {
+        payment = false;
+    }
     var start = new Date()
     var end = new Date()
     end.setDate(end.getDate() + 1)
@@ -624,7 +646,7 @@ exports.indidualkooli = (req, res) => {
                 }
             }
 
-        ]).then(dics => {
+        ]).sort({ "payed.date": -1, "payed._id": -1 }).exec((err, dics) => {
             Loaders.find().distinct('name').then(loaders => {
 
 
@@ -636,6 +658,7 @@ exports.indidualkooli = (req, res) => {
                     start: start,
                     end: end,
                     loaders: loaders,
+                    payment: payment
 
                 })
 
@@ -645,9 +668,15 @@ exports.indidualkooli = (req, res) => {
 
 }
 exports.indidualkoolifilter = (req, res) => {
+    let payment = req.flash('payment');
+    if (payment.length > 0) {
+        payment = payment[0];
+    } else {
+        payment = false;
+    }
     start = new Date(req.body.sdate);
     end = new Date(req.body.edate);
-    name = req.params.id
+    name = req.body.id
     Loaders.aggregate([{
             "$match": { "name": name }
         },
@@ -678,7 +707,7 @@ exports.indidualkoolifilter = (req, res) => {
             }
 
 
-        ]).then(dics => {
+        ]).sort({ "payed.date": -1, "payed._id": -1 }).exec((err, dics) => {
             Loaders.find().distinct('name').then(loaders => {
 
 
@@ -686,11 +715,11 @@ exports.indidualkoolifilter = (req, res) => {
                     docs: docs,
                     dics: dics,
                     mainpath: '/viewkooli',
-                    names: name,
+                    names: req.body.id,
                     start: start,
                     end: end,
                     loaders: loaders,
-
+                    payment: payment
                 })
 
             })
@@ -719,7 +748,7 @@ exports.addloaderpayment = (req, res) => {
                 }, { safe: true, upsert: true },
                 function(err, model) {
                     var transaction = new Transaction({
-                        id: arrayid,
+                        _id: arrayid,
                         Date: date,
                         amount: req.body.amount,
                         types: "debit",
@@ -734,14 +763,22 @@ exports.addloaderpayment = (req, res) => {
                 })
         } else {
             if (req.body.category == 'all') {
+                req.flash('payment', true)
                 res.redirect('/employee/indidualkooli/' + name)
             } else {
-
+                req.flash('payment',true)
+                res.redirect('/employee/loaderspayment')
             }
         }
 
     }).then(docs => {
-        res.redirect('/employee/indidualkooli/' + name)
+        if (req.body.category == 'all') {
+            req.flash('payment', true)
+            res.redirect('/employee/indidualkooli/' + name)
+        } else {
+            req.flash('payment',true)
+            res.redirect('/employee/loaderspayment')
+        }
     }).catch(err => {
         console.log(err)
     })
@@ -793,7 +830,6 @@ exports.deleteload = (req, res) => {
 
 }
 exports.deletepayment = (req, res) => {
-    c
     name = req.params.name.toUpperCase()
     Loaders.findOne({ name: name }).then(docs => {
 
@@ -810,9 +846,11 @@ exports.deletepayment = (req, res) => {
                 Transaction.findByIdAndDelete(req.params.arrayid).then((err, docs) => {
 
                     if (req.params.type == 'individual') {
+                        req.flash('payment',true)
                         res.redirect('/employee/indidualkooli/' + name)
                     } else {
-
+                        req.flash('payment',true)
+                        res.redirect('/employee/loaderspayment')
                     }
                 })
 
@@ -820,6 +858,120 @@ exports.deletepayment = (req, res) => {
 
     }).catch(err => {
         console.log(err)
+    })
+
+}
+exports.loaderspayment = (req, res) => { 
+    let payment = req.flash('payment');
+if (payment.length > 0) {
+    payment = payment[0];
+} else {
+    payment = false;
+}
+    var start = new Date()
+    var end = new Date()
+    end.setDate(end.getDate() + 1)
+    start.setMonth(start.getMonth() - 1);
+
+    Loaders.aggregate([
+        { $unwind: "$work" }, {
+            $match: {
+
+                "work.date": {
+                    $lt: end,
+                    $gte: start
+                }
+            }
+        }
+
+
+    ]).sort({ "work.date": -1, "work._id": -1 }).exec((err, docs) => {
+
+        Loaders.aggregate([
+            { $unwind: "$payed" }, {
+                $match: {
+
+                    "payed.date": {
+                        $lt: end,
+                        $gte: start
+                    }
+                }
+            }
+
+        ]).sort({ "payed.date": -1, "payed._id": -1 }).exec((err, dics) => {
+            Loaders.find().distinct('name').then(loaders => {
+
+
+                res.render('loaderspayment', {
+                    docs: docs,
+                    dics: dics,
+                    mainpath: '/loaderspayment',
+                  
+                    start: start,
+                    end: end,
+                    loaders: loaders,
+                    payment: payment
+
+                })
+
+            })
+        })
+    })
+
+
+}
+exports.filterloaderspayment = (req, res) => {
+    let payment = req.flash('payment');
+    if (payment.length > 0) {
+        payment = payment[0];
+    } else {
+        payment = false;
+    }
+    start = new Date(req.body.sdate);
+    end = new Date(req.body.edate);
+    Loaders.aggregate([
+        { $unwind: "$work" }, {
+            $match: {
+
+                "work.date": {
+                    $lt: end,
+                    $gte: start
+                }
+            }
+        }
+
+
+    ]).sort({ "work.date": -1, "work._id": -1 }).exec((err, docs) => {
+
+        Loaders.aggregate([
+            { $unwind: "$payed" }, {
+                $match: {
+
+                    "payed.date": {
+                        $lt: end,
+                        $gte: start
+                    }
+                }
+            }
+
+        ]).sort({ "payed.date": -1, "payed._id": -1 }).exec((err, dics) => {
+            Loaders.find().distinct('name').then(loaders => {
+
+
+                res.render('loaderspayment', {
+                    docs: docs,
+                    dics: dics,
+                    mainpath: '/loaderspayment',
+                   
+                    start: start,
+                    end: end,
+                    loaders: loaders,
+                    payment: payment
+
+                })
+
+            })
+        })
     })
 
 }

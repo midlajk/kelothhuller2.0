@@ -24,4 +24,6 @@ router.get('/markattendance', employeeController.markattendance);
 router.post('/markattendance', employeeController.postmarkattendance);
 router.get('/addkooli', employeeController.addkooli);
 router.post('/addkooli', employeeController.postaddkooli);
+router.get('/loaderspayment', employeeController.loaderspayment);
+router.post('/filterloaderspayment', employeeController.filterloaderspayment);
 module.exports = router;

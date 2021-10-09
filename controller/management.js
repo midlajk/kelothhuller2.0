@@ -48,7 +48,7 @@ exports.accountmanagement = (req, res) => {
             },
 
         }]).sort({ "deal.date": -1, "deal._id": -1 }).exec((err, datas) => {
-            Names.find().then(names => {
+            Names.find().distinct('name').then(names => {
                 res.render('accountmanagement', {
                     mainpath: '/stockmanagement',
                     subpath: '',
@@ -75,25 +75,13 @@ exports.filtrsales = (req, res) => {
     }
     var end = new Date()
     var start = new Date()
-    var totals = {
-        "$addFields": {
-            "total_bag": {
-                "$sum": { "$sum": "$deal.bags" }
-            },
-            "total_amount": {
-                "$sum": { "$sum": "$deal.total" }
-            },
 
-        }
-
-    }
-    var filter = [{ $unwind: "$deal" }, totals]
+    var filter = [{ $unwind: "$deal" }]
     if (req.body.type == 'filter') {
 
         start = new Date(req.body.sdate);
         end = new Date(req.body.edate);
 
-        console.log(start)
         filter = [{ $unwind: "$deal" }, {
             $match: {
 
@@ -102,7 +90,7 @@ exports.filtrsales = (req, res) => {
                     $gte: start
                 }
             }
-        }, totals]
+        }]
 
     } else if (req.body.type == '2months') {
         start.setMonth(start.getMonth() - 2);
@@ -116,7 +104,7 @@ exports.filtrsales = (req, res) => {
                     $gte: start
                 }
             }
-        }, totals]
+        }]
     } else if (req.body.type == '5months') {
         start.setMonth(start.getMonth() - 5);
 
@@ -128,7 +116,7 @@ exports.filtrsales = (req, res) => {
                     $gte: start
                 }
             }
-        }, totals]
+        }]
 
     } else if (req.body.type == 'year') {
         start.setFullYear(start.getFullYear() - 1);
@@ -142,17 +130,17 @@ exports.filtrsales = (req, res) => {
                     $gte: start
                 }
             }
-        }, totals]
+        }]
     } else {
         start = new Date(08 / 03 / 2000)
 
-        filter = [{ $unwind: "$deal" }, totals]
+        filter = [{ $unwind: "$deal" }]
 
     }
 
     Buyers.aggregate(filter).sort({ "deal.date": -1, "deal._id": -1 }).exec((err, data) => {
         Sellers.aggregate(filter).sort({ "deal.date": -1, "deal._id": -1 }).exec((err, datas) => {
-            Names.find().then(names => {
+            Names.find().distinct('name').then(names => {
                 res.render('accountmanagement', {
                     mainpath: '/stockmanagement',
                     subpath: '',
@@ -170,7 +158,7 @@ exports.filtrsales = (req, res) => {
 
 }
 exports.postdetailedbuyerdata = (req, res) => {
-    console.log("here")
+
     var totalpayment
     var price;
     if (req.body.through == 'quatity') {
@@ -185,9 +173,9 @@ exports.postdetailedbuyerdata = (req, res) => {
     const objectid = new mongoose.Types.ObjectId()
     const arrayid = new mongoose.Types.ObjectId()
     var name = req.body.buyer.toUpperCase();
-    console.log(name)
+
     Sellers.findOne({ name: name }).then((docs, err) => {
-        console.log(name)
+
 
         if (err) {
             console.log(err)
@@ -249,7 +237,7 @@ exports.postdetailedbuyerdata = (req, res) => {
 
             })
             sellers.save(function(err, doc) {
-                console.log(doc)
+
             })
 
             Names.findOne({ $and: [{ name: name }, { relation: "seller" }] }).then(docs => {
@@ -283,7 +271,7 @@ exports.postdetailedbuyerdata = (req, res) => {
         if (parseInt(req.body.paid) > 0) {
 
             var transaction = new Transaction({
-                id: arrayid,
+                _id: arrayid,
                 Date: req.body.date,
                 amount: req.body.paid,
                 types: "debit",
@@ -302,7 +290,7 @@ exports.postdetailedbuyerdata = (req, res) => {
             res.redirect('/purchasemanagement')
         } else {
             req.flash('error', "Successfully added")
-            res.redirect('/accountmanagement')
+            res.redirect('/individualpurchase/' + name);
 
         }
 
@@ -343,7 +331,7 @@ exports.deletepurchase = (req, res) => {
 
     }).then((docs, err) => {
         if (err) console.log("error")
-        Transaction.findOneAndRemove({ id: req.params.arrayid }).then(docs => {
+        Transaction.findOneAndRemove({ _id: req.params.arrayid }).then(docs => {
             if (req.params.type == "seperate") {
                 res.redirect('/purchasemanagement')
             } else if (req.params.type == "nonseperate") {
@@ -366,7 +354,7 @@ exports.postbuyerform = (req, res) => {
     const objectid = new mongoose.Types.ObjectId()
     const arrayid = new mongoose.Types.ObjectId()
     var name = req.body.buyer.toUpperCase();
-    console.log(name)
+
     Buyers.findOne({ name: name }).then(docs => {
         if (docs) {
             var maintotal = docs.total - parseInt(req.body.paid) + totalpayment;
@@ -433,7 +421,7 @@ exports.postbuyerform = (req, res) => {
 
 
             })
-            console.log("ehere")
+
             Names.findOne({ $and: [{ name: name }, { relation: "buyer" }] }).then(docs => {
                 if (docs) {
 
@@ -463,7 +451,7 @@ exports.postbuyerform = (req, res) => {
 
         if (parseInt(req.body.paid) > 0) {
             var transaction = new Transaction({
-                id: arrayid,
+                _id: arrayid,
                 Date: req.body.date,
                 amount: req.body.paid,
                 types: "credit",
@@ -482,7 +470,7 @@ exports.postbuyerform = (req, res) => {
             res.redirect('/salesmanagement')
         } else {
             req.flash('error', "Successfully added")
-            res.redirect('/accountmanagement')
+            res.redirect('/individualsales/' + name);
         }
     })
 
@@ -525,7 +513,7 @@ exports.deletesales = (req, res) => {
     }).then((err, docs) => {
         if (err) console.log(err)
 
-        Transaction.findOneAndDelete({ id: req.params.arrayid }).then(docs => {
+        Transaction.findOneAndDelete({ _id: req.params.arrayid }).then(docs => {
             if (err) console.log(err)
             if (req.params.type == "seperate") {
                 res.redirect('/salesmanagement')
@@ -563,8 +551,7 @@ exports.salesmanagement = (req, res) => {
 
 
     ]).sort({ "deal.date": -1, "deal._id": -1 }).exec((err, datas) => {
-
-        Names.find({ relation: "buyer" }).then(names => {
+        Names.find().distinct('name').then(names => {
 
             res.render('salesmanagement', {
                 mainpath: '/stockmanagement',
@@ -596,7 +583,7 @@ exports.salesfilter = (req, res) => {
         start = new Date(req.body.sdate);
         end = new Date(req.body.edate);
 
-        console.log(start)
+
         filter = [{ $unwind: "$deal" }, {
             $match: {
 
@@ -619,7 +606,7 @@ exports.salesfilter = (req, res) => {
                     $gte: start
                 }
             }
-        }, totals]
+        }]
     } else if (req.body.type == '5months') {
         start.setMonth(start.getMonth() - 5);
 
@@ -631,7 +618,7 @@ exports.salesfilter = (req, res) => {
                     $gte: start
                 }
             }
-        }, totals]
+        }]
 
     } else if (req.body.type == 'year') {
         start.setFullYear(start.getFullYear() - 1);
@@ -645,7 +632,7 @@ exports.salesfilter = (req, res) => {
                     $gte: start
                 }
             }
-        }, totals]
+        }]
     } else {
         start = "08/03/2000"
 
@@ -654,8 +641,7 @@ exports.salesfilter = (req, res) => {
     }
 
     Buyers.aggregate(filter).sort({ "deal.date": -1, "deal._id": -1 }).exec((err, data) => {
-
-        Names.find().then(names => {
+        Names.find().distinct('name').then(names => {
             res.render('salesmanagement', {
                 mainpath: '/stockmanagement',
                 subpath: '',
@@ -693,8 +679,7 @@ exports.purchasemanagement = (req, res) => {
         },
 
     }]).sort({ "deal.date": -1, "deal._id": -1 }).exec((err, datas) => {
-        Names.find({ relation: "seller" }).then(names => {
-
+        Names.find().distinct('name').then(names => {
             res.render('purchasemanagement', {
                 mainpath: '/stockmanagement',
                 subpath: '',
@@ -748,7 +733,7 @@ exports.purchasefilter = (req, res) => {
                     $gte: start
                 }
             }
-        }, totals]
+        }]
     } else if (req.body.type == '5months') {
         start.setMonth(start.getMonth() - 5);
 
@@ -760,7 +745,7 @@ exports.purchasefilter = (req, res) => {
                     $gte: start
                 }
             }
-        }, totals]
+        }]
 
     } else if (req.body.type == 'year') {
         start.setFullYear(start.getFullYear() - 1);
@@ -774,7 +759,7 @@ exports.purchasefilter = (req, res) => {
                     $gte: start
                 }
             }
-        }, totals]
+        }]
     } else {
         start = "08/03/2000"
 
@@ -784,7 +769,7 @@ exports.purchasefilter = (req, res) => {
 
     Sellers.aggregate(filter).sort({ "deal.date": -1, "deal._id": -1 }).exec((err, data) => {
 
-        Names.find().then(names => {
+        Names.find().distinct('name').then(names => {
             res.render('purchasemanagement', {
                 mainpath: '/stockmanagement',
                 subpath: '',
@@ -827,7 +812,7 @@ exports.individualpurchase = (req, res) => {
                 }
             }
         }]).sort({ "deal.date": -1, "deal._id": -1 }).exec((err, docs) => {
-            Names.find().then(names => {
+            Names.find().distinct('name').then(names => {
                 res.render('individualsalesandpurchase', {
                     mainpath: '/stockmanagement',
                     category: 'purchase',
@@ -836,7 +821,7 @@ exports.individualpurchase = (req, res) => {
                     errorMessage: message,
                     start: start,
                     end: end,
-                    name: name,
+                    name: req.params.id.toUpperCase(),
                     names: names
 
                 })
@@ -865,7 +850,7 @@ exports.individualpurchasefilter = (req, res) => {
         start = new Date(req.body.sdate);
         end = new Date(req.body.edate);
 
-        console.log(start)
+
         filter = [{
             $match: {
                 "name": req.body.id
@@ -947,7 +932,7 @@ exports.individualpurchasefilter = (req, res) => {
 
         Sellers.aggregate(filter).sort({ "deal.date": -1, "deal._id": -1 }).exec((err, data) => {
 
-            Names.find().then(names => {
+            Names.find().distinct('name').then(names => {
                 res.render('individualsalesandpurchase', {
                     mainpath: '/stockmanagement',
                     category: 'purchase',
@@ -957,7 +942,7 @@ exports.individualpurchasefilter = (req, res) => {
                     errorMessage: message,
                     start: start,
                     end: end,
-                    name: name
+                    name: req.body.id.toUpperCase()
                 })
             }).catch(err => console.log(err));
 
@@ -979,6 +964,7 @@ exports.individualsales = (req, res) => {
     Buyers.findOne({
         name: req.params.id
     }).then(name => {
+
         Buyers.aggregate([{
             $match: {
                 "name": req.params.id
@@ -992,7 +978,7 @@ exports.individualsales = (req, res) => {
                 }
             }
         }]).sort({ "deal.date": -1, "deal._id": -1 }).exec((err, docs) => {
-            Names.find().then(names => {
+            Names.find().distinct('name').then(names => {
                 res.render('individualsalesandpurchase', {
                     mainpath: '/stockmanagement',
                     category: 'sales',
@@ -1001,7 +987,7 @@ exports.individualsales = (req, res) => {
                     errorMessage: message,
                     start: start,
                     end: end,
-                    name: name,
+                    name: req.params.id.toUpperCase(),
                     names: names
                 })
             }).catch(err => console.log(err));
@@ -1031,7 +1017,6 @@ exports.individualsalesfilter = (req, res) => {
         start = new Date(req.body.sdate);
         end = new Date(req.body.edate);
 
-        console.log(start)
         filter = [{
             $match: {
                 "name": req.body.id
@@ -1112,7 +1097,7 @@ exports.individualsalesfilter = (req, res) => {
     }).then(name => {
         Buyers.aggregate(filter).sort({ "deal.date": -1, "deal._id": -1 }).exec((err, data) => {
 
-            Names.find().then(names => {
+            Names.find().distinct('name').then(names => {
                 res.render('individualsalesandpurchase', {
                     mainpath: '/stockmanagement',
                     category: 'sales',
@@ -1121,165 +1106,12 @@ exports.individualsalesfilter = (req, res) => {
                     errorMessage: message,
                     start: start,
                     end: end,
-
+                    name: req.body.id.toUpperCase()
                 })
             }).catch(err => console.log(err));
 
         })
     })
-
-}
-exports.updateindividualsales = (req, res) => {
-
-
-    const arrayid = new mongoose.Types.ObjectId()
-    var totalpayment
-
-    if (req.body.through == 'quatity') {
-        totalpayment = 0
-
-    } else {
-        totalpayment = parseInt(req.body.total);
-
-    }
-    Buyers.findOne({ name: req.body.id }).then(docs => {
-        if (docs) {
-            var maintotal = docs.total - parseInt(req.body.paid) + totalpayment;
-            docs.updateOne({
-                    total: maintotal,
-
-                }, { safe: true, upsert: true },
-                function(err, model) {
-
-
-
-                }
-            )
-
-            docs.updateOne({
-
-                    $push: {
-                        "deal": {
-                            _id: arrayid,
-                            id: arrayid,
-                            date: req.body.date,
-                            bags: req.body.bags,
-                            kilogram: req.body.kilogram,
-                            price: req.body.price,
-                            total: totalpayment,
-                            paid: req.body.paid,
-                            Remaining: maintotal,
-                            through: req.body.through,
-                            hint: req.body.hint
-
-                        }
-                    }
-                }, { safe: true, upsert: true },
-                function(err, model) {
-                    console.log(err);
-
-                }
-            )
-        }
-    }).then(docs => {
-        if (parseInt(req.body.paid) > 0) {
-            var transaction = new Transaction({
-                id: arrayid,
-                Date: req.body.date,
-                amount: req.body.paid,
-                types: "credit",
-                comment: "Amount recieved from " + req.body.id,
-                paymentmode: "bank",
-                credit: req.body.paid
-
-            })
-            transaction.save((err, doc) => {
-
-            })
-
-        }
-
-        req.flash('error', "Successfully added")
-        res.redirect('/individualsales/' + req.body.id)
-
-    })
-
-}
-exports.updateindividualpuchase = (req, res) => {
-    var totalpayment
-    if (req.body.through == 'quatity') {
-        totalpayment = 0
-
-    } else {
-        totalpayment = parseInt(req.body.total);
-
-    }
-
-    const arrayid = new mongoose.Types.ObjectId()
-    Sellers.findOne({ name: req.body.id }).then(docs => {
-        if (docs) {
-            var maintotal = docs.total - parseInt(req.body.paid) + totalpayment;
-            docs.updateOne({
-                    total: maintotal,
-
-                }, { safe: true, upsert: true },
-                function(err, model) {
-
-
-
-                }
-            )
-
-            docs.updateOne({
-                    $push: {
-                        "deal": {
-                            _id: arrayid,
-                            id: arrayid,
-                            date: req.body.date,
-                            bags: req.body.bags,
-                            kilogram: req.body.kilogram,
-                            price: req.body.price,
-                            total: totalpayment,
-                            paid: req.body.paid,
-                            Remaining: maintotal,
-                            through: req.body.through,
-                            hint: req.body.hint
-                        }
-                    }
-                }, { safe: true, upsert: true },
-                function(err, model) {
-                    console.log(err);
-
-                }
-            )
-        }
-    }).then(docs => {
-
-
-        if (parseInt(req.body.paid) > 0) {
-            var transaction = new Transaction({
-                id: arrayid,
-                Date: req.body.date,
-                amount: req.body.paid,
-                types: "debit",
-                comment: "Amount paid to " + req.body.id,
-                paymentmode: "bank",
-                debit: req.body.paid
-
-            })
-            transaction.save((err, doc) => {
-
-
-            })
-
-        }
-        req.flash('error', "succeesfully added")
-        res.redirect('/individualpurchase/' + req.body.id)
-    })
-
-
-
-
 
 }
 
@@ -1386,7 +1218,7 @@ exports.utility = (req, res) => {
     }]).sort({ "detail.date": -1, "detail._id": -1 }).exec((err, data) => {
         Utility.find().distinct('name').then(utitlity => {
             res.render('utilitybill', {
-                mainpath: '/adduser',
+                mainpath: '/utility',
                 docs: data,
                 start: start,
                 end: end,
@@ -1400,6 +1232,7 @@ exports.utility = (req, res) => {
 
 }
 exports.utilityform = (req, res) => {
+    const arrayid = new mongoose.Types.ObjectId()
     var name = req.body.billto.toUpperCase()
     date = new Date(req.body.date)
     Utility.findOne({ name: name }).then(docs => {
@@ -1407,6 +1240,7 @@ exports.utilityform = (req, res) => {
             docs.updateOne({
                     $push: {
                         "detail": {
+                            _id: arrayid,
                             date: date,
                             payment: req.body.payment,
                             amount: req.body.amount
@@ -1416,11 +1250,7 @@ exports.utilityform = (req, res) => {
                 }, { safe: true, upsert: true },
                 function(err, model) {
                     if (err) console.log(err)
-                    if (req.body.type == 'individual') {
-                        res.redirect('/indivual_utility/' + name)
-                    } else {
-                        res.redirect('/utility')
-                    }
+
 
                 }
             )
@@ -1428,6 +1258,7 @@ exports.utilityform = (req, res) => {
             var utility = new Utility({
                 name: name,
                 detail: [{
+                    _id: arrayid,
                     date: date,
                     payment: req.body.payment,
                     amount: req.body.amount
@@ -1435,13 +1266,30 @@ exports.utilityform = (req, res) => {
 
             })
             utility.save((err, docs) => {
-                res.redirect('/utility')
+
             })
 
         }
 
-    }).catch(err => {
-        console.log(err)
+    }).then(docs => {
+
+        var transaction = new Transaction({
+            _id: arrayid,
+            Date: req.body.date,
+            amount: req.body.amount,
+            types: "debit",
+            comment: "utility " + name,
+            paymentmode: req.body.payment,
+            debit: req.body.amount
+
+        })
+        transaction.save((err, doc) => {
+            if (req.body.type == 'individual') {
+                res.redirect('/indivual_utility/' + name)
+            } else {
+                res.redirect('/utility')
+            }
+        })
     })
 
 
@@ -1449,7 +1297,7 @@ exports.utilityform = (req, res) => {
 }
 
 exports.editorder = (req, res) => {
-    console.log(req.body.hint)
+
     var totalpayment
     if (req.body.through == 'quatity') {
         totalpayment = 0
@@ -1494,7 +1342,7 @@ exports.editorder = (req, res) => {
                     }, // list fields you like to change
                     { 'new': true, 'safe': true, 'upsert': true })
                 .then(docs => {
-                    Transaction.findOneAndUpdate({ id: req.body.arrayid }).then(docs => {
+                    Transaction.findOneAndUpdate({ _id: req.body.arrayid }).then(docs => {
                         if (docs) {
                             docs.Date = req.body.editdate;
                             docs.amount = req.body.editpaid;
@@ -1556,7 +1404,7 @@ exports.editorder = (req, res) => {
                     }, // list fields you like to change
                     { 'new': true, 'safe': true, 'upsert': true })
                 .then(docs => {
-                    Transaction.findOneAndUpdate({ id: req.body.arrayid }).then(docs => {
+                    Transaction.findOneAndUpdate({ _id: req.body.arrayid }).then(docs => {
                         if (docs) {
                             docs.Date = req.body.editdate;
                             docs.amount = req.body.editpaid;
@@ -1593,20 +1441,21 @@ exports.getTransaction = (req, res) => {
     end.setDate(end.getDate() + 1)
     start.setMonth(start.getMonth() - 1);
     Transaction.find({ //query today up to tonight
-        Date: {
-            $lt: end,
-            $gte: start
-        }
-    }).then(docs => {
-
-        res.render('transactions', {
-            mainpath: '/transaction',
-            data: docs,
-            start: start,
-            end: end
-
+            Date: {
+                $lt: end,
+                $gte: start
+            }
         })
-    })
+        .sort({ Date: -1, _id: -1 }).exec((err, docs) => {
+
+            res.render('transactions', {
+                mainpath: '/transaction',
+                data: docs,
+                start: start,
+                end: end
+
+            })
+        })
 
 
 }
@@ -1728,7 +1577,8 @@ exports.filterTransaction = (req, res) => {
             $lt: end,
             $gte: start
         }
-    }).then(docs => {
+    }).sort({ Date: -1, _id: -1 }).exec((err, docs) => {
+
 
         res.render('transactions', {
             mainpath: '/transaction',

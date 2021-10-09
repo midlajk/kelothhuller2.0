@@ -1,66 +1,20 @@
 <%- include('./includes/head.ejs') %>
     <div class="container-fluid">
+        <div class="d-sm-flex align-items-center justify-content-between mb-4">
+            <h1 class="h3 mb-0 text-gray-800"> Purchase and sales Detailed report
+            </h1>
 
-        <!-- Page Heading -->
-
-        <div class="card shadow mb-4">
-            <div class="card-header"><a onclick="opendetail()" class="collapsible">Opens Report from <%=moment(start).format( 'DD-MM-YYYY')%>  to <%=moment(end).format( 'DD-MM-YYYY')%></a></div>
-            <div class="card-body contunt" id="opendiv">
-                <div class="row">
-
-
-
-
-                    <div class="col-md-6">
-                        <h5>Sales side</h5>
-                        <hr>
-                        <h6>Total Sales kg : <span id="totalsaleskg"></span>
-
-                        </h6><br>
-                        <h6>Total Sales amount : <span id="totalsalesamount"></span>
-
-                        </h6><br>
-                        <h6>Total Amount recieved : <span id="totalsalesamountgot"></span>
-
-                        </h6><br>
-                        <h6>Payment Remaining : <span id="totalsalespending"></span>
-
-                        </h6><br>
-                        <h6>Kg coffiee Remaining : <span id="remainingkg"></span>
-
-                        </h6><br>
-
-                    </div>
-                    <div class="col-md-6">
-                        <h5>Purchase side</h5>
-                        <hr>
-                        <h6>Total Purchase kg : <span id="totalpurchasekg"></span>
-
-                        </h6><br>
-                        <h6>Total Purchase amount : <span id="totalpurchaseamount"></span>
-
-                        </h6><br>
-                        <h6>Total Amount paid : <span id="totalpurchasepaid"></span>
-
-                        </h6><br>
-                        <h6>Payment Remaining : <span id="totalpurchaseremaining"></span>
-
-                        </h6><br>
-                        <h6>Expected Profit : <span id="expectedprofit"></span>
-
-                        </h6><br>
-
-                    </div>
-                </div>
-
-
-            </div>
+            <h6>From
+                <%= moment(start).format( 'DD-MMM-YYYY') %> to
+                    <%= moment(end).format( 'DD-MMM-YYYY') %>
+            </h6>
         </div>
-        <!-- DataTales Example -->
+
+
+
         <div class="card shadow mb-4">
             <div class="card-header py-3">
-                <h6 class="m-0 font-weight-bold text-primary mb-2"> Purchase and sales
-                </h6>
+
                 <% if (errorMessage) { %>
                     <h5 class="text-center">
                         <%= errorMessage %>
@@ -70,24 +24,29 @@
                     <% } %>
 
 
-                        <a href="purchasemanagement" class="btn btn-primary">Purchase</a>
-                        <a id="btnsales" href="/salesmanagement" class="btn btn-primary">Sales</a>
+                        <a href="purchasemanagement" class="btn btn-primary">Purchase Management</a>
+                        <a id="btnsales" href="/salesmanagement" class="btn btn-primary">Sales Management</a>
 
-                        <a href="" data-toggle="modal" data-target="#filtermodel" style="float:right" class="btn btn-danger">Filter table</a>
+                        <a href="" data-toggle="modal" data-target="#filtermodel" style="float:right" class="btn btn-danger">Filter table</a> <button class="btn btn-success float-right mr-2">View dealers list</button>
             </div>
             <div class="card-header py-3">
 
                 <form>
                     <div class="col-sm-12 mb-3 mb-sm-0 input-group">
-                        <input required type="text" id="mylistofsellers" class="form-control form-control-user" oninput="check_user()" placeholder="Search for names" list="browsers" autocomplete="off">
+                        <select tabindex="99" class="form-control form-control-user js-example-basic-single" id="mylistofsellers" onchange="check_user()">
+                            <option value="">Search names</option>
+                              <%for(let docs of names){%>
+                                <option value="<%=docs%>"><%=docs%></option>
+                              <%}%>
+                         </select>
+
                         <div class="input-group-append">
-                            <a href="" id="check" type="button" class="btn btn-danger">View Individual accounts</a>
+                            <select tabindex="100" class="form-control form-control-user" name="" onchange="check_user()" id="inputselection">
+                                <option value="Purchase">Purchase Account</option>
+                                <option value="Sales">Sales account</option>
+                            </select>
+                            <a href="" tabindex="101" id="check" type="button" class="btn btn-danger">Indivual Purchase</a>
                         </div>
-                        <datalist id="browsers">
-                            <%for(let docs of names){%>
-                                <option value="<%=docs.name%>:<%=docs.relation%>">
-                                <%}%>
-                        </datalist>
 
                     </div>
                 </form>
@@ -96,7 +55,7 @@
             </div>
             <div class="card-body">
                 <div class="table-responsive">
-                    <table class="table table-bordered" width="100%" cellspacing="0">
+                    <table class="table" width="100%" cellspacing="0">
                         <thead>
                             <tr>
                                 <th>Date</th>
@@ -108,18 +67,18 @@
                                 <th>Paid amount</th>
                                 <th>Through</th>
                                 <th>Hint</th>
-
                                 <th>Submit</th>
+
                             </tr>
                         </thead>
                         <tbody>
                             <form id="buyerform" action="/detailedbuyerdata" method="POST">
                                 <tr>
                                     <td><input autofocus required tabindex="2" name="date" class="form-control " value="<%=todaydate%>" type="date" id="date"></td>
-                                    <td><input required class="p-1 form-control" style="width: 200px;" tabIndex="3" oninput="set_user()" autocomplete="off" list="sellernames" type="text" name="buyer" id="customer">
+                                    <td><input required class="p-1 form-control" style="width: 200px;" tabIndex="3" autocomplete="off" list="sellernames" type="text" name="buyer" id="customer">
                                         <datalist id="sellernames">
                                             <%for(let docs of names){%>
-                                                <option value="<%=docs.name%>"><%=docs.name%>:<%=docs.relation%></option>
+                                                <option value="<%=docs%>">
                                                 <%}%>
                                         </datalist></td>
 
@@ -150,44 +109,10 @@
                     </table>
                 </div>
             </div>
-            <div class="card-body">
-                <div class="table-responsive">
-                    <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
-                        <thead>
-                            <tr>
-                                <th>Date</th>
-                                <th>Seller/Buyer</th>
-                                <th>Type</th>
-                                <th>Kilogram</th>
-                                <th>Prize</th>
-                                <th>Total</th>
-                                <th>Paid</th>
-                                <th>Remaining</th>
-                                <th>Through</th>
-                                <th>Hint</th>
-                                <th>Edit</th>
-                            </tr>
-                        </thead>
-                        <tfoot>
-                            <tr>
-                                <th>Date</th>
-                                <th>Seller/Buyer</th>
-                                <th>Type</th>
-                                <th>Kilogram</th>
-                                <th>Prize</th>
-                                <th>Total</th>
-                                <th>Paid</th>
-                                <th>Remaining</th>
-                                <th>Through</th>
-                                <th>Hint</th>
-                                <th>Edit</th>
-
-                            </tr>
-                        </tfoot>
-                        <tbody>
 
 
-                            <%
+
+            <%
                             internationalNumberFormat = new Intl.NumberFormat('en-US')
                             var length;
                             if (seller.length < buyer.length){
@@ -202,104 +127,213 @@
                             var bagpurchase = 0;
                             var purchasepaid = 0;
                             
-                            for (var i = 0; i < length; i++){%>
-                                <%if(i < seller.length){
-                                    totalpurchase = totalpurchase + seller[i].deal.total;
-                                    bagpurchase = bagpurchase + seller[i].deal.kilogram;
-                                    purchasepaid = purchasepaid + seller[i].deal.paid;
-                                      %>
-                                    <tr id="purchase" class="purchase">
-                                        <td>
-                                            <%= moment(seller[i].deal.date).format( 'DD-MMM-YYYY') %>
+                            for (var i = 0; i < length; i++){
+                                if(i < seller.length){
+                                    totalpurchase = parseInt(totalpurchase) + parseInt(seller[i].deal.total);
+                                    bagpurchase = parseInt(bagpurchase) + parseInt(seller[i].deal.kilogram);
+                                    purchasepaid = parseInt(purchasepaid) + parseInt(seller[i].deal.paid);
+                                }
+                                      
+                              if(i < buyer.length){
+                                            totalsales = parseInt(totalsales) + parseInt(buyer[i].deal.total);
+                                            bagsales = parseInt(bagsales) + parseInt(buyer[i].deal.kilogram);
+                                            salespaid = parseInt(salespaid) + parseInt(buyer[i].deal.paid);
+                              } 
+                                                }%>
 
-                                        </td>
-                                        <td>
-                                            <a href="/individualpurchase/<%=seller[i].name%>">
 
-                                                <%=seller[i].name%>
-                                            </a>
-                                        </td>
-                                        <td>
-                                            Purchase
-                                        </td>
+        </div>
+        <!-- Page Heading -->
+        <div class="row">
 
-                                        <td class="totalpurchasekg">
-                                            <%=seller[i].deal.kilogram.toLocaleString()%>
-                                        </td>
-                                        <td class="">
-                                            <%=seller[i].deal.price%>
-                                        </td>
-                                        <td class="totalpurchaseamount">
-                                            <%=seller[i].deal.total.toLocaleString()%>
-                                        </td>
-                                        <td class="totalpurchasepaid" style="color: brown;">
-                                            <%=seller[i].deal.paid.toLocaleString()%>
-                                        </td>
-                                        <td class="totalpurchaseremaining">
-                                            <%=seller[i].deal.Remaining.toLocaleString()%>
-                                        </td>
-                                        <td class="">
-                                            <%=seller[i].deal.through%>
-                                        </td>
-                                        <td class="">
-                                            <%=seller[i].deal.hint%>
-                                        </td>
-                                        <td><a href="#" onclick="editpurchase('<%=i%>')" class="btn btn-primary">edit</a>
+            <!-- Earnings (Monthly) Card Example -->
+            <div class="col-xl-3 col-md-6 mb-4">
+                <div class="card border-left-primary shadow h-100 py-2">
+                    <div class="card-body">
+                        <div class="row no-gutters align-items-center">
+                            <div class="col mr-2">
+                                <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">Total Sales kg</div>
+                                <div class="h5 mb-0 font-weight-bold text-gray-800"><span id="totalsaleskg"></span></div>
+                            </div>
+                            <div class="col-auto">
+                                <i class="fas fa-save fa-2x text-gray-300"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
 
-                                    </tr>
-                                    <%}%>
-                                        <%if(i < buyer.length){
-                                            totalsales = totalsales + buyer[i].deal.total;
-                                            bagsales = bagsales + buyer[i].deal.kilogram;
-                                            salespaid = salespaid + buyer[i].deal.paid;
-                                            %>
-                                            <tr class="sales" style="background: rgba(230, 230, 230, 0.918);">
-                                                <td>
-                                                    <%= moment(buyer[i].deal.date).format( 'DD-MMM-YYYY') %>
+            <!-- Earnings (Monthly) Card Example -->
+            <div class="col-xl-3 col-md-6 mb-4">
+                <div class="card border-left-success shadow h-100 py-2">
+                    <div class="card-body">
+                        <div class="row no-gutters align-items-center">
+                            <div class="col mr-2">
+                                <div class="text-xs font-weight-bold text-success text-uppercase mb-1">Total Sales amount</div>
+                                <div class="h5 mb-0 font-weight-bold text-gray-800"><span id="totalsalesamount"></span></div>
+                            </div>
+                            <div class="col-auto">
+                                <i class="fas fa-rupee-sign fa-2x text-gray-300"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
 
-                                                </td>
-                                                <td>
+            <div class="col-xl-3 col-md-6 mb-4">
+                <div class="card border-left-info shadow h-100 py-2">
+                    <div class="card-body">
+                        <div class="row no-gutters align-items-center">
+                            <div class="col mr-2">
+                                <div class="text-xs font-weight-bold text-success text-uppercase mb-1">Sales Payment Recieved </div>
+                                <div class="h5 mb-0 font-weight-bold text-gray-800"><span id="totalsalesamountgot"></span></div>
+                            </div>
+                            <div class="col-auto">
+                                <i class="fas fa-rupee-sign fa-2x text-gray-300"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
 
-                                                    <a href="/individualsales/<%=buyer[i].name%>">
-                                                        <%=buyer[i].name%>
-                                                    </a>
 
-                                                </td>
-                                                <td>Sales</td>
+            <!-- Earnings (Monthly) Card Example -->
 
-                                                <td class="totalsaleskg">
-                                                    <%=buyer[i].deal.kilogram.toLocaleString()%>
-                                                </td>
-                                                <td class="">
-                                                    <%=buyer[i].deal.price%>
-                                                </td>
-                                                <td class="totalsalesamount">
-                                                    <%=buyer[i].deal.total.toLocaleString() %>
-                                                </td>
-                                                <td class="totalsalespaid" style="color: green;">
-                                                    <%=buyer[i].deal.paid.toLocaleString()%>
-                                                </td>
-                                                <td class="totalsalesremaining">
-                                                    <%=buyer[i].deal.Remaining.toLocaleString()%>
-                                                </td>
-                                                <td class="">
-                                                    <%=buyer[i].deal.through%>
-                                                </td>
-                                                <td class="">
-                                                    <%=buyer[i].deal.hint%>
-                                                </td>
-                                                <td><a href="#" onclick="editsales('<%=i%>')" class="btn btn-primary">edit</a>
-
-                                                </td>
-                                            </tr>
-                                            <%}%>
-                                                <%}%>
-
-                        </tbody>
-                    </table>
+            <!-- Pending Requests Card Example -->
+            <div class="col-xl-3 col-md-6 mb-4">
+                <div class="card border-left-warning shadow h-100 py-2">
+                    <div class="card-body">
+                        <div class="row no-gutters align-items-center">
+                            <div class="col mr-2">
+                                <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">Remaining Sales Payment</div>
+                                <div class="h5 mb-0 font-weight-bold text-gray-800"><span id="totalsalespending"></span></div>
+                            </div>
+                            <div class="col-auto">
+                                <i class="fas fa-rupee-sign fa-2x text-gray-300"></i>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
+        <div class="row">
+
+            <!-- Earnings (Monthly) Card Example -->
+            <div class="col-xl-3 col-md-6 mb-4">
+                <div class="card border-left-primary shadow h-100 py-2">
+                    <div class="card-body">
+                        <div class="row no-gutters align-items-center">
+                            <div class="col mr-2">
+                                <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">Total Purchase kg</div>
+                                <div class="h5 mb-0 font-weight-bold text-gray-800"><span id="totalpurchasekg"></span></div>
+                            </div>
+                            <div class="col-auto">
+                                <i class="fas fa-save fa-2x text-gray-300"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Earnings (Monthly) Card Example -->
+            <div class="col-xl-3 col-md-6 mb-4">
+                <div class="card border-left-success shadow h-100 py-2">
+                    <div class="card-body">
+                        <div class="row no-gutters align-items-center">
+                            <div class="col mr-2">
+                                <div class="text-xs font-weight-bold text-success text-uppercase mb-1">Total purchase amount</div>
+                                <div class="h5 mb-0 font-weight-bold text-gray-800"><span id="totalpurchaseamount"></span></div>
+                            </div>
+                            <div class="col-auto">
+                                <i class="fas fa-rupee-sign fa-2x text-gray-300"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-xl-3 col-md-6 mb-4">
+                <div class="card border-left-info shadow h-100 py-2">
+                    <div class="card-body">
+                        <div class="row no-gutters align-items-center">
+                            <div class="col mr-2">
+                                <div class="text-xs font-weight-bold text-success text-uppercase mb-1">purchase amount paid </div>
+                                <div class="h5 mb-0 font-weight-bold text-gray-800"><span id="totalpurchasepaid"></span></div>
+                            </div>
+                            <div class="col-auto">
+                                <i class="fas fa-rupee-sign fa-2x text-gray-300"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+
+            <!-- Earnings (Monthly) Card Example -->
+
+            <!-- Pending Requests Card Example -->
+            <div class="col-xl-3 col-md-6 mb-4">
+                <div class="card border-left-warning shadow h-100 py-2">
+                    <div class="card-body">
+                        <div class="row no-gutters align-items-center">
+                            <div class="col mr-2">
+                                <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">Purchase payment Remaining</div>
+                                <div class="h5 mb-0 font-weight-bold text-gray-800"><span id="totalpurchaseremaining"></span></div>
+                            </div>
+                            <div class="col-auto">
+                                <i class="fas fa-rupee-sign fa-2x text-gray-300"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+
+            <!-- Earnings (Monthly) Card Example -->
+            <div class="col-xl-6 col-md-6 mb-4">
+                <div class="card border-left-primary shadow h-100 py-2">
+                    <div class="card-body">
+                        <div class="row no-gutters align-items-center">
+                            <div class="col mr-2">
+                                <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">Total kg Remaining</div>
+                                <div class="h5 mb-0 font-weight-bold text-gray-800"><span id="remainingkg"></span></div>
+                            </div>
+                            <div class="col-auto">
+                                <i class="fas fa-save fa-2x text-gray-300"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Earnings (Monthly) Card Example -->
+            <div class="col-xl-6 col-md-6 mb-4">
+                <div class="card border-left-success shadow h-100 py-2">
+                    <div class="card-body">
+                        <div class="row no-gutters align-items-center">
+                            <div class="col mr-2">
+                                <div class="text-xs font-weight-bold text-success text-uppercase mb-1">Expected Profit</div>
+                                <div class="h5 mb-0 font-weight-bold text-gray-800"><span id="expectedprofit"></span></div>
+                            </div>
+                            <div class="col-auto">
+                                <i class="fas fa-rupee-sign fa-2x text-gray-300"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+
+
+            <!-- Earnings (Monthly) Card Example -->
+
+            <!-- Pending Requests Card Example -->
+
+        </div>
+
+        <!-- DataTales Example -->
+
 
     </div>
     <div class="modal fade" id="filtermodel" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
@@ -354,86 +388,6 @@
         </div>
     </div>
 
-    <div class="modal fade" id="editmodel" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-        <div class="modal-dialog" role="document">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="exampleModalLabel"><span id="editcustomers"></span> <span id="edittype"></span></h5>
-                    <a class="close" type="button" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">×</span>
-                    </a>
-                </div>
-                <div class="modal-body">
-                    <form id="editform" action="/editorder" method="POST">
-                        <div class="form-group row">
-                            <div class="col-sm-6 mb-3 mb-sm-0">
-                                <label for="">Date</label>
-                                <input type="date" required class="form-control form-control-user" id="editdate" tabindex="42" name="editdate">
-                            </div>
-                            <input type="hidden" class="form-control form-control-user" id="section" name="section">
-
-                            <input type="hidden" class="form-control form-control-user" value="detailedsalesandpurchase" name="types">
-
-
-                            <div class="col-sm-6 mb-3 mb-sm-0">
-                                <label for="">Autumn</label>
-                                <input type="number" tabindex="43" class="form-control form-control-user" id="editoutumn" step=".01" name="autumn">
-                            </div>
-                            <div class="col-sm-6 mb-3 mb-sm-0">
-                                <label for="">Moisture</label>
-                                <input type="number" tabindex="44" class="form-control form-control-user" id="editmoisture" step=".01" name="moisture">
-                            </div>
-                            <div class="col-sm-6 mb-3 mb-sm-0">
-                                <label for="">Hint / careoff</label>
-                                <input type="text" tabindex="45" class="form-control form-control-user" id="editcareoff" name="hint">
-                            </div>
-                            <div class="col-sm-6 mb-3 mb-sm-0">
-                                <label for="">Bags</label>
-                                <input type="number" tabindex="46" class="form-control form-control-user" id="editbags" name="editbags">
-                            </div>
-
-                            <div class="col-sm-6 mb-3 mb-sm-0">
-                                <label for="">Kilogram</label>
-                                <input required type="number" tabindex="47" class="form-control form-control-user price-control" id="editkilogram" step=".01" name="editkilogram">
-                            </div>
-                            <div class="col-sm-6 mb-3 mb-sm-0">
-                                <label for="">Prize</label>
-                                <input required type="number" tabindex="48" class="form-control form-control-user price-control" id="editprize" step=".01" name="editprize">
-                            </div>
-                            <div class="col-sm-6 mb-3 mb-sm-0">
-                                <label for="">Total</label>
-                                <input required type="number" tabindex="49" class="p-1" id="edittotal" step=".01" name="edittotal">
-
-                            </div>
-                            <div class="col-sm-6 mb-3 mb-sm-0">
-                                <label for="">Paid</label>
-                                <input required type="number" tabindex="50" class="form-control form-control-user" id="editpaid" name="editpaid">
-                            </div>
-                            <div class="col-sm-6 mb-3 mb-sm-0">
-                                <label for="">Remaining</label>
-                                <h5 id="editremaining"> </h5>
-                            </div>
-
-
-                            <input type="hidden" name="through" id="thre">
-
-                            <input type="hidden" name="previoustotal" id="previoustotal">
-                            <input type="hidden" name="previouspaid" id="previouspaid">
-                            <input type="hidden" value="" name="arrayid" id="arrayid">
-                            <input type="hidden" value="" name="objectid" id="objectid">
-                        </div>
-                    </form>
-
-                </div>
-                <div class="modal-footer">
-                    <a id="deletebutton" class="btn btn-danger" onclick="return confirm('are you sure you want to delete this?')">Delete</a>
-
-                    <button tabindex="51" form="editform" class="btn btn-primary" type="submit">Edit Deal</button>
-                </div>
-            </div>
-
-        </div>
-    </div>
 
     <div class="floatingButtonWrap">
         <div class="floatingButtonInner">
@@ -459,91 +413,24 @@
         </div>
     </div>
     <script>
-        function editsales(i) {
-            var obj = <%- JSON.stringify(buyer) %>;
-
-            document.getElementById("deletebutton").href = "/deletesales/" + obj[i]._id + "/" + obj[i].deal._id + "/nonseperate/" + obj[i].deal.total + "/" + obj[i].deal.paid;
-            var today = moment(obj[i].deal.date).format('YYYY-MM-DD');
-            document.getElementById("editdate").value = today;
-
-            document.getElementById('edittype').innerText = "sales";
-            document.getElementById('editcustomers').innerText = obj[i].name;
-            document.getElementById('editbags').value = obj[i].deal.bags;
-            document.getElementById('editkilogram').value = obj[i].deal.kilogram
-            document.getElementById('edittotal').value = obj[i].deal.total
-            document.getElementById('editpaid').value = obj[i].deal.paid
-            document.getElementById('editremaining').innerText = obj[i].deal.Remaining.toLocaleString();
-
-            document.getElementById('objectid').value = obj[i]._id;
-            document.getElementById('arrayid').value = obj[i].deal._id;
-            document.getElementById('section').value = "sales"
-            document.getElementById('editoutumn').value = obj[i].deal.outumn;
-            document.getElementById('editmoisture').value = obj[i].deal.moisture;
-            document.getElementById('editcareoff').value = obj[i].deal.hint;
-            document.getElementById('editprize').value = obj[i].deal.price;
-            document.getElementById('previoustotal').value = obj[i].deal.total;
-            document.getElementById('previouspaid').value = obj[i].deal.paid;
-            document.getElementById('thre').value = obj[i].deal.through;
-            $('#editmodel').modal('show')
-
-        }
-
-        function editpurchase(i) {
-            var obj = <%- JSON.stringify(seller) %>;
-
-            document.getElementById("deletebutton").href = "/deletepurchase/" + obj[i]._id + "/" + obj[i].deal._id + "/nonseperate/" + obj[i].deal.total + "/" + obj[i].deal.paid;
-            var today = moment(obj[i].deal.date).format('YYYY-MM-DD');
-            document.getElementById("editdate").value = today;
-
-            document.getElementById('edittype').innerText = "purchase";
-            document.getElementById('editcustomers').innerText = obj[i].name;
-            document.getElementById('section').value = "purchase"
-            document.getElementById('editbags').value = obj[i].deal.bags;
-            document.getElementById('editkilogram').value = obj[i].deal.kilogram;
-            document.getElementById('edittotal').value = obj[i].deal.total;
-
-            document.getElementById('objectid').value = obj[i]._id;
-            document.getElementById('arrayid').value = obj[i].deal._id;
-            document.getElementById('editpaid').value = obj[i].deal.paid
-            document.getElementById('editremaining').innerText = obj[i].deal.Remaining.toLocaleString();
-            document.getElementById('editoutumn').value = obj[i].deal.outumn;
-            document.getElementById('editmoisture').value = obj[i].deal.moisture;
-            document.getElementById('editcareoff').value = obj[i].deal.hint;
-            document.getElementById('editprize').value = obj[i].deal.price;
-            document.getElementById('previoustotal').value = obj[i].deal.total;
-            document.getElementById('previouspaid').value = obj[i].deal.paid;
-            document.getElementById('thre').value = obj[i].deal.through;
-            $('#editmodel').modal('show')
-        }
-
         function check_user() {
             var st = document.getElementById("mylistofsellers").value;
-            var content = st.split(':');
-            var name = content[0];
-            var type = content[1];
+            var yt = document.getElementById("inputselection").value;
+            var x = document.getElementById("check")
+            if (!st) {
 
-            var link
-            if (type == 'buyer') {
+            } else {
+                name = st;
+            }
+            if (yt == 'Sales') {
                 link = "individualsales"
+                x.innerText = "Indivual Sales"
             } else {
                 link = "individualpurchase"
+                x.innerText = "Indivual Purchase"
             }
-            var x = document.getElementById("check")
+
             x.href = "/" + link + "/" + name
-        }
-
-        function set_user() {
-            var st = document.getElementById("customer").value;
-            var content = st.split(':');
-            var type = content[1];
-
-            if (type == 'buyer') {
-                document.getElementById(
-                    "formaction").selectedIndex = "1";
-            } else {
-                document.getElementById(
-                    "formaction").selectedIndex = "0";
-            }
 
         }
     </script>
@@ -615,8 +502,8 @@
             var totalsaleskg = <%= bagsales%>;
             var totalsalesremaining = 0;
 
-            var remainingbags = parseInt(totalpurchasekg - totalsaleskg);
-            var expectedrevenue = parseInt(totalsalesamount - totalpurchaseamount);
+            var remainingbags = parseInt(totalpurchasekg) - parseInt(totalsaleskg);
+            var expectedrevenue = parseInt(totalsalesamount) - parseInt(totalpurchaseamount);
             totalpurchaseremaining = parseInt(totalpurchaseamount - totalpurchasepaid);
             totalsalesremaining = parseInt(totalsalesamount - totalsalespaid);
             document.getElementById('totalpurchaseamount').innerText = totalpurchaseamount.toLocaleString();
@@ -638,18 +525,7 @@
     <script>
         var coll = document.getElementsByClassName("collapsible");
 
-        function opendetail() {
 
-            var content = document.getElementById('opendiv')
-            if (content.style.maxHeight) {
-                content.style.maxHeight = null;
-                content.style.padding = "0px 18px";
-
-            } else {
-                content.style.padding = "10px 18px";
-                content.style.maxHeight = "350px";
-            }
-        };
         $(document).ready(function() {
             $('#submit').click(function() {
                 $('#submit').hide();

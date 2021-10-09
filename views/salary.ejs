@@ -2,17 +2,52 @@
 
 
     <div class="container-fluid">
+        <div class="d-sm-flex align-items-center justify-content-between mb-4">
+            <h1 class="h3 mb-0 text-gray-800">
+                <%if(!payment){%><span id="headertext">Salary Paid</span>
+                    <%}else{%><span id="headertext">Salary Payment</span>
+                        <%}%>
 
+                            <%if(individual){%>
+                                to/from
+                                <%=id%>
+                                    <%}%>
+            </h1>
+
+            <h6>
+                <%if(filter){%>
+                    From
+                    <%=moment(start).format( 'DD-MM-YYYY')%> to
+                        <%=moment(end).format( 'DD-MM-YYYY')%>
+                            <%}%>
+            </h6>
+        </div>
         <!-- Page Heading -->
         <div class="row">
 
             <!-- Earnings (Monthly) Card Example -->
+            <!-- Earnings (Monthly) Card Example -->
+            <div class="col-xl-3 col-md-6 mb-4">
+                <div class="card border-left-success shadow h-100 py-2">
+                    <div class="card-body">
+                        <div class="row no-gutters align-items-center">
+                            <div class="col mr-2">
+                                <div class="text-xs font-weight-bold text-success text-uppercase mb-1">Total Payment </div>
+                                <div class="h5 mb-0 font-weight-bold text-gray-800"><span id="totalpaid"></span></div>
+                            </div>
+                            <div class="col-auto">
+                                <i class="fas fa-rupee-sign fa-2x text-gray-300"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
             <div class="col-xl-3 col-md-6 mb-4">
                 <div class="card border-left-primary shadow h-100 py-2">
                     <div class="card-body">
                         <div class="row no-gutters align-items-center">
                             <div class="col mr-2">
-                                <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">Total Salary</div>
+                                <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">Total Paid</div>
                                 <div class="h5 mb-0 font-weight-bold text-gray-800"><span id="totalsum"></span></div>
                             </div>
                             <div class="col-auto">
@@ -23,22 +58,7 @@
                 </div>
             </div>
 
-            <!-- Earnings (Monthly) Card Example -->
-            <div class="col-xl-3 col-md-6 mb-4">
-                <div class="card border-left-success shadow h-100 py-2">
-                    <div class="card-body">
-                        <div class="row no-gutters align-items-center">
-                            <div class="col mr-2">
-                                <div class="text-xs font-weight-bold text-success text-uppercase mb-1">Total Paid </div>
-                                <div class="h5 mb-0 font-weight-bold text-gray-800"><span id="totalpaid"></span></div>
-                            </div>
-                            <div class="col-auto">
-                                <i class="fas fa-rupee-sign fa-2x text-gray-300"></i>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
+
             <div class="col-xl-3 col-md-6 mb-4">
                 <div class="card border-left-success shadow h-100 py-2">
                     <div class="card-body">
@@ -74,28 +94,18 @@
         </div>
 
         <!-- DataTales Example -->
-        <div class="card shadow mb-4" id="loadingdeatils">
+        <div class="card shadow mb-4" id="loadingdeatils" style="<%if(payment){%>display: none;<%}%>">
 
             <div class="card-header py-3">
 
                 <a class="float-right btn btn-danger ml-2" href="" href="" data-toggle="modal" data-target="#filtermodel">Filter</a>
                 <button class="btn btn-success float-right" id="paymentbutton">View payments</button>
-                <%if(!individual){%> <a class="btn btn-primary float-right mr-2" href="/employee/Editemployee">Employee List</a>
+                <%if(!individual){%> <a class="btn btn-primary " href="/employee/Editemployee">Employee List</a>
                     <%}else{%>
                         <a class="btn btn-primary float-right mr-2" href="/paymentcontroller/salary">Complete Salary </a>
                         <%}%>
 
-                            <h5 class="">Salary Paid
-                                <%if(individual){%>
-                                    of
-                                    <%=id%>
-                                        <%}%>
-                                            <%if(filter){%>
-                                                from
-                                                <%=moment(start).format( 'DD-MM-YYYY')%> to
-                                                    <%=moment(end).format( 'DD-MM-YYYY')%>
-                                                        <%}%>
-                            </h5>
+                            <br>
                             <br>
                             <form action="" method="GET" id="checkword">
                                 <div id="inputFormRow" class="form-group row">
@@ -120,20 +130,22 @@
             </div>
             <div class="card-body">
                 <div class="table-responsive">
-                    <table width="100%" cellspacing="0">
-
-                        <tbody>
+                    <table class="table" width="100%" cellspacing="0">
+                        <thead>
                             <tr>
-                                <td>Date</td>
+                                <th>Date</th>
                                 <%if(!individual){%>
-                                    <td>Name</td>
+                                    <th>Name</th>
                                     <%}%>
-                                        <td>Amount</tf>
+                                        <th>Amount</tf>
 
-                                            <td>Hint</td>
-
+                                            <th>Hint</th>
+                                            <th>Submit</th>
 
                             </tr>
+                        </thead>
+                        <tbody>
+
                             <form id="utility" action="/paymentcontroller/salary" method="POST">
                                 <tr>
                                     <td><input required tabindex="1" name="date" class="form-control" style="max-width: 175px;" type="date" value="<%=todaydate%>" id=""></td>
@@ -250,7 +262,7 @@
 
 
         </div>
-        <div class="card shadow mb-4" style="display: none;" id="paymentdetails">
+        <div class="card shadow mb-4" style="<%if(!payment){%>display: none;<%}%>" id="paymentdetails">
             <div class="card-header py-3">
                 <a class="float-right btn btn-danger ml-2" href="" href="" data-toggle="modal" data-target="#filtermodel">Filter</a>
                 <button class="btn btn-success float-right" id="loadingbutton">View Paid</button>
@@ -271,18 +283,20 @@
             </div>
             <div class="card-body">
                 <div class="table-responsive">
-                    <table width="100%" cellspacing="0">
-
-                        <tbody>
+                    <table class="table" width="100%" cellspacing="0">
+                        <thead>
                             <tr>
-                                <td>Date</td>
+                                <th>Date</th>
                                 <%if(!individual){%>
-                                    <td>Name</td>
+                                    <th>Name</th>
                                     <%}%>
-                                        <td>Amount</td>
-                                        <td>hint</td>
-
+                                        <th>Amount</th>
+                                        <th>hint</th>
+                                        <th>Submit</th>
                             </tr>
+                        </thead>
+                        <tbody>
+
                             <form id="buyerform" action="/paymentcontroller/addsalary" method="POST">
                                 <tr>
                                     <td><input required tabindex="1" name="date" class="form-control" style="max-width: 175px;" value="<%=todaydate%>" type="date" id="date"></td>
@@ -435,9 +449,11 @@
 
                 $('#paymentdetails').show();
                 $('#loadingdeatils').hide();
+                $('#headertext').text("Salary Payments");
+
             })
             $("#loadingbutton").click(function() {
-
+                $('#headertext').text("Salary Paid");
                 $('#paidname').focus();
                 $('#paymentdetails').hide();
                 $('#loadingdeatils').show();
@@ -482,20 +498,22 @@
                     $('#button-spinner').show();
 
                 });
-            });
-            $(document).ready(function() {
                 $('#submits').click(function() {
                     $('#submits').hide();
                     $('#button-spinners').show();
 
                 });
+            });
+            $(document).ready(function() {
+
                 $('#MyTable').DataTable({
                     initComplete: function() {
                         this.api().columns().every(function() {
                             var column = this;
 
                         });
-                    }
+                    },
+                    "ordering": false,
                 });
             });
         </script>

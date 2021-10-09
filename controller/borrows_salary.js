@@ -79,7 +79,11 @@ exports.indivdualborrowsfilter = (req, res) => {
     var start = new Date(req.body.sdate)
     var end = new Date(req.body.edate)
 
-    Borrowed.aggregate([{ $unwind: "$detail" }, {
+    Borrowed.aggregate([{
+        $match: {
+            "name": req.body.id.toUpperCase()
+        }
+    }, { $unwind: "$detail" }, {
         $match: {
 
             "detail.date": {
@@ -97,6 +101,7 @@ exports.indivdualborrowsfilter = (req, res) => {
                 individual: true,
                 borrevers: borrevers,
                 filter: true,
+                id: req.body.id.toUpperCase()
             })
         })
 
@@ -158,13 +163,15 @@ exports.borrowform = (req, res) => {
                         section: "Borrowal"
 
                     })
-                    transaction.save((err, doc) => {})
-                    if (err) console.log(err)
-                    if (req.body.type == 'individual') {
-                        res.redirect('/paymentcontroller/indivdualborrows/' + name)
-                    } else {
-                        res.redirect('/paymentcontroller/borrows')
-                    }
+                    transaction.save((err, doc) => {
+                        if (err) console.log(err)
+                        if (req.body.sec == 'individual') {
+                            res.redirect('/paymentcontroller/indivdualborrows/' + name)
+                        } else {
+                            res.redirect('/paymentcontroller/borrows')
+                        }
+
+                    })
 
                 }
             )
@@ -172,6 +179,7 @@ exports.borrowform = (req, res) => {
             var borrowe = new Borrowed({
                 name: name,
                 detail: [{
+                    _id: arrayid,
                     date: date,
                     payment: req.body.payment,
                     amount: amount,
@@ -181,7 +189,27 @@ exports.borrowform = (req, res) => {
             })
             borrowe.save((err, docs) => {
                 console.log(err)
-                res.redirect('/paymentcontroller/borrows')
+                var transaction = new Transaction({
+                    _id: arrayid,
+                    Date: date,
+                    amount: amount,
+                    types: req.body.type,
+                    comment: method + name,
+                    paymentmode: "bank or cash",
+                    debit: debit,
+                    credit: credit,
+                    section: "Borrowal"
+
+                })
+                transaction.save((err, doc) => {
+                    if (err) console.log(err)
+                    if (req.body.sec == 'individual') {
+                        res.redirect('/paymentcontroller/indivdualborrows/' + name)
+                    } else {
+                        res.redirect('/paymentcontroller/borrows')
+                    }
+
+                })
             })
 
         }
@@ -231,7 +259,12 @@ exports.deleteborrow = (req, res) => {
     }
     /* -------next ----- */
 exports.salary = (req, res) => {
-
+    let payment = req.flash('payment');
+    if (payment.length > 0) {
+        payment = payment[0];
+    } else {
+        payment = false;
+    }
     Employees.aggregate([{ $unwind: "$detail" }]).sort({ "detail.date": -1, "detail._id": -1 }).exec((err, data) => {
         Employees.aggregate([{ $unwind: "$payment" }]).sort({ "payment.date": -1, "payment._id": -1 }).exec((err, dics) => {
             Employees.find().distinct('name').then(borrevers => {
@@ -241,7 +274,8 @@ exports.salary = (req, res) => {
                     individual: false,
                     borrevers: borrevers,
                     filter: false,
-                    dics: dics
+                    dics: dics,
+                    payment: payment
 
                 })
             })
@@ -251,6 +285,12 @@ exports.salary = (req, res) => {
 
 }
 exports.filtersalary = (req, res) => {
+    let payment = req.flash('payment');
+    if (payment.length > 0) {
+        payment = payment[0];
+    } else {
+        payment = false;
+    }
     var start = new Date(req.body.sdate)
     var end = new Date(req.body.edate)
     console.log("here")
@@ -281,7 +321,8 @@ exports.filtersalary = (req, res) => {
                     individual: false,
                     borrevers: borrevers,
                     filter: true,
-                    dics: dics
+                    dics: dics,
+                    payment: payment
 
                 })
             })
@@ -291,6 +332,12 @@ exports.filtersalary = (req, res) => {
 
 }
 exports.indivdualsalary = (req, res) => {
+    let payment = req.flash('payment');
+    if (payment.length > 0) {
+        payment = payment[0];
+    } else {
+        payment = false;
+    }
     var name = req.params.id
     Employees.aggregate([{
         $match: {
@@ -311,7 +358,8 @@ exports.indivdualsalary = (req, res) => {
                     borrevers: borrevers,
                     filter: false,
                     id: name,
-                    dics: dics
+                    dics: dics,
+                    payment: payment
 
                 })
             })
@@ -321,6 +369,12 @@ exports.indivdualsalary = (req, res) => {
 
 }
 exports.indivdualsalaryfilter = (req, res) => {
+    let payment = req.flash('payment');
+    if (payment.length > 0) {
+        payment = payment[0];
+    } else {
+        payment = false;
+    }
     var start = new Date(req.body.sdate)
     var end = new Date(req.body.edate)
     name = req.body.id
@@ -360,7 +414,8 @@ exports.indivdualsalaryfilter = (req, res) => {
                     borrevers: borrevers,
                     filter: true,
                     id: name,
-                    dics: dics
+                    dics: dics,
+                    payment: payment
                 })
             })
         })
@@ -406,8 +461,10 @@ exports.salaryform = (req, res) => {
 
                         if (err) console.log(err)
                         if (req.body.type == 'individual') {
+                            req.flash('payment', false)
                             res.redirect('/paymentcontroller/indivdualsalary/' + name)
                         } else {
+                            req.flash('payment', false)
                             res.redirect('/paymentcontroller/salary')
                         }
                     })
@@ -454,8 +511,10 @@ exports.addsalary = (req, res) => {
                 function(err, model) {
                     if (err) console.log(err)
                     if (req.body.type == 'individual') {
+                        req.flash('payment', true)
                         res.redirect('/paymentcontroller/indivdualsalary/' + name)
                     } else {
+                        req.flash('payment', true)
                         res.redirect('/paymentcontroller/salary')
                     }
 
@@ -477,8 +536,9 @@ exports.addsalary = (req, res) => {
 
 }
 exports.deletesalary = (req, res) => {
-
+    var name
     Employees.findById(req.params.objectid).then((docs, err) => {
+        name = docs.name
         docs.updateOne({
                 $pull: {
                     "detail": {
@@ -497,15 +557,12 @@ exports.deletesalary = (req, res) => {
 
     }).then(docs => {
         if (req.params.section == 'salarymanage') {
+            req.flash('payment', false)
             res.redirect('/paymentcontroller/salary')
         } else {
-            var section = req.params.section.split('_')[0];
-            var name = req.params.section.split('_')[1];
-            if (section == 'salary') {
-                res.redirect('/paymentcontroller/indivdualsalary/' + name)
-            } else {
+            req.flash('payment', false)
+            res.redirect('/paymentcontroller/indivdualsalary/' + name)
 
-            }
         }
     })
 
@@ -513,8 +570,9 @@ exports.deletesalary = (req, res) => {
 
 }
 exports.deletesalarypayment = (req, res) => {
-
+    var name
     Employees.findById(req.params.objectid).then((docs, err) => {
+        name = docs.name
         docs.updateOne({
                 $pull: {
                     "payment": {
@@ -531,15 +589,14 @@ exports.deletesalarypayment = (req, res) => {
 
     }).then(docs => {
         if (req.params.section == 'salarymanage') {
+            req.flash('payment', true)
             res.redirect('/paymentcontroller/salary')
         } else {
-            var section = req.params.section.split('_')[0];
-            var name = req.params.section.split('_')[1];
-            if (section == 'salary') {
-                res.redirect('/paymentcontroller/indivdualsalary/' + name)
-            } else {
+            req.flash('payment', true)
+            res.redirect('/paymentcontroller/indivdualsalary/' + name)
 
-            }
+
+
         }
     })
 

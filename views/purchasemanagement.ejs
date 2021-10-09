@@ -3,8 +3,8 @@
         <div class="d-sm-flex align-items-center justify-content-between mb-4">
             <h1 class="h3 mb-0 text-gray-800">Purchase management</h1>
             <h6>
-                <%=moment(start).format( 'DD-MM-YYYY')%> to
-                    <%=moment(end).format( 'DD-MM-YYYY')%>
+                <%=moment(start).format( 'DD-MMM-YYYY')%> to
+                    <%=moment(end).format( 'DD-MMM-YYYY')%>
             </h6>
 
         </div>
@@ -100,7 +100,7 @@
                     </p>
                     <% } %>
                         <a href="/salesmanagement" class="btn btn-primary">Detailed Sales</a>
-                        <a href="/accountmanagement" class="btn btn-primary">Detailed Report</a>
+                        <a href="/accountmanagement" class="btn btn-success">Detailed Report</a>
 
                         <a href="" data-toggle="modal" data-target="#filtermodel" style="float:right" class="btn btn-danger">Filter table</a>
 
@@ -126,7 +126,7 @@
             </div>
             <div class="card-body">
                 <div class="table-responsive">
-                    <table class="table table-bordered" width="100%" cellspacing="0">
+                    <table class="table" width="100%" cellspacing="0">
                         <thead>
                             <tr>
                                 <th>Date</th>
@@ -470,9 +470,24 @@
         }
 
         function check_user() {
-            var name = document.getElementById("mylistofsellers").value;
+            var st = document.getElementById("mylistofsellers").value;
+            var yt = document.getElementById("inputselection").value;
             var x = document.getElementById("check")
-            x.href = "individualpurchase/" + name
+            if (!st) {
+
+            } else {
+                name = st;
+            }
+            if (yt == 'Sales') {
+                link = "individualsales"
+                x.innerText = "Indivual Sales"
+            } else {
+                link = "individualpurchase"
+                x.innerText = "Indivual Purchase"
+            }
+
+            x.href = "/" + link + "/" + name
+
         }
     </script>
     <script>

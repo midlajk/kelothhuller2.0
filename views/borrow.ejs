@@ -5,27 +5,33 @@
 
         <!-- Page Heading -->
 
+        <div class="d-sm-flex align-items-center justify-content-between mb-4">
+            <h1 class="h3 mb-0 text-gray-800">
+                Borrows and return
+                <%if(individual){%>
+                    of
+                    <%=id%>
+                        <%}%>
+            </h1>
 
+            <h6>
+                <%if(filter){%>
+                    From
+                    <%=moment(start).format( 'DD-MM-YYYY')%> to
+                        <%=moment(end).format( 'DD-MM-YYYY')%>
+                            <%}%>
+            </h6>
+        </div>
         <!-- DataTales Example -->
         <div class="card shadow mb-4">
             <div class="card-header py-3">
                 <a class="float-right btn btn-danger ml-2" href="" href="" data-toggle="modal" data-target="#filtermodel">Filter</a>
-                <%if(!individual){%> <a class="btn btn-success float-right mr-2" href="/paymentcontroller/borrows">Borrowers List</a>
+                <%if(!individual){%> <a class="btn btn-success" href="/paymentcontroller/borrows">Borrowers List</a>
 
                     <%}else{%>
-                        <a class="btn btn-primary float-right mr-2" href="/paymentcontroller/borrows">Borrow Manage</a>
+                        <a class="btn btn-primary" href="/paymentcontroller/borrows">Manage Borrowal </a>
                         <%}%>
-                            <h6 class="m-0 font-weight-bold text-primary">Borrows and return
-                                <%if(individual){%>
-                                    of
-                                    <%=id%>
-                                        <%}%>
-                                            <%if(filter){%>
-                                                from
-                                                <%=moment(start).format( 'DD-MM-YYYY')%> to
-                                                    <%=moment(end).format( 'DD-MM-YYYY')%>
-                                                        <%}%>
-                            </h6>
+                            <br>
                             <br>
                             <form action="" method="GET" id="checkword">
                                 <div id="inputFormRow" class="form-group row">
@@ -49,29 +55,31 @@
             </div>
             <div class="card-body">
                 <div class="table-responsive">
-                    <table width="100%" cellspacing="0">
-
-                        <tbody>
+                    <table class="table" width="100%" cellspacing="0">
+                        <thead>
                             <tr>
-                                <td>date</td>
+                                <th>date</th>
                                 <%if(!individual){%>
-                                    <td>Name</td>
+                                    <th>Name</th>
                                     <%}%>
-                                        <td>Amount</td>
-                                        <td>Type</td>
-                                        <td>Hint</td>
-
+                                        <th>Amount</th>
+                                        <th>Type</th>
+                                        <th>Hint</th>
+                                        <th>Submit</th>
 
                             </tr>
+                        </thead>
+                        <tbody>
+
                             <form id="utility" action="/paymentcontroller/borrows" method="POST">
                                 <tr>
-                                    <td><input required tabindex="1" name="date" class="form-control" style="width: 175px;" type="date" value="<%=todaydate%>" id=""></td>
+                                    <td><input required autofocus tabindex="1" name="date" class="form-control" style="width: 175px;" type="date" value="<%=todaydate%>" id=""></td>
                                     <%if(!individual){%>
                                         <td><input required autofocus autocomplete="off" class="p-1 form-control" style="width: 200px;" tabIndex="2" type="text" list="billto" name="billto" id=""></td>
                                         <datalist id="billto">  <%for(let docs of borrevers){%>
                                             <option value="<%=docs%>">
                                           <%}%></datalist>
-                                        <%}else{%> <input type="hidden" name="type" value="individual">
+                                        <%}else{%> <input type="hidden" name="sec" value="individual">
                                             <input type="hidden" name="billto" value="<%=id%>">
                                             <%}%>
                                                 <td><input autofocus required class="form-control" tabIndex="3" type="number" name="amount" style="width: 125px;"></td>
@@ -85,7 +93,9 @@
                                                     <input class="p-1 form-control" style="width: 200px;" tabIndex="5" type="text" name="payment" id=""></td>
 
 
-                                                <td><button form="utility" tabIndex="6" class="btn btn-primary" type="submit">Submit</button></td>
+                                                <td><button form="utility" tabIndex="6" class="btn btn-primary" id="submit" type="submit">Submit</button>
+                                                    <div id="button-spinner" style="margin-left: 10px; width: 25px; height: 25px; display: none" class="spinner-border"></div>
+                                                </td>
 
                                 </tr>
                             </form>
@@ -222,14 +232,23 @@
                 "ordering": false,
 
             });
+            $('#submit').click(function() {
+                $('#submit').hide();
+                $('#button-spinner').show();
+
+            });
             total = <%=total%>;
             document.getElementById('total').innerHTML = total.toLocaleString();
         });
 
         function check_user() {
             var st = document.getElementById("list_sellers").value;
-            var x = document.getElementById("checkword")
-            x.action = "/paymentcontroller/indivdualborrows/" + st
+            if (!st) {
+
+            } else {
+                var x = document.getElementById("checkword")
+                x.action = "/paymentcontroller/indivdualborrows/" + st
+            }
         }
     </script>
     <%- include('./includes/end.ejs') %>

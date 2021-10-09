@@ -4,12 +4,18 @@
         <!-- Page Heading -->
 
         <div class="d-sm-flex align-items-center justify-content-between mb-4">
-            <h1 class="h3 mb-0 text-gray-800">Deals with
-                <%=name.name%>
+            <h1 class="h3 mb-0 text-gray-800">
+                <%if(category =='sales'){%>
+                    sales to
+                    <%=name%>
+                        <%}else{%>
+                            Purchase from
+                            <%=name%>
+                                <%}%>
             </h1>
             <h6>
-                <%=moment(start).format( 'DD-MM-YYYY')%> to
-                    <%=moment(end).format( 'DD-MM-YYYY')%>
+                <%=moment(start).format( 'DD-MMM-YYYY')%> to
+                    <%=moment(end).format( 'DD-MMM-YYYY')%>
             </h6>
 
         </div>
@@ -91,15 +97,7 @@
         <!-- DataTales Example -->
         <div class="card shadow mb-4">
             <div class="card-header py-3">
-                <h6 class="m-0 font-weight-bold text-primary mb-2">
-                    <%if(category =='sales'){%>
-                        sales to
-                        <%=name.name%>
-                            <%}else{%>
-                                Purchase from
-                                <%=name.name%>
-                                    <%}%>
-                </h6>
+
                 <% if (errorMessage) { %>
                     <h5 class="text-center">
                         <%= errorMessage %>
@@ -107,24 +105,49 @@
 
                     </p>
                     <% } %>
+                        <%if(category =='sales'){%>
+                            <a href="/salesmanagement" class="btn btn-primary">Detailed Sales</a>
+                            <a href="/accountmanagement" class="btn btn-success">Detailed Report</a>
+
+                            <%}else{%> <a href="/purchasemanagement" class="btn btn-primary"> Deatailed Purchase</a>
+                                <a href="/accountmanagement" class="btn btn-success">Detailed Report</a>
 
 
-                        <a href="" data-toggle="modal" data-target="#filtermodel" style="float:right" class="btn btn-danger">Filter table</a>
+                                <% } %>
+
+                                    <a href="" data-toggle="modal" data-target="#filtermodel" style="float:right" class="btn btn-danger">Filter table</a>
+                                    <%if(category =='sales'){%>
+                                        <a href="/individualpurchase/<%=name%>" class="btn btn-primary float-right mr-2">
+                                            <%=name%>'s Purchase account </a>
+
+
+                                        <%}else{%>
+                                            <a href="/individualsales/<%=name%>" class="btn btn-primary float-right mr-2">
+                                                <%=name%>'s Sales account </a>
+
+
+
+                                            <% } %>
 
             </div>
             <div class="card-header py-3">
 
                 <form>
                     <div class="col-sm-12 mb-3 mb-sm-0 input-group">
-                        <input required type="text" id="mylistofsellers" class="form-control form-control-user" oninput="check_user()" placeholder="Search for names" list="browsers" autocomplete="off">
+                        <select tabindex="99" class="form-control form-control-user js-example-basic-single" id="mylistofsellers" onchange="check_user()">
+                            <option value="">Search names</option>
+                              <%for(let docs of names){%>
+                                <option value="<%=docs%>"><%=docs%></option>
+                              <%}%>
+                         </select>
+
                         <div class="input-group-append">
-                            <a href="" id="check" type="button" class="btn btn-danger">View Individual accounts</a>
+                            <select tabindex="100" class="form-control form-control-user" name="" onchange="check_user()" id="inputselection">
+                                <option value="Purchase">Purchase Account</option>
+                                <option value="Sales">Sales account</option>
+                            </select>
+                            <a href="" tabindex="101" id="check" type="button" class="btn btn-danger">Indivual Purchase</a>
                         </div>
-                        <datalist id="browsers">
-                            <%for(let docs of names){%>
-                                <option value="<%=docs.name%>:<%=docs.relation%>">
-                                <%}%>
-                        </datalist>
 
                     </div>
                 </form>
@@ -132,7 +155,7 @@
             </div>
             <div class="card-body">
                 <div class="table-responsive">
-                    <table class="table table-bordered" width="100%" cellspacing="0">
+                    <table class="table" width="100%" cellspacing="0">
                         <thead>
                             <tr>
                                 <th>Date</th>
@@ -154,7 +177,7 @@
                             </tr>
                         </thead>
                         <tbody>
-                            <form id="buyerform" action="<%if(category =='sales'){%>/updateindividualsales<%}else{%>/updateindividualpuchase<%}%>" method="POST">
+                            <form id="buyerform" action="<%if(category =='sales'){%>/buyerform<%}else{%>/detailedbuyerdata<%}%>" method="POST">
                                 <tr>
                                     <td><input autofocus required tabindex="1" name="date" class="form-control" value="<%=todaydate%>" type="date" id="date"></td>
 
@@ -177,7 +200,7 @@
                                                 <td>
                                                     <button form="buyerform" tabIndex="7" class="btn btn-primary" id="submit" type="submit">Submit</button>
                                                     <div id="button-spinner" style="margin-left: 10px; width: 25px; height: 25px; display: none" class="spinner-border"></div>
-                                                    <input required type="hidden" name="id" value="<%=name.name%>">
+                                                    <input required type="hidden" name="buyer" value="<%=name%>">
                                                 </td>
 
                                 </tr>
@@ -331,7 +354,7 @@
                                 <label for="">To date</label>
                                 <input type="date" value="<%=todaydate%>" name="edate" class="form-control form-control-user" id="exampleFirstName" placeholder="Date">
                             </div>
-                            <input type="hidden" name="id" value="<%=name.name%>">
+                            <input type="hidden" name="id" value="<%=name%>">
                             <input type="hidden" name="type" value="filter">
 
                         </div>
@@ -341,19 +364,19 @@
 
                     </form>
                     <form id="form2" action="<%if(category =='sales'){%>/individualsalesfilter<%}else{%>/individualpurchasefilter<%}%>" method="POST" class="ml-1" style="float: left;">
-                        <input type="hidden" name="id" value="<%=name.name%>">
+                        <input type="hidden" name="id" value="<%=name%>">
                         <input type="hidden" name="type" value="2months"> <button type="submit" form="form2" class="btn btn-primary">2 months</button>
                     </form>
                     <form id="form3" class="ml-1" style="float: left;" action="<%if(category =='sales'){%>/individualsalesfilter<%}else{%>/individualpurchasefilter<%}%>" method="POST">
-                        <input type="hidden" name="id" value="<%=name.name%>">
+                        <input type="hidden" name="id" value="<%=name%>">
                         <input type="hidden" name="type" value="5months"><button type="submit" form="form3" class="btn btn-primary">5 months</button>
                     </form>
                     <form id="form4" class="ml-1" style="float: left;" action="<%if(category =='sales'){%>/individualsalesfilter<%}else{%>/individualpurchasefilter<%}%>" method="POST">
-                        <input type="hidden" name="id" value="<%=name.name%>">
+                        <input type="hidden" name="id" value="<%=name%>">
                         <input type="hidden" name="type" value="year"><button type="submit" form="form4" class="btn btn-primary">1 Year</button>
                     </form>
                     <form id="form5" class="ml-1" style="float: left;" action="<%if(category =='sales'){%>/individualsalesfilter<%}else{%>/individualpurchasefilter<%}%>" method="POST">
-                        <input type="hidden" name="id" value="<%=name.name%>">
+                        <input type="hidden" name="id" value="<%=name%>">
                         <input type="hidden" name="type" value="all"> <button type="submit" form="form5" class="btn btn-primary">All records</button>
                     </form>
                 </div>
@@ -489,21 +512,25 @@
             });
         });
 
-
         function check_user() {
             var st = document.getElementById("mylistofsellers").value;
-            var content = st.split(':');
-            var name = content[0];
-            var type = content[1];
+            var yt = document.getElementById("inputselection").value;
+            var x = document.getElementById("check")
+            if (!st) {
 
-            var link
-            if (type == 'buyer') {
+            } else {
+                name = st;
+            }
+            if (yt == 'Sales') {
                 link = "individualsales"
+                x.innerText = "Indivual Sales"
             } else {
                 link = "individualpurchase"
+                x.innerText = "Indivual Purchase"
             }
-            var x = document.getElementById("check")
+
             x.href = "/" + link + "/" + name
+
         }
     </script>
 

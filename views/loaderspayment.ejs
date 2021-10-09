@@ -4,10 +4,10 @@
         <!-- Page Heading -->
         <div class="d-sm-flex align-items-center justify-content-between mb-4">
             <h1 class="h3 mb-0 text-gray-800">
-                <%=names%> Loading
-                    <%if(!payment){%><span id="loadingpayment"></span>
-                        <%}else{%><span id="loadingpayment">Payment</span>
-                            <%}%> Details
+                Loadings
+                <%if(!payment){%><span id="loadingpayment"></span>
+                    <%}else{%><span id="loadingpayment">Payments</span>
+                        <%}%> Details
             </h1>
 
             <h6>
@@ -43,7 +43,7 @@
                     <div class="card-body">
                         <div class="row no-gutters align-items-center">
                             <div class="col mr-2">
-                                <div class="text-xs font-weight-bold text-success text-uppercase mb-1">Total Work</div>
+                                <div class="text-xs font-weight-bold text-success text-uppercase mb-1">Total Work payment</div>
                                 <div class="h5 mb-0 font-weight-bold text-gray-800"><span id="totalpurchaseamount"></span></div>
                             </div>
                             <div class="col-auto">
@@ -104,6 +104,7 @@
                     <div id="inputFormRow" class="form-group row">
 
                         <div class="col-sm-12 mb-3 mb-sm-0 input-group" id="loader_ind">
+
                             <select class="form-control form-control-user js-example-basic-single" id="list_loaders" onchange="check_user()">
                                 <option value="">Search names</option>
                                 <%for(let docs of loaders){%>
@@ -111,6 +112,7 @@
                                   <%}%>
                              </select>
                             <div class="input-group-append">
+
                                 <input type="submit" class="btn btn-danger" value="Search loader"></input>
                             </div>
                         </div>
@@ -123,7 +125,8 @@
                         <thead>
                             <tr>
                                 <th>Date</th>
-                                <th>Seller</th>
+                                <th>Loader</th>
+                                <th>Load of</th>
                                 <th>Bags</th>
                                 <th>kooli</th>
                                 <th>hint</th>
@@ -136,7 +139,8 @@
                             <tr>
                                 <tr>
                                     <th>Date</th>
-                                    <th>Seller</th>
+                                    <th>Loader</th>
+                                    <th>Load of</th>
                                     <th>Bags</th>
                                     <th>kooli</th>
                                     <th>hint</th>
@@ -159,7 +163,16 @@
                                         <%= moment(doc.work.date).format( 'DD-MMM-YYYY') %>
                                     </td>
                                     <td>
-                                        <%=doc.work.loadof%>
+                                        <a href="/employee/indidualkooli/<%=doc.name%>">
+                                            <%=doc.name%>
+                                        </a>
+
+                                    </td>
+                                    <td>
+                                        <a href="/employee/viewkooli/<%=doc.work.loadof%>">
+                                            <%=doc.work.loadof%>
+                                        </a>
+
                                     </td>
                                     <td>
                                         <%=doc.work.numberofsack%>
@@ -198,6 +211,7 @@
                         <thead>
                             <tr>
                                 <th>Date</th>
+                                <th>Name</th>
                                 <th>Amount</th>
                                 <th>hint</th>
                                 <th>Submit</th>
@@ -208,7 +222,10 @@
                             <form id="buyerform" action="/employee/addloaderpayment" method="POST">
                                 <tr>
                                     <td><input autofocus required tabindex="1" name="date" class="form-control" value="<%=todaydate%>" type="date" id="date"></td>
-
+                                    <td><input autofocus required tabindex="1" name="id" class="form-control" value="" type="text" list="namess" id="id"></td>
+                                    <datalist id="namess">  <%for(let docs of loaders){%>
+                                        <option value="<%=docs%>">
+                                      <%}%></datalist>
                                     <td><input required class="form-control" tabIndex="2" type="number" name="amount"></td>
                                     <td><input class="form-control" tabIndex="3" type="text" name="hint" id="hint"></td>
 
@@ -216,8 +233,7 @@
                                     <td>
                                         <button form="buyerform" tabindex="4" class="btn btn-primary" id="submit" type="submit">Submit</button>
                                         <div id="button-spinner" style="margin-left: 10px; width: 25px; height: 25px; display: none" class="spinner-border"></div>
-                                        <input required type="hidden" name="id" value="<%=names%>">
-                                        <input required type="hidden" name="category" value="individual">
+
                                     </td>
 
                                 </tr>
@@ -233,6 +249,7 @@
                         <thead>
                             <tr>
                                 <th>Date</th>
+                                <th>Name</th>
                                 <th>Amount</th>
 
                                 <th>hint</th>
@@ -245,6 +262,7 @@
                             <tr>
                                 <tr>
                                     <th>Date</th>
+                                    <th>Name</th>
                                     <th>Amount</th>
 
                                     <th>hint</th>
@@ -263,7 +281,11 @@
                                     <td>
                                         <%= moment(dic.payed.date).format( 'DD-MMM-YYYY') %>
                                     </td>
-
+                                    <td>
+                                        <a href="/employee/indidualkooli/<%=dic.name%>">
+                                            <%=dic.name%>
+                                        </a>
+                                    </td>
                                     <td>
                                         <%=dic.payed.amount%>
                                     </td>
@@ -271,7 +293,7 @@
                                         <%=dic.payed.message%>
                                     </td>
                                     <td>
-                                        <a onclick="return confirm('are you sure?')" href="/employee/deletepayment/<%=dic.payed._id%>/<%=dic.name%>/individual" class="btn btn-danger">Delete</a></td>
+                                        <a onclick="return confirm('are you sure?')" href="/employee/deletepayment/<%=dic.payed._id%>/<%=dic.name%>/all" class="btn btn-danger">Delete</a></td>
 
                                 </tr>
                                 <%}
@@ -295,7 +317,7 @@
                     </a>
                 </div>
                 <div class="modal-body">
-                    <form id="form1" action="/employee/indidualkoolifilter" method="POST">
+                    <form id="form1" action="/employee/filterloaderspayment" method="POST">
                         <div class="form-group row">
                             <div class="col-sm-12 mb-3 mb-sm-0">
                                 <label for="">From date</label>
@@ -310,8 +332,6 @@
 
 
                         </div>
-
-                        <input type="hidden" name="id" value="<%=names%>">
 
 
                     </form>
@@ -364,6 +384,7 @@
 
             });
         });
+
 
         function check_user() {
             var st = document.getElementById("list_loaders").value;

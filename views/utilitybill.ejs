@@ -6,42 +6,54 @@
         <!-- Page Heading -->
 
 
+        <div class="d-sm-flex align-items-center justify-content-between mb-4">
+            <h1 class="h3 mb-0 text-gray-800">
+                Utility bill
+                <%if(individual){%>
+                    of
+                    <%=id%>
+                        <%}%>
+            </h1>
+
+            <h6>
+
+                From
+                <%=moment(start).format( 'DD-MM-YYYY')%> to
+                    <%=moment(end).format( 'DD-MM-YYYY')%>
+
+            </h6>
+        </div>
         <!-- DataTales Example -->
         <div class="card shadow mb-4">
             <div class="card-header py-3">
-                <a class="float-right btn btn-danger ml-2" href="" href="" data-toggle="modal" data-target="#filtermodel">Filter</a>
-                <h6 class="m-0 font-weight-bold text-primary">Utility bill
-                    <%if(individual){%>
-                        of
-                        <%=id%>
-                            <%}%> from
-                                <%=moment(start).format( 'DD-MM-YYYY')%> to
-                                    <%=moment(end).format( 'DD-MM-YYYY')%>
-                </h6>
-                <br>
-                <form action="" method="GET" id="checkword">
-                    <div id="inputFormRow" class="form-group row">
+                <%if(individual){%> <a class=" btn btn-danger" href="/utility">Complete Utility</a>
+                    <%}%>
+                        <a class="float-right btn btn-danger ml-2" href="" href="" data-toggle="modal" data-target="#filtermodel">Filter</a>
+                        <br>
+                        <br>
+                        <form action="" method="GET" id="checkword">
+                            <div id="inputFormRow" class="form-group row">
 
 
-                        <div class="col-sm-12 mb-3 mb-sm-0 input-group" id="seller_buyer">
-
-                            <input type="text" oninput="check_user()" class="form-control form-control-user" id="list_sellers" placeholder="Search names" name="list_sellers" list="browsers" autocomplete="off">
-                            <datalist id="browsers">
+                                <div class="col-sm-12 mb-3 mb-sm-0 input-group" id="seller_buyer">
+                                    <select class="form-control form-control-user js-example-basic-single" id="list_sellers" onchange="check_user()">
+                                <option value="">Search names</option>
                                 <%for(let docs of utitlity){%>
-                                    <option value="<%=docs%>">
-                                    <%}%>
-                            </datalist>
-                            <div class="input-group-append">
-                                <input type="submit" class="btn btn-primary" value="Search Loari"></input>
-                            </div>
-                        </div>
+                                    <option value="<%=docs%>"><%=docs%></option>
+                                  <%}%>
+                             </select>
 
-                    </div>
-                </form>
+                                    <div class="input-group-append">
+                                        <input type="submit" class="btn btn-primary" value="Search Loari"></input>
+                                    </div>
+                                </div>
+
+                            </div>
+                        </form>
             </div>
             <div class="card-body">
                 <div class="table-responsive">
-                    <table class="table table-bordered" width="100%" cellspacing="0">
+                    <table class="table " width="100%" cellspacing="0">
                         <thead>
                             <tr>
                                 <th>date</th>
@@ -69,7 +81,9 @@
                                                     <input class="p-1 form-control" style="width: 200px;" tabIndex="4" type="text" name="payment" id=""></td>
 
 
-                                                <td><button form="utility" tabIndex="5" class="btn btn-primary" type="submit">Submit</button></td>
+                                                <td><button form="utility" tabIndex="5" class="btn btn-primary" id="submit" type="submit">Submit</button>
+                                                    <div id="button-spinner" style="margin-left: 10px; width: 25px; height: 25px; display: none" class="spinner-border"></div>
+                                                </td>
 
                                 </tr>
                             </form>
@@ -139,7 +153,11 @@
                                             <td>
                                                 <%=docs[i].detail.payment%>
                                             </td>
-                                            <td><a href="" onclick="return confirm('Are you sure')" class="btn btn-danger">Delete</a></td>
+                                            <%if(!individual){%>
+                                                <td><a href="/deleteutility/<%=docs[i].name%>/<%=docs[i].detail._id%>/all" onclick="return confirm('Are you sure')" class="btn btn-danger">Delete</a></td>
+                                                <%}else{%>
+                                                    <td><a href="/deleteutility/<%=docs[i].name%>/<%=docs[i].detail._id%>/individual" onclick="return confirm('Are you sure')" class="btn btn-danger">Delete</a></td>
+                                                    <%}%>
                                 </tr>
                                 <%}%>
                         </tbody>
@@ -198,13 +216,23 @@
             });
             total = <%=total%>;
             document.getElementById('total').innerHTML = total.toLocaleString();
+            $('#submit').click(function() {
+                $('#submit').hide();
+                $('#button-spinner').show();
+
+            });
         });
 
         function check_user() {
             var st = document.getElementById("list_sellers").value;
 
-            var x = document.getElementById("checkword")
-            x.action = "/indivual_utility/" + st
+            if (!st) {
+
+            } else {
+
+                var x = document.getElementById("checkword")
+                x.action = "/indivual_utility/" + st
+            }
         }
     </script>
     <%- include('./includes/end.ejs') %>

@@ -4,12 +4,13 @@
         <!-- Page Heading -->
 
         <div class="d-sm-flex align-items-center justify-content-between mb-4">
-            <h1 class="h3 mb-0 text-gray-800">Total Transactions from
-                <%= moment(start).format( 'YYYY-MM-DD') %> to
-                    <%= moment(end).format( 'YYYY-MM-DD') %>
+            <h1 class="h3 mb-0 text-gray-800">Total Transactions
             </h1>
 
-
+            <h6>From
+                <%= moment(start).format( 'DD-MMM-YYYY') %> to
+                    <%= moment(end).format( 'DD-MMM-YYYY') %>
+            </h6>
         </div>
 
         <!-- Content Row -->
@@ -49,7 +50,7 @@
                 </div>
             </div>
 
-            <a href="#" class="col-xl-3 col-md-6 mb-4">
+            <div class="col-xl-3 col-md-6 mb-4">
                 <div class="card border-left-info shadow h-100 py-2">
                     <div class="card-body">
                         <div class="row no-gutters align-items-center">
@@ -63,7 +64,7 @@
                         </div>
                     </div>
                 </div>
-            </a>
+            </div>
 
 
             <!-- Earnings (Monthly) Card Example -->
@@ -98,7 +99,7 @@
             </div>
             <div class="card-body">
                 <div class="table-responsive">
-                    <table class="table table-bordered" width="100%" cellspacing="0">
+                    <table class="table" width="100%" cellspacing="0">
                         <thead>
                             <tr>
                                 <th>Date</th>
@@ -106,19 +107,19 @@
                                 <th>Type</th>
                                 <th>Comment</th>
                                 <th>Payment mode</th>
-                                <th>Edit</th>
+
                             </tr>
                         </thead>
                         <tbody>
                             <form id="transactionform" action="/credittransaction" method="POST">
                                 <tr>
-                                    <td><input autofocus required tabindex="2" name="date" class="form-control" type="date" value="<%=todaydate%>" id=""></td>
+                                    <td><input autofocus required tabindex="2" name="date" class="form-control" style="width: 175px;" type="date" value="<%=todaydate%>" id=""></td>
                                     <td><input required class="p-1 form-control" style="width: 150px;" tabIndex="3" type="number" name="amount" id="bags"></td>
                                     <td><select required class="form-control" tabIndex="4" type="text" id="formaction" style="width: 125px;"><option value="credit">Credit</option>
                                         <option value="debit">Debit</option></select></td>
-                                    <td><input required class="p-1 form-control" tabIndex="5" type="text" style="width: 155px;" name="hint" id="hint"></td>
+                                    <td><input class="p-1 form-control" tabIndex="5" type="text" style="width: 155px;" name="hint" id="hint"></td>
 
-                                    <td> <select name="through" tabindex="6" id="through" class="form-control form-control-user">
+                                    <td> <select name="through" style="width: 145px;" tabindex="6" id="through" class="form-control form-control-user">
                                         <option value="bank">Bank</option>
                                         <option value="cash">Cash</option>
                                         <option value="other">Other</option>
@@ -165,8 +166,15 @@
 
 
 
-                            <%for (var i =0; i < data.length; i++){%>
-                                <%if(data[i].types =='credit'){%>
+                            <%
+                            var credit = 0;
+                            var debit = 0;
+                            var total = 0;
+                            for (var i =0; i < data.length; i++){
+                                total = parseInt(total) + parseInt(data[i].amount) %>
+                                <%if(data[i].types =='credit'){
+                                   credit = parseInt(credit) + parseInt(data[i].amount);
+                                   %>
                                     <tr id="credit" class="purchase">
                                         <td>
                                             <%= moment(data[i].Date).format( 'YYYY-MM-DD') %>
@@ -188,7 +196,8 @@
 
                                         <td><a href="#" onclick="editcredit('<%=i%>')" class="btn btn-primary ">Edit</a></td>
                                     </tr>
-                                    <%}else{%>
+                                    <%}else{
+                                        debit = parseInt(debit) + parseInt(data[i].amount);%>
                                         <tr id="debit" class="sales">
                                             <td>
                                                 <%= moment(data[i].Date).format( 'YYYY-MM-DD') %>
@@ -234,13 +243,13 @@
                         <div class="form-group row">
                             <div class="col-sm-12 mb-3 mb-sm-0">
                                 <label for="">From date</label>
-                                <input required type="date" class="form-control form-control-user" id="exampleFirstName" name="sdate" placeholder="Date">
+                                <input required value="<%=todaydate%>" type="date" class="form-control form-control-user" id="exampleFirstName" name="sdate" placeholder="Date">
                             </div>
                         </div>
                         <div class="form-group row">
                             <div class="col-sm-12 mb-3 mb-sm-0">
                                 <label for="">To date</label>
-                                <input required type="date" name="edate" class="form-control form-control-user" id="exampleFirstName" placeholder="Date">
+                                <input required value="<%=todaydate%>" type="date" name="edate" class="form-control form-control-user" id="exampleFirstName" placeholder="Date">
                             </div>
                             <input type="hidden" name="type" value="filter">
 
@@ -483,13 +492,13 @@
             });
         })
         $(document).ready(function() {
-            var table = $('#dataTable').DataTable({
-                columnDefs: [{
-                    'targets': 0,
-                    type: 'date-euro'
-                }],
-                order: [0, 'desc'],
+
+            $('#dataTable').DataTable({
+
+                "ordering": false,
+
             });
+
             // $.fn.dataTable.moment('DD/MM/YY');
             // $('#dataTable').DataTable({
             //     "ordering": true,
@@ -500,28 +509,16 @@
 
 
             var totalrevenue = 0;
-            var totaldebit = 0;
-            var totalcredit = 0;
-            var totalturnover = 0;
+            var totaldebit = <%=debit%>;
+            var totalcredit = <%=credit%>;
+            var totalturnover = <%=total%>;
 
-            $('#dataTable tbody tr td').each(function() {
-
-
-                if (this.className == 'totaldebit') {
-                    totaldebit += isNaN(this.innerHTML) ? 0 : parseInt(this.innerHTML);
-                }
-                if (this.className == 'totalcredit') {
-                    totalcredit += isNaN(this.innerHTML) ? 0 : parseInt(this.innerHTML);
-                }
-
-
-            });
             totalturnover = totalcredit + totaldebit
             totalrevenue = totalcredit - totaldebit
-            document.getElementById('Turnover').innerText = totalturnover;
-            document.getElementById('revenue').innerText = totalrevenue;
-            document.getElementById('amountcredit').innerText = totalcredit;
-            document.getElementById('amountdebit').innerText = totaldebit;
+            document.getElementById('Turnover').innerText = totalturnover.toLocaleString();
+            document.getElementById('revenue').innerText = totalrevenue.toLocaleString();
+            document.getElementById('amountcredit').innerText = totalcredit.toLocaleString();
+            document.getElementById('amountdebit').innerText = totaldebit.toLocaleString();
 
         });
         $("#formaction").change(function() {

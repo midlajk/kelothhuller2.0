@@ -5,13 +5,17 @@
 
         <!-- Page Heading -->
 
+        <div class="d-sm-flex align-items-center justify-content-between mb-4">
+            <h1 class="h3 mb-0 text-gray-800"> List of Employees
+            </h1>
 
+
+        </div>
         <!-- DataTales Example -->
         <div class="card shadow mb-4">
             <div class="card-header py-3">
                 <a class="btn btn-success float-right mr-2" href="/paymentcontroller/salary">Salary Manage</a>
-                <h5>List of Employees
-                </h5>
+
                 <% if (errorMessage) { %>
                     <h5 class="text-center">
                         <%= errorMessage %>
@@ -22,20 +26,22 @@
             </div>
             <div class="card-body">
                 <div class="table-responsive">
-                    <table id="" width="100%" cellspacing="0">
-
-
-                        <tbody>
+                    <table class="table" id="" width="100%" cellspacing="0">
+                        <thead>
                             <tr>
-                                <td>Name</td>
-                                <td>Phone</td>
-                                <td>Place</td>
-                                <td>careoff</td>
-                                <td>Duty</td>
-                                <td>Minimum salary</td>
-
+                                <th>Name</th>
+                                <th>Phone</th>
+                                <th>Place</th>
+                                <th>careoff</th>
+                                <th>Duty</th>
+                                <th>Minimum salary</th>
+                                <th>Submit
+                                </th>
 
                             </tr>
+                        </thead>
+                        <tbody>
+
                             <form id="ademployee" action="/employee/postaddemployee" method="POST">
                                 <tr>
 

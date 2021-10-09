@@ -5,8 +5,8 @@
         <div class="d-sm-flex align-items-center justify-content-between mb-4">
             <h1 class="h3 mb-0 text-gray-800">Sales management</h1>
             <h6>
-                <%=moment(start).format( 'DD-MM-YYYY')%> to
-                    <%=moment(end).format( 'DD-MM-YYYY')%>
+                <%=moment(start).format( 'DD-MMM-YYYY')%> to
+                    <%=moment(end).format( 'DD-MMM-YYYY')%>
             </h6>
 
 
@@ -104,7 +104,7 @@
                     </p>
                     <% } %>
                         <a href="/purchasemanagement" class="btn btn-primary">Purchase management</a>
-                        <a href="/accountmanagement" class="btn btn-primary">Detailed Report</a>
+                        <a href="/accountmanagement" class="btn btn-success">Detailed Report</a>
 
                         <a href="" data-toggle="modal" data-target="#filtermodel" style="float:right" class="btn btn-danger">Filter table</a>
 
@@ -113,15 +113,20 @@
 
                 <form>
                     <div class="col-sm-12 mb-3 mb-sm-0 input-group">
-                        <input required type="text" id="mylistofsellers" class="form-control form-control-user" oninput="check_user()" placeholder="Search for names" list="sellernames" autocomplete="off">
+                        <select tabindex="99" class="form-control form-control-user js-example-basic-single" id="mylistofsellers" onchange="check_user()">
+                            <option value="">Search names</option>
+                              <%for(let docs of names){%>
+                                <option value="<%=docs%>"><%=docs%></option>
+                              <%}%>
+                         </select>
+
                         <div class="input-group-append">
-                            <a href="" id="check" type="button" class="btn btn-danger">View Individual accounts</a>
+                            <select tabindex="100" class="form-control form-control-user" name="" onchange="check_user()" id="inputselection">
+                                <option value="Purchase">Purchase Account</option>
+                                <option value="Sales">Sales account</option>
+                            </select>
+                            <a href="" tabindex="101" id="check" type="button" class="btn btn-danger">Indivual Purchase</a>
                         </div>
-                        <datalist id="sellernames">
-                            <%for(let docs of names){%>
-                                <option value="<%=docs.name%>">
-                                <%}%>
-                        </datalist>
 
                     </div>
                 </form>
@@ -130,7 +135,7 @@
             </div>
             <div class="card-body">
                 <div class="table-responsive">
-                    <table class="table table-bordered" width="100%" cellspacing="0">
+                    <table class="table" width="100%" cellspacing="0">
                         <thead>
                             <tr>
                                 <th>Date</th>
@@ -491,9 +496,24 @@
         }
 
         function check_user() {
-            var name = document.getElementById("mylistofsellers").value;
+            var st = document.getElementById("mylistofsellers").value;
+            var yt = document.getElementById("inputselection").value;
             var x = document.getElementById("check")
-            x.href = "individualsales/" + name
+            if (!st) {
+
+            } else {
+                name = st;
+            }
+            if (yt == 'Sales') {
+                link = "individualsales"
+                x.innerText = "Indivual Sales"
+            } else {
+                link = "individualpurchase"
+                x.innerText = "Indivual Purchase"
+            }
+
+            x.href = "/" + link + "/" + name
+
         }
     </script>
     <script>

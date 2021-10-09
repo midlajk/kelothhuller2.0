@@ -2,20 +2,31 @@
     <div class="container-fluid">
 
         <!-- Page Heading -->
+        <div class="d-sm-flex align-items-center justify-content-between mb-4">
+            <h1 class="h3 mb-0 text-gray-800">
+                Loads Details
+                <%if(individual){%> of
+                    <%=names%>
+                        <%}%>
+            </h1>
 
+            <h6>
+
+                From
+                <%=moment(start).format( 'DD-MM-YYYY')%> to
+                    <%=moment(end).format( 'DD-MM-YYYY')%>
+
+            </h6>
+        </div>
 
         <!-- DataTales Example -->
         <div class="card shadow mb-4">
             <div class="card-header py-3">
+                <a class="btn btn-success" href="/employee/loaderspayment">Loaders payment</a>
+
                 <a class="float-right btn btn-danger ml-2" href="" href="" data-toggle="modal" data-target="#filtermodel">Filter</a>
                 <a class="float-right btn btn-info" href="/employee/addkooli">Add load</a>
-                <h6 class="m-0 font-weight-bold text-primary">Load details
-                    <%if(individual){%> of
-                        <%=names%>
-                            <%}%>from
-                                <%=moment(start).format( 'DD-MM-YYYY')%> to
-                                    <%=moment(end).format( 'DD-MM-YYYY')%>
-                </h6>
+
                 <br>
 
                 <form action="" method="GET" id="checkword">
@@ -27,25 +38,27 @@
                         </div>
                         <div class="col-sm-12 mb-3 mb-sm-0 input-group" id="loader_ind">
 
-                            <input type="text" id="list_loaders" oninput="check_loader()" class="form-control form-control-user" name="list_loaders" placeholder="Search names" list="browsers" autocomplete="off">
+                            <select class="form-control form-control-user js-example-basic-single" id="list_loaders" onchange="check_loader()">
+                                <option value="">Search names</option>
+                                  <%for(let docs of loads){%>
+                                    <option value="<%=docs%>"><%=docs%></option>
+                                  <%}%>
+                            </select>
                             <div class="input-group-append">
-                                <datalist id="browsers">
-                                    <%for(let docs of loaders){%>
-                                        <option value="<%=docs%>">
-                                        <%}%>
-                                </datalist>
+
                                 <input type="submit" class="btn btn-danger" value="Search loader"></input>
                             </div>
                         </div>
 
-                        <div class="col-sm-12 mb-3 mb-sm-0 input-group" id="seller_buyer" style="display: none;">
+                        <div class="col-sm-12 mb-3 mb-sm-0 input-group" id="seller_buyer" style="display: none;" style="width: 100%;">
 
-                            <input type="text" oninput="check_seller()" class="form-control form-control-user" id="list_sellers" placeholder="Search names" name="list_sellers" list="browserss" autocomplete="off">
-                            <datalist id="browserss">
-                                <%for(let docs of loads){%>
-                                    <option value="<%=docs%>">
-                                    <%}%>
-                            </datalist>
+                            <select class="form-control form-control-user js-example-basic-single" style="width: 80%;" id="list_sellers" onchange="check_seller()">
+                                <option value="">Search names</option>
+                                  <%for(let docs of loads){%>
+                                    <option value="<%=docs%>"><%=docs%></option>
+                                  <%}%>
+                             </select>
+
                             <div class="input-group-append">
                                 <input type="submit" class="btn btn-primary" value="Search seller/buyer"></input>
                             </div>
@@ -93,8 +106,8 @@
                             <% var bags = 0;
                             var kooli = 0;
                             for(var i=0; i < docs.length ; i++){
-                                bags = bags + docs[i].order.numberofsack;
-                                kooli = kooli + docs[i].order.total;
+                                bags = parseInt(bags) + parseInt(docs[i].order.numberofsack);
+                                kooli = parseInt(kooli) + parseInt(docs[i].order.total);
                                 %>
 
                                 <tr>

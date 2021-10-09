@@ -30,7 +30,7 @@ var loaders = new Schema({
         date: Date,
     }],
     payed: [{
-        amount: String,
+        amount: Number,
         date: Date,
         message: String
     }],
