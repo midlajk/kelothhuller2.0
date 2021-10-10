@@ -545,9 +545,9 @@
 
 
             '<%if(category =="sales"){%>'
-            document.getElementById("deletebutton").href = "/deletesales/" + obj[i]._id + "/" + obj[i].deal._id + "/indivdual/" + obj[i].deal.total + "/" + obj[i].deal.paid;
+            document.getElementById("deletebutton").href = "/deletesales/" + obj[i].id + "/" + obj[i].deal.id + "/indivdual/" + obj[i].deal.total + "/" + obj[i].deal.paid;
             '<%}else{%>'
-            document.getElementById("deletebutton").href = "/deletepurchase/" + obj[i]._id + "/" + obj[i].deal._id + "/indivdual/" + obj[i].deal.total + "/" + obj[i].deal.paid;
+            document.getElementById("deletebutton").href = "/deletepurchase/" + obj[i].id + "/" + obj[i].deal.id + "/indivdual/" + obj[i].deal.total + "/" + obj[i].deal.paid;
             '<%}%>'
             // document.getElementById("deletebutton").href = "/deletesales/ " + obj.id + "/ " + obj[i].deal.id + "/indivdual ";
 
@@ -561,8 +561,8 @@
             document.getElementById('editmoisture').value = obj[i].deal.moisture;
             document.getElementById('editcareoff').value = obj[i].deal.hint;
             document.getElementById('editprize').value = obj[i].deal.price;
-            document.getElementById('objectid').value = obj[i]._id;
-            document.getElementById('arrayid').value = obj[i].deal._id;
+            document.getElementById('objectid').value = obj[i].id;
+            document.getElementById('arrayid').value = obj[i].deal.id;
             document.getElementById('previoustotal').value = obj[i].deal.total;
             document.getElementById('previouspaid').value = obj[i].deal.paid;
             document.getElementById('editpaid').value = obj[i].deal.paid

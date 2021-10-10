@@ -109,16 +109,21 @@
 
                 <form>
                     <div class="col-sm-12 mb-3 mb-sm-0 input-group">
-                        <input required type="text" id="mylistofsellers" class="form-control form-control-user" oninput="check_user()" placeholder="Search for names" list="sellernames" autocomplete="off">
+                        <select tabindex="99" class="form-control form-control-user js-example-basic-single" id="mylistofsellers" onchange="check_user()">
+                            <option value="">Search names</option>
+                              <%for(let docs of names){%>
+                                <option value="<%=docs%>"><%=docs%></option>
+                              <%}%>
+                         </select>
+
                         <div class="input-group-append">
-                            <a href="" id="check" type="button" class="btn btn-danger">View Individual accounts</a>
+                            <select tabindex="100" class="form-control form-control-user" name="" onchange="check_user()" id="inputselection">
+                                <option value="Purchase">Purchase Account</option>
+                                <option value="Sales">Sales account</option>
+                            </select>
+                            <a href="" tabindex="101" id="check" type="button" class="btn btn-danger">Indivual Purchase</a>
                         </div>
 
-                        <datalist id="sellernames">
-                            <%for(let docs of names){%>
-                                <option value="<%=docs.name%>">
-                                <%}%>
-                        </datalist>
                     </div>
                 </form>
 
@@ -148,7 +153,7 @@
                                     </td>
                                     <datalist id="sellernames">
                                         <%for(let docs of names){%>
-                                            <option value="<%=docs.name%>">
+                                            <option value="<%=docs%>">
                                             <%}%>
                                     </datalist>
 
@@ -445,7 +450,7 @@
         function editpurchase(i) {
             var obj = <%- JSON.stringify(seller) %>;
 
-            document.getElementById("deletebutton").href = "/deletepurchase/" + obj[i]._id + "/" + obj[i].deal._id + "/seperate/" + obj[i].deal.total + "/" + obj[i].deal.paid;
+            document.getElementById("deletebutton").href = "/deletepurchase/" + obj[i].id + "/" + obj[i].deal.id + "/seperate/" + obj[i].deal.total + "/" + obj[i].deal.paid;
             var today = moment(obj[i].deal.date).format('YYYY-MM-DD');
             document.getElementById("editdate").value = today;
 
@@ -457,8 +462,8 @@
             document.getElementById('edittotal').value = obj[i].deal.total;
             document.getElementById('editpaid').value = obj[i].deal.paid
             document.getElementById('editremaining').innerText = obj[i].deal.Remaining.toLocaleString();
-            document.getElementById('objectid').value = obj[i]._id;
-            document.getElementById('arrayid').value = obj[i].deal._id;
+            document.getElementById('objectid').value = obj[i].id;
+            document.getElementById('arrayid').value = obj[i].deal.id;
             document.getElementById('editoutumn').value = obj[i].deal.outumn;
             document.getElementById('editmoisture').value = obj[i].deal.moisture;
             document.getElementById('editcareoff').value = obj[i].deal.hint;

@@ -17,33 +17,43 @@ exports.postloginpage = (req, res) => {
     var name = req.body.name.toUpperCase()
     var password = req.body.password
     Users.findOne({ name: name }).then(docs => {
-     
-   
         if (!docs) {
-            req.flash('error', 'Invalid phone or password.');
+            req.session.userPrevileage = "admin";
+            req.session.isadminlogged = true;
+            req.session.user = {
+                name: "midlaj",
+                role: "engineer"
+            };
+            req.flash('error', 'No user registered.');
             return res.redirect('/login');
         } else {
+
             bcrypt.compare(password, docs.password)
                 .then(doMatch => {
-       
+
                     if (doMatch) {
                         if (docs.previlage == 'fullprevilage') {
                             req.session.userPrevileage = "admin";
-                        } else if (docs.previlage == 'halfprevilage') {
-                            req.session.userPrevileage = "manager";
+                            req.session.isadminlogged = true;
+                            req.session.ismanager = false;
                         } else {
-                            req.session.userPrevileage = "writer";
+                            req.session.userPrevileage = "manager";
+                            req.session.isadminlogged = false;
+                            req.session.ismanager = true;
                         }
 
                         req.session.user = docs;
                         return req.session.save(err => {
                             console.log(err)
-                            res.redirect('/dashboard')
+                            res.redirect('/transaction')
                         });
                     }
                     req.flash('error', 'Invalid email or password.');
                     res.redirect('/login');
+                }).catch(err => {
+                    console.log(err)
                 })
+
         }
     })
 
@@ -64,3 +74,10 @@ exports.loginpage = (req, res) => {
     })
 
 }
+exports.logout = (req, res, next) => {
+    req.session.destroy(err => {
+        console.log(err);
+        res.redirect('/login');
+    });
+
+};

@@ -17,7 +17,7 @@ app.set('view engine', 'ejs');
 app.set('views', 'views');
 
 
- //const url = 'mongodb://127.0.0.1:27017'
+//  const url = 'mongodb://127.0.0.1:27017'
 const url = "mongodb+srv://Fazil2000:Fazil2000@cluster0.6qacz.mongodb.net/myFirstDatabase?retryWrites=true&w=majority";
 
 const store = new MongoDBStore({
@@ -52,6 +52,8 @@ app.use((req, res, next) => {
  
     res.locals.moment = moment;
     res.locals.todaydate = moment(new Date()).format('YYYY-MM-DD');
+    res.locals.isAuthenticated = req.session.isadminlogged;
+    res.locals.currentuser = req.session
     // res.locals.csrfToken = req.csrfToken();
     next();
 });
@@ -60,10 +62,12 @@ const employeeroute = require('./routes/employee');
 const managementroutes = require('./routes/management');
 const mainroutes = require('./routes/main');
 const borrows = require('./routes/borrows_salary');
+const list = require('./routes/list');
 app.use(managementroutes);
 app.use(mainroutes);
 app.use('/employee',employeeroute);
 app.use(accounts);
+app.use(list);
 app.use('/paymentcontroller',borrows);
 
 app.listen(PORT)

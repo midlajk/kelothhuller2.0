@@ -471,7 +471,7 @@
         function editsales(i) {
             var obj = <%- JSON.stringify(buyer) %>;
 
-            document.getElementById("deletebutton").href = "/deletesales/" + obj[i]._id + "/" + obj[i].deal._id + "/seperate/" + obj[i].deal.total + "/" + obj[i].deal.paid;
+            document.getElementById("deletebutton").href = "/deletesales/" + obj[i].id + "/" + obj[i].deal.id + "/seperate/" + obj[i].deal.total + "/" + obj[i].deal.paid;
             var today = moment(obj[i].deal.date).format('YYYY-MM-DD');
             document.getElementById("editdate").value = today;
 
@@ -486,8 +486,8 @@
             document.getElementById('editprize').value = obj[i].deal.price;
             document.getElementById('editpaid').value = obj[i].deal.paid
             document.getElementById('editremaining').innerText = obj[i].deal.Remaining.toLocaleString();
-            document.getElementById('objectid').value = obj[i]._id;
-            document.getElementById('arrayid').value = obj[i].deal._id;
+            document.getElementById('objectid').value = obj[i].id;
+            document.getElementById('arrayid').value = obj[i].deal.id;
             document.getElementById('previoustotal').value = obj[i].deal.total;
             document.getElementById('previouspaid').value = obj[i].deal.paid;
             document.getElementById('thre').value = obj[i].deal.through;

@@ -195,7 +195,7 @@ exports.postdetailedbuyerdata = (req, res) => {
                     $push: {
 
                         "deal": {
-                            _id: arrayid,
+
                             id: arrayid,
                             date: req.body.date,
                             kilogram: req.body.kilogram,
@@ -218,7 +218,7 @@ exports.postdetailedbuyerdata = (req, res) => {
         } else {
 
             var sellers = new Sellers({
-                _id: objectid,
+
                 id: objectid,
                 name: name,
                 total: totalpayment - parseInt(req.body.paid),
@@ -271,7 +271,7 @@ exports.postdetailedbuyerdata = (req, res) => {
         if (parseInt(req.body.paid) > 0) {
 
             var transaction = new Transaction({
-                _id: arrayid,
+                id: arrayid,
                 Date: req.body.date,
                 amount: req.body.paid,
                 types: "debit",
@@ -302,7 +302,7 @@ exports.postdetailedbuyerdata = (req, res) => {
 }
 exports.deletepurchase = (req, res) => {
 
-    Sellers.findOne({ _id: req.params.objectid }).then((docs, err) => {
+    Sellers.findOne({ id: req.params.objectid }).then((docs, err) => {
 
         name = docs.name
         var maintotal = docs.total - parseInt(req.params.total) + parseInt(req.params.paid)
@@ -317,7 +317,7 @@ exports.deletepurchase = (req, res) => {
         docs.updateOne({
                 $pull: {
                     "deal": {
-                        _id: req.params.arrayid
+                        id: req.params.arrayid
                     }
                 }
             }, { safe: true, upsert: true },
@@ -331,7 +331,7 @@ exports.deletepurchase = (req, res) => {
 
     }).then((docs, err) => {
         if (err) console.log("error")
-        Transaction.findOneAndRemove({ _id: req.params.arrayid }).then(docs => {
+        Transaction.findOneAndRemove({ id: req.params.arrayid }).then(docs => {
             if (req.params.type == "seperate") {
                 res.redirect('/purchasemanagement')
             } else if (req.params.type == "nonseperate") {
@@ -371,7 +371,7 @@ exports.postbuyerform = (req, res) => {
             docs.updateOne({
                     $push: {
                         "deal": {
-                            _id: arrayid,
+
                             id: arrayid,
                             date: req.body.date,
                             bags: req.body.bags,
@@ -394,12 +394,12 @@ exports.postbuyerform = (req, res) => {
 
         } else {
             var buyers = new Buyers({
-                _id: objectid,
+
                 id: objectid,
                 name: name,
                 total: totalpayment - parseInt(req.body.paid),
                 deal: [{
-                    _id: arrayid,
+
                     id: arrayid,
                     date: req.body.date,
                     bags: req.body.bags,
@@ -451,7 +451,7 @@ exports.postbuyerform = (req, res) => {
 
         if (parseInt(req.body.paid) > 0) {
             var transaction = new Transaction({
-                _id: arrayid,
+                id: arrayid,
                 Date: req.body.date,
                 amount: req.body.paid,
                 types: "credit",
@@ -482,7 +482,7 @@ exports.postbuyerform = (req, res) => {
 }
 exports.deletesales = (req, res) => {
     var name
-    Buyers.findOne({ _id: req.params.objectid }).then((docs, err) => {
+    Buyers.findOne({ id: req.params.objectid }).then((docs, err) => {
         name = docs.name
 
         docs.updateOne({
@@ -499,7 +499,7 @@ exports.deletesales = (req, res) => {
         docs.updateOne({
                 $pull: {
                     "deal": {
-                        _id: req.params.arrayid
+                        id: req.params.arrayid
                     }
                 }
             }, { safe: true, upsert: true },
@@ -513,7 +513,7 @@ exports.deletesales = (req, res) => {
     }).then((err, docs) => {
         if (err) console.log(err)
 
-        Transaction.findOneAndDelete({ _id: req.params.arrayid }).then(docs => {
+        Transaction.findOneAndDelete({ id: req.params.arrayid }).then(docs => {
             if (err) console.log(err)
             if (req.params.type == "seperate") {
                 res.redirect('/salesmanagement')
@@ -1297,7 +1297,8 @@ exports.utilityform = (req, res) => {
 }
 
 exports.editorder = (req, res) => {
-
+    console.log(req.body.objectid)
+    console.log(req.body.arrayid)
     var totalpayment
     if (req.body.through == 'quatity') {
         totalpayment = 0
@@ -1307,11 +1308,10 @@ exports.editorder = (req, res) => {
 
     }
 
-
     if (req.body.section == "sales") {
 
         var name
-        Buyers.findOne({ _id: req.body.objectid }).then(docs => {
+        Buyers.findOne({ id: req.body.objectid }).then(docs => {
             name = docs.name
 
             var maintotal = docs.total - (parseInt(req.body.previoustotal) + parseInt(req.body.editpaid)) + totalpayment + parseInt(req.body.previouspaid)
@@ -1324,7 +1324,7 @@ exports.editorder = (req, res) => {
 
                 }
             )
-            Buyers.findOneAndUpdate({ _id: req.body.objectid, deal: { $elemMatch: { _id: req.body.arrayid } } }, {
+            Buyers.findOneAndUpdate({ id: req.body.objectid, deal: { $elemMatch: { id: req.body.arrayid } } }, {
 
                         $set: {
 
@@ -1342,7 +1342,7 @@ exports.editorder = (req, res) => {
                     }, // list fields you like to change
                     { 'new': true, 'safe': true, 'upsert': true })
                 .then(docs => {
-                    Transaction.findOneAndUpdate({ _id: req.body.arrayid }).then(docs => {
+                    Transaction.findOne({ id: req.body.arrayid }).then(docs => {
                         if (docs) {
                             docs.Date = req.body.editdate;
                             docs.amount = req.body.editpaid;
@@ -1374,7 +1374,7 @@ exports.editorder = (req, res) => {
 
 
         var name
-        Sellers.findOne({ _id: req.body.objectid }).then(docs => {
+        Sellers.findOne({ id: req.body.objectid }).then(docs => {
             name = docs.name;
             var maintotal = docs.total - (parseInt(req.body.previoustotal) + parseInt(req.body.editpaid)) + totalpayment + parseInt(req.body.previouspaid)
 
@@ -1386,7 +1386,7 @@ exports.editorder = (req, res) => {
 
                 }
             )
-            Sellers.findOneAndUpdate({ _id: req.body.objectid, deal: { $elemMatch: { _id: req.body.arrayid } } }, {
+            Sellers.findOneAndUpdate({ id: req.body.objectid, deal: { $elemMatch: { id: req.body.arrayid } } }, {
 
                         $set: {
 
@@ -1404,7 +1404,7 @@ exports.editorder = (req, res) => {
                     }, // list fields you like to change
                     { 'new': true, 'safe': true, 'upsert': true })
                 .then(docs => {
-                    Transaction.findOneAndUpdate({ _id: req.body.arrayid }).then(docs => {
+                    Transaction.findOne({ id: req.body.arrayid }).then(docs => {
                         if (docs) {
                             docs.Date = req.body.editdate;
                             docs.amount = req.body.editpaid;

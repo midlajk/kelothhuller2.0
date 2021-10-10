@@ -1,81 +1,138 @@
-<%- include('./includes/head.ejs') %>
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <link rel="apple-touch-icon" sizes="57x57" href="/apple-icon-57x57.png">
+    <link rel="apple-touch-icon" sizes="60x60" href="/apple-icon-60x60.png">
+    <link rel="apple-touch-icon" sizes="72x72" href="/apple-icon-72x72.png">
+    <link rel="apple-touch-icon" sizes="76x76" href="/apple-icon-76x76.png">
+    <link rel="apple-touch-icon" sizes="114x114" href="/apple-icon-114x114.png">
+    <link rel="apple-touch-icon" sizes="120x120" href="/apple-icon-120x120.png">
+    <link rel="apple-touch-icon" sizes="144x144" href="/apple-icon-144x144.png">
+    <link rel="apple-touch-icon" sizes="152x152" href="/apple-icon-152x152.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-icon-180x180.png">
+    <link rel="icon" type="image/png" sizes="192x192" href="/android-icon-192x192.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="96x96" href="/favicon-96x96.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+    <link rel="manifest" href="/manifest.json">
+    <meta name="msapplication-TileColor" content="#ffffff">
+    <meta name="msapplication-TileImage" content="/ms-icon-144x144.png">
+    <meta name="theme-color" content="#ffffff">
+
+    <link href="/css/style.css" rel="stylesheet">
+
+    <!-- Custom fonts for this template -->
+    <link href="/vendor/fontawesome-free/css/all.min.css" rel="stylesheet" type="text/css">
+    <link href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i" rel="stylesheet">
+
+    <!-- Custom styles for this template -->
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <!-- Custom styles for this page -->
 
 
-    <div class="container">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
 
-        <!-- Outer Row -->
-        <div class="row justify-content-center">
-            <div class="col-xl-6 col-lg-6 col-md-6">
 
-                <div class="card o-hidden border-0 shadow-lg my-3">
-                    <div class="card-body p-5 bg-primary">
-                        <i class="fa fa-4x fa-clipboard-list float-right text-white"></i>
-                        <h2> <a class="text-white text-decoration-none" href="http://">Check attendnce</a> </h2>
 
+
+
+</head>
+
+<body>
+    <section class="ftco-section">
+        <div class="container">
+            <div class="row justify-content-center">
+                <div class="col-md-6 text-center mb-5">
+                    <h2 class="heading-section">Website menu</h2>
+                </div>
+            </div>
+        </div>
+        <div class="container">
+            <nav class="navbar navbar-expand-lg ftco_navbar ftco-navbar-light" id="ftco-navbar">
+                <div class="container">
+                    <a class="navbar-brand" href="/">Keloth Huller</a>
+                    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#ftco-nav" aria-controls="ftco-nav" aria-expanded="false" aria-label="Toggle navigation">
+		        <span class="fa fa-bars"></span> Menu
+		      </button>
+                    <div class="collapse navbar-collapse" id="ftco-nav">
+                        <ul class="navbar-nav ml-auto">
+                            <li class="nav-item"><a href="/" class="nav-link">Home</a></li>
+
+                            <li class="nav-item"><a href="/login" class="nav-link">Login</a></li>
+                            <li class="nav-item dropdown position-static">
+                                <a class="nav-link dropdown-toggle" href="#" id="dropdown04" data-toggle="" aria-haspopup="true" aria-expanded="false">Details</a>
+                                <div class="dropdown-menu p-4">
+                                    <div class="row">
+                                        <div class="col-md-3">
+                                            <a class="dropdown-item" href="#">View atttendance</a>
+                                            <a class="dropdown-item" href="#">View Kooli</a>
+                                            <a class="dropdown-item" href="#">View Loads</a>
+                                            <a class="dropdown-item" href="#">Borrowal and Returns</a>
+                                            <a class="dropdown-item" href="#">Salary</a>
+                                            <a class="dropdown-item" href="#">Lori Rent</a>
+                                        </div>
+                                        <div class="col-md-3 d-none d-md-block">
+                                            <a href="#" class="img" style="background-image: url(/haris.jpg);"></a>
+                                            <div class="text">
+                                                <h3><a href="#">Haris keloth</a></h3>
+                                                <span>9449120062</span>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-3 d-none d-md-block">
+                                            <a href="#" class="img" style="background-image: url(/aju.jpg);"></a>
+                                            <div class="text">
+                                                <h3><a href="#">Ajmal p k</a></h3>
+                                                <span>9449120062</span>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-3 d-none d-md-block">
+                                            <a href="#" class="img" style="background-image: url(/suhair.png);"></a>
+                                            <div class="text">
+                                                <h3><a href="#">Suhair k</a></h3>
+                                                <span>9449120062</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </li>
+                        </ul>
                     </div>
                 </div>
-
-            </div>
-            <div class="col-xl-6 col-lg-6 col-md-6">
-
-                <div class="card o-hidden border-0 shadow-lg my-3">
-                    <div class="card-body p-5 bg-primary">
-                        <i class="fa fa-4x fa-dollar-sign float-right text-white"></i>
-                        <h2> <a class="text-white text-decoration-none" href="http://">Loading wage</a> </h2>
-
-                    </div>
-                </div>
-
-            </div>
-            <div class="col-xl-6 col-lg-6 col-md-6">
-
-                <div class="card o-hidden border-0 shadow-lg my-3">
-                    <div class="card-body p-5 bg-primary">
-                        <i class="fa fa-4x fa-bars float-right text-white"></i>
-                        <h2> <a class="text-white text-decoration-none" href="http://">Employee Wage</a> </h2>
-
-                    </div>
-                </div>
-
-            </div>
-            <div class="col-xl-6 col-lg-6 col-md-6">
-
-                <div class="card o-hidden border-0 shadow-lg my-3">
-                    <div class="card-body p-5 bg-primary">
-                        <i class="fa fa-4x fa-user float-right text-white"></i>
-                        <h2> <a class="text-white text-decoration-none" href="http://">Loari rent</a> </h2>
-
-                    </div>
-                </div>
-
-            </div>
-            <div class="col-xl-6 col-lg-6 col-md-6">
-
-                <div class="card o-hidden border-0 shadow-lg my-3">
-                    <div class="card-body p-5 bg-primary">
-                        <i class="fa fa-4x fa-user float-right text-white"></i>
-                        <h2> <a class="text-white text-decoration-none" href="http://">Employee Loans</a> </h2>
-
-                    </div>
-                </div>
-
-            </div>
-            <div class="col-xl-6 col-lg-6 col-md-6">
-
-                <div class="card o-hidden border-0 shadow-lg my-3">
-                    <div class="card-body p-5 bg-primary">
-                        <i class="fa fa-4x fa-user float-right text-white"></i>
-                        <h2> <a class="text-white text-decoration-none" class="" href="/login">User login</a> </h2>
-
-                    </div>
-                </div>
-
-            </div>
-
-
-
+            </nav>
+            <!-- END nav -->
         </div>
 
-    </div>
+    </section>
+    <script src="/vendor/jquery/jquery.min.js"></script>
+    <script src="/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+    <script>
+        (function($) {
 
-    <%- include('./includes/end.ejs') %>
+            "use strict";
+
+            $('nav .dropdown').hover(function() {
+                var $this = $(this);
+                $this.addClass('show');
+                $this.find('> a').attr('aria-expanded', true);
+                $this.find('.dropdown-menu').addClass('show');
+            }, function() {
+                var $this = $(this);
+                $this.removeClass('show');
+                $this.find('> a').attr('aria-expanded', false);
+                $this.find('.dropdown-menu').removeClass('show');
+            });
+
+        })(jQuery);
+    </script>
+
+</body>
+
+</html>

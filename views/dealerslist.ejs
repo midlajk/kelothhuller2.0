@@ -1,0 +1,376 @@
+<%- include('./includes/head.ejs') %>
+
+
+    <div class="container-fluid">
+        <div class="d-sm-flex align-items-center justify-content-between mb-4">
+            <h1 class="h3 mb-0 text-gray-800">
+                Dealers List
+            </h1>
+
+        </div>
+        <!-- Page Heading -->
+
+        <div id="sellersum" class="row">
+
+            <!-- Earnings (Monthly) Card Example -->
+            <!-- Earnings (Monthly) Card Example -->
+            <div class="col-xl-3 col-md-6 mb-4">
+                <div class="card border-left-success shadow h-100 py-2">
+                    <div class="card-body">
+                        <div class="row no-gutters align-items-center">
+                            <div class="col mr-2">
+                                <div class="text-xs font-weight-bold text-success text-uppercase mb-1">Total Kg Purchase </div>
+                                <div class="h5 mb-0 font-weight-bold text-gray-800"><span id="totalpurchasekg"></span></div>
+                            </div>
+                            <div class="col-auto">
+                                <i class="fas fa-rupee-sign fa-2x text-gray-300"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-xl-3 col-md-6 mb-4">
+                <div class="card border-left-primary shadow h-100 py-2">
+                    <div class="card-body">
+                        <div class="row no-gutters align-items-center">
+                            <div class="col mr-2">
+                                <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">Total Purchase amount</div>
+                                <div class="h5 mb-0 font-weight-bold text-gray-800"><span id="totalpurchasesum"></span></div>
+                            </div>
+                            <div class="col-auto">
+                                <i class="fas fa-rupee-sign fa-2x text-gray-300"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+
+            <div class="col-xl-3 col-md-6 mb-4">
+                <div class="card border-left-success shadow h-100 py-2">
+                    <div class="card-body">
+                        <div class="row no-gutters align-items-center">
+                            <div class="col mr-2">
+                                <div class="text-xs font-weight-bold text-success text-uppercase mb-1">Total amount paid </div>
+                                <div class="h5 mb-0 font-weight-bold text-gray-800"><span id="totalpurchasepaid"></span></div>
+                            </div>
+                            <div class="col-auto">
+                                <i class="fas fa-rupee-sign fa-2x text-gray-300"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-xl-3 col-md-6 mb-4">
+                <div class="card border-left-success shadow h-100 py-2">
+                    <div class="card-body">
+                        <div class="row no-gutters align-items-center">
+                            <div class="col mr-2">
+                                <div class="text-xs font-weight-bold text-success text-uppercase mb-1">Remaining amount </div>
+                                <div class="h5 mb-0 font-weight-bold text-gray-800"><span id="totalpurchaseremaining"></span></div>
+                            </div>
+                            <div class="col-auto">
+                                <i class="fas fa-rupee-sign fa-2x text-gray-300"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        <div id="buyersum" style="display: none;" class="row">
+
+            <!-- Earnings (Monthly) Card Example -->
+            <!-- Earnings (Monthly) Card Example -->
+            <div class="col-xl-3 col-md-6 mb-4">
+                <div class="card border-left-success shadow h-100 py-2">
+                    <div class="card-body">
+                        <div class="row no-gutters align-items-center">
+                            <div class="col mr-2">
+                                <div class="text-xs font-weight-bold text-success text-uppercase mb-1">Total Kg sales </div>
+                                <div class="h5 mb-0 font-weight-bold text-gray-800"><span id="totalsaleskg"></span></div>
+                            </div>
+                            <div class="col-auto">
+                                <i class="fas fa-rupee-sign fa-2x text-gray-300"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-xl-3 col-md-6 mb-4">
+                <div class="card border-left-primary shadow h-100 py-2">
+                    <div class="card-body">
+                        <div class="row no-gutters align-items-center">
+                            <div class="col mr-2">
+                                <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">Total sales amount</div>
+                                <div class="h5 mb-0 font-weight-bold text-gray-800"><span id="totalsalesamount"></span></div>
+                            </div>
+                            <div class="col-auto">
+                                <i class="fas fa-rupee-sign fa-2x text-gray-300"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+
+            <div class="col-xl-3 col-md-6 mb-4">
+                <div class="card border-left-success shadow h-100 py-2">
+                    <div class="card-body">
+                        <div class="row no-gutters align-items-center">
+                            <div class="col mr-2">
+                                <div class="text-xs font-weight-bold text-success text-uppercase mb-1">Total amount Recieved </div>
+                                <div class="h5 mb-0 font-weight-bold text-gray-800"><span id="totalamountrecieved"></span></div>
+                            </div>
+                            <div class="col-auto">
+                                <i class="fas fa-rupee-sign fa-2x text-gray-300"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-xl-3 col-md-6 mb-4">
+                <div class="card border-left-success shadow h-100 py-2">
+                    <div class="card-body">
+                        <div class="row no-gutters align-items-center">
+                            <div class="col mr-2">
+                                <div class="text-xs font-weight-bold text-success text-uppercase mb-1">Remaining amount </div>
+                                <div class="h5 mb-0 font-weight-bold text-gray-800"><span id="totalsalesremaining"></span></div>
+                            </div>
+                            <div class="col-auto">
+                                <i class="fas fa-rupee-sign fa-2x text-gray-300"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+        <!-- DataTales Example -->
+        <div id="sellerslistss" class="card shadow mb-4">
+
+            <div class="card-header py-3">
+                <h5>Sellers List</h5>
+                <a href="purchasemanagement" class="btn btn-primary">Purchase Management</a>
+                <a id="btnsales" href="/salesmanagement" class="btn btn-primary">Sales Management</a>
+
+                <button class="btn btn-success float-right" id="buyerslistbutton">Buyers List</button>
+                <a class="btn btn-primary float-right mr-2" href="/accountmanagement">Detailed Report </a>
+
+
+
+                <br>
+
+            </div>
+
+
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                        <thead>
+                            <tr>
+
+                                <th>Name</th>
+                                <th>Total purchase kg</th>
+                                <th>Purchase amount</th>
+                                <th>Amount Paid</th>
+                                <th>Remaining</th>
+
+                            </tr>
+                        </thead>
+                        <tfoot>
+                            <tr>
+                                <th>Name</th>
+                                <th>Total purchase kg</th>
+                                <th>Purchase amount</th>
+                                <th>Amount Paid</th>
+                                <th>Remaining</th>
+
+                            </tr>
+                        </tfoot>
+                        <tbody>
+
+                            <%
+                            var purchaseamount = 0;
+                            var purchasekg = 0;
+                            var purchasepaid = 0;
+                 
+                            for(let doc of docs){
+                                purchaseamount = parseInt(doc.totalsales) + parseInt(purchaseamount)
+                                purchasekg = parseInt(doc.totalkg) + parseInt(purchasekg)
+                                purchasepaid = parseInt(doc.totalpaid) + parseInt(purchasepaid)
+                                %>
+                                <tr>
+
+                                    <td>
+                                        <a href="/individualpurchase/<%=doc.name%>">
+                                            <%=doc.name%>
+                                        </a>
+                                    </td>
+                                    <td>
+                                        <%=doc.totalkg.toLocaleString()%>
+                                    </td>
+                                    <td>
+                                        <%=doc.totalsales.toLocaleString()%>
+                                    </td>
+                                    <td>
+                                        <%=doc.totalpaid.toLocaleString()%>
+                                    </td>
+                                    <td>
+                                        <%= (parseInt(doc.totalsales) - parseInt(doc.totalpaid)).toLocaleString()  %>
+                                    </td>
+
+                                </tr>
+                                <%}%>
+
+
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+
+
+
+        </div>
+
+
+        <div id="buyerslist" style="display: none;" class="card shadow mb-4">
+            <div class="card-header py-3">
+                <h5>Buyers List</h5>
+                <a href="purchasemanagement" class="btn btn-primary">Purchase Management</a>
+                <a id="btnsales" href="/salesmanagement" class="btn btn-primary">Sales Management</a>
+
+                <button class="btn btn-success float-right" id="sellerslist">Sellers List</button>
+                <a class="btn btn-primary float-right mr-2" href="/accountmanagement">Detailed Report </a>
+
+
+                <br>
+
+            </div>
+
+
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-bordered" id="MyTable" width="100%" cellspacing="0">
+                        <thead>
+                            <tr>
+                                <th>Name</th>
+                                <th>Total purchase kg</th>
+                                <th>Purchase amount</th>
+                                <th>Amount Paid</th>
+                                <th>Remaining</th>
+
+                            </tr>
+                        </thead>
+                        <tfoot>
+                            <tr>
+                                <tr>
+                                    <th>Name</th>
+                                    <th>Total purchase kg</th>
+                                    <th>Purchase amount</th>
+                                    <th>Amount Paid</th>
+                                    <th>Remaining</th>
+                                </tr>
+                        </tfoot>
+                        <tbody>
+                            <%
+                            var salestotal = 0;
+                            var saleskg = 0;
+                            var salespaid = 0;
+                 
+                            for(let doc of docs){
+                                salestotal = parseInt(doc.totalsales) + parseInt(salestotal)
+                                saleskg = parseInt(doc.totalkg) + parseInt(saleskg)
+                                salespaid = parseInt(doc.totalpaid) + parseInt(salespaid)
+                                %>
+                                <tr>
+
+                                    <td>
+                                        <a href="/individualsales/<%=doc.name%>">
+                                            <%=doc.name%>
+                                        </a>
+                                    </td>
+                                    <td>
+                                        <%=doc.totalkg.toLocaleString()%>
+                                    </td>
+                                    <td>
+                                        <%=doc.totalsales.toLocaleString()%>
+                                    </td>
+                                    <td>
+                                        <%=doc.totalpaid.toLocaleString()%>
+                                    </td>
+                                    <td>
+                                        <%= (parseInt(doc.totalsales) - parseInt(doc.totalpaid)).toLocaleString()  %>
+                                    </td>
+
+                                </tr>
+                                <%}%>
+
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <script>
+            $("#buyerslistbutton").click(function() {
+
+                $('#buyerslist').show();
+                $('#sellerslistss').hide();
+                $('#buyersum').show();
+                $('#sellersum').hide();
+            })
+            $("#sellerslist").click(function() {
+                $('#buyerslist').hide();
+                $('#sellerslistss').show();
+                $('#sellersum').show();
+                $('#buyersum').hide();
+            })
+        </script>
+        <script>
+            $(document).ready(function() {
+
+                purchaseamount = <%=purchaseamount%>;
+                purchasekg = <%=purchasekg%>;
+                purchasepaid = <%=purchasepaid%>;
+                remainingpurchase = purchaseamount - purchasepaid
+                salesamount = <%=salestotal%>;
+                saleskg = <%=saleskg%>;
+                salespaid = <%=salespaid%>;
+                salesremaining = salesamount - salespaid
+                document.getElementById('totalpurchasekg').innerText = purchasekg.toLocaleString();
+                document.getElementById('totalpurchasesum').innerText = purchaseamount.toLocaleString();
+                document.getElementById('totalpurchasepaid').innerText = purchasepaid.toLocaleString();
+                document.getElementById('totalpurchaseremaining').innerText = remainingpurchase.toLocaleString();
+                document.getElementById('totalsaleskg').innerText = saleskg.toLocaleString();
+                document.getElementById('totalsalesamount').innerText = salesamount.toLocaleString();
+                document.getElementById('totalamountrecieved').innerText = salespaid.toLocaleString();
+                document.getElementById('totalsalesremaining').innerText = salesremaining.toLocaleString();
+                $('#dataTable').DataTable({
+
+                    "ordering": false,
+
+                });
+
+
+            });
+
+
+            $(document).ready(function() {
+
+                $('#MyTable').DataTable({
+                    initComplete: function() {
+                        this.api().columns().every(function() {
+                            var column = this;
+
+                        });
+                    },
+                    "ordering": false,
+                });
+            });
+        </script>
+        <%- include('./includes/end.ejs') %>

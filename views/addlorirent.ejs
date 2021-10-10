@@ -113,22 +113,23 @@
 
             <div class="card-body">
                 <div class="table-responsive">
-                    <table id="" width="100%" cellspacing="0">
-
-
-                        <tbody>
+                    <table id="" class="table" width="100%" cellspacing="0">
+                        <thead>
                             <tr>
-                                <td>Date</td>
+                                <th>Date</th>
                                 <%if(!individual){%>
-                                    <td>Lori number</td>
+                                    <th>Lori number</th>
                                     <%}%>
 
-                                        <td>Load to</td>
-                                        <td>Rent</td>
-                                        <td>Content</td>
-                                        <td>Driver</td>
+                                        <th>Load to</th>
+                                        <th>Rent</th>
+                                        <th>Content</th>
+                                        <th>Driver</th>
 
                             </tr>
+                        </thead>
+                        <tbody>
+
                             <form id="adloari" action="/addlorirent" method="POST">
                                 <tr>
                                     <td><input class="p-1 form-control" style="width: 160px;" tabIndex="1" required type="date" value="<%=todaydate%>" placeholder="User name" name="date"></td>
@@ -261,20 +262,22 @@
 
             <div class="card-body">
                 <div class="table-responsive">
-                    <table width="100%" cellspacing="0">
+                    <table class="table" width="100%" cellspacing="0">
 
-
-                        <tbody>
+                        <thead>
                             <tr>
-                                <td>Date</td>
+                                <th>Date</th>
                                 <%if(!individual){%>
-                                    <td>Lori number</td>
+                                    <th>Lori number</th>
                                     <%}%>
 
-                                        <td>Amount</td>
-                                        <td>Hint</td>
+                                        <th>Amount</th>
+                                        <th>Hint</th>
 
                             </tr>
+                        </thead>
+                        <tbody>
+
                             <form id="adloaris" action="/addloripayment" method="POST">
                                 <tr>
                                     <td><input class="p-1 form-control" style="width: 160px;" tabIndex="55" required type="date" value="<%=todaydate%>" placeholder="User name" name="date"></td>
