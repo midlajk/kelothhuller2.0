@@ -123,7 +123,17 @@ exports.Editemployee = (req, res) => {
     } else {
         message = null;
     }
-    Employees.find().then(docs => {
+    Employees.aggregate( [
+        {
+          $addFields: {
+            totalsalary: { $sum: "$payment.amount" } ,
+            totalpaid: { $sum: "$detail.amount" },
+            borrowed: { $sum: "$borrowal.borrowed" } ,
+            returned: { $sum: "$borrowal.returned" },
+          }
+        }
+     ]).sort({ "_id": -1 }).exec((err, docs) => {
+
         res.render('Editemployee', {
             mainpath: '/editemployee',
             docs: docs,
@@ -762,13 +772,7 @@ exports.addloaderpayment = (req, res) => {
                     })
                 })
         } else {
-            if (req.body.category == 'all') {
-                req.flash('payment', true)
-                res.redirect('/employee/indidualkooli/' + name)
-            } else {
-                req.flash('payment',true)
-                res.redirect('/employee/loaderspayment')
-            }
+       
         }
 
     }).then(docs => {
@@ -779,10 +783,7 @@ exports.addloaderpayment = (req, res) => {
             req.flash('payment',true)
             res.redirect('/employee/loaderspayment')
         }
-    }).catch(err => {
-        console.log(err)
     })
-
 }
 exports.deleteload = (req, res) => {
     name = req.params.name.toUpperCase()
@@ -900,7 +901,6 @@ if (payment.length > 0) {
 
         ]).sort({ "payed.date": -1, "payed._id": -1 }).exec((err, dics) => {
             Loaders.find().distinct('name').then(loaders => {
-
 
                 res.render('loaderspayment', {
                     docs: docs,

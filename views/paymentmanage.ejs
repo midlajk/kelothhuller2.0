@@ -88,12 +88,12 @@
             <div class="card-header py-3">
 
                 <%if(individual){%>
-                    <a id="" href="/getpayments" class="btn btn-success">Payments record</a>
+                    <a id="" href="/getpayments" class="btn btn-primary">Payments record</a>
                     <%}else{%>
-                        <a id="" href="#" class="btn btn-success">Payee list</a>
+                        <a id="" href="/payeelist" class="btn btn-primary">Payee list</a>
                         <%}%>
                             <a href="" data-toggle="modal" data-target="#filtermodel" style="float:right" class="btn btn-danger">Filter table</a>
-                            <a id="paidbutton" href="#" class="btn btn-success float-right mr-2">Recivied</a>
+                            <button id="paidbutton" href="#" class="btn btn-success float-right mr-2">Recivied</button>
 
             </div>
             <div class="card-header py-3">
@@ -523,14 +523,12 @@
             $("#paidbutton").click(function() {
                 $('#paymentslist').show();
                 $('#paidlist').hide();
-
                 $('#headertext').text("Amount Recieved");
 
             })
             $("#paymentbutton").click(function() {
                 $('#paymentslist').hide();
                 $('#paidlist').show();
-
                 $('#headertext').text("Amount Paid");
             })
 

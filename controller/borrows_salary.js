@@ -11,13 +11,21 @@ exports.borrows = (req, res) => {
     Borrowed.aggregate([{ $unwind: "$detail" }]).sort({ "detail.date": -1, "detail._id": -1 }).exec((err, data) => {
 
         Borrowed.find().distinct('name').then(borrevers => {
-            res.render('borrow', {
-                mainpath: '/borrow',
-                docs: data,
-                individual: false,
-                borrevers: borrevers,
-                filter: false
+            Employees.find().distinct('name').then(emp => {
+                namesnew = borrevers.concat(emp);
 
+                var uniqueSet = new Set(namesnew);
+                var uniqueArr = Array.from(uniqueSet);
+
+                res.render('borrow', {
+                    mainpath: '/borrow',
+                    docs: data,
+                    individual: false,
+                    borrevers: borrevers,
+                    names: uniqueArr,
+                    filter: false
+
+                })
             })
         })
 
@@ -165,11 +173,7 @@ exports.borrowform = (req, res) => {
                     })
                     transaction.save((err, doc) => {
                         if (err) console.log(err)
-                        if (req.body.sec == 'individual') {
-                            res.redirect('/paymentcontroller/indivdualborrows/' + name)
-                        } else {
-                            res.redirect('/paymentcontroller/borrows')
-                        }
+                        employee_check()
 
                     })
 
@@ -182,7 +186,7 @@ exports.borrowform = (req, res) => {
                     _id: arrayid,
                     date: date,
                     payment: req.body.payment,
-                    amount: amount,
+                    amount: amounts,
                     typee: req.body.type
                 }]
 
@@ -202,29 +206,68 @@ exports.borrowform = (req, res) => {
 
                 })
                 transaction.save((err, doc) => {
-                    if (err) console.log(err)
-                    if (req.body.sec == 'individual') {
-                        res.redirect('/paymentcontroller/indivdualborrows/' + name)
-                    } else {
-                        res.redirect('/paymentcontroller/borrows')
-                    }
+                    employee_check()
 
                 })
             })
 
         }
 
-    }).catch(err => {
-        console.log(err)
+    }).then(docs => {
+        if (req.body.sec == 'individual') {
+            res.redirect('/paymentcontroller/indivdualborrows/' + name)
+        } else {
+            res.redirect('/paymentcontroller/borrows')
+        }
+
     })
 
+    function employee_check() {
+        Employees.findOne({ name: name }).then(docs => {
 
+            if (docs) {
+                if (req.body.type == 'credit') {
+                    docs.updateOne({
+                            $push: {
+                                "borrowal": {
+                                    id: arrayid,
+                                    date: date,
+                                    returned: amount,
+
+
+                                }
+                            }
+                        }, { safe: true, upsert: true },
+                        function(err, model) {
+
+                        })
+                } else {
+                    docs.updateOne({
+                            $push: {
+                                "borrowal": {
+                                    id: arrayid,
+                                    date: date,
+                                    borrowed: amount,
+
+
+                                }
+                            }
+                        }, { safe: true, upsert: true },
+                        function(err, model) {
+
+                        })
+                }
+            }
+
+        })
+    }
 
 }
 
 exports.deleteborrow = (req, res) => {
-
+        var name
         Borrowed.findById(req.params.objectid).then((docs, err) => {
+            name = docs.name
             docs.updateOne({
                     $pull: {
                         "detail": {
@@ -235,6 +278,25 @@ exports.deleteborrow = (req, res) => {
                 function(err, model) {
 
                     Transaction.findByIdAndDelete(req.params.arrayid).then((err, docs) => {
+
+                    })
+                    Employees.findOne({ name: name }).then((docs, err) => {
+                        if (docs) {
+                            docs.updateOne({
+                                    $pull: {
+                                        "borrowal": {
+                                            id: req.params.arrayid
+                                        }
+                                    }
+                                }, { safe: true, upsert: true },
+                                function(err, model) {
+
+
+                                }
+                            )
+                        }
+
+
 
                     })
                 }

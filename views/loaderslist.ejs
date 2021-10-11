@@ -1,0 +1,184 @@
+<%- include('./includes/head.ejs') %>
+
+
+    <div class="container-fluid">
+
+        <!-- Page Heading -->
+
+
+        <div class="d-sm-flex align-items-center justify-content-between mb-4">
+            <h1 class="h3 mb-0 text-gray-800">
+                Loaders List
+
+            </h1>
+
+
+        </div>
+        <div id="sellersum" class="row">
+
+            <!-- Earnings (Monthly) Card Example -->
+            <!-- Earnings (Monthly) Card Example -->
+            <div class="col-xl-3 col-md-6 mb-4">
+                <div class="card border-left-success shadow h-100 py-2">
+                    <div class="card-body">
+                        <div class="row no-gutters align-items-center">
+                            <div class="col mr-2">
+                                <div class="text-xs font-weight-bold text-success text-uppercase mb-1">Total bags </div>
+                                <div class="h5 mb-0 font-weight-bold text-gray-800"><span id="totalpurchasekg"></span></div>
+                            </div>
+                            <div class="col-auto">
+                                <i class="fas fa-rupee-sign fa-2x text-gray-300"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-xl-3 col-md-6 mb-4">
+                <div class="card border-left-primary shadow h-100 py-2">
+                    <div class="card-body">
+                        <div class="row no-gutters align-items-center">
+                            <div class="col mr-2">
+                                <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">Total Kooli amount</div>
+                                <div class="h5 mb-0 font-weight-bold text-gray-800"><span id="totalpurchasesum"></span></div>
+                            </div>
+                            <div class="col-auto">
+                                <i class="fas fa-rupee-sign fa-2x text-gray-300"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+
+            <div class="col-xl-3 col-md-6 mb-4">
+                <div class="card border-left-success shadow h-100 py-2">
+                    <div class="card-body">
+                        <div class="row no-gutters align-items-center">
+                            <div class="col mr-2">
+                                <div class="text-xs font-weight-bold text-success text-uppercase mb-1">Total kooli paid </div>
+                                <div class="h5 mb-0 font-weight-bold text-gray-800"><span id="totalpurchasepaid"></span></div>
+                            </div>
+                            <div class="col-auto">
+                                <i class="fas fa-rupee-sign fa-2x text-gray-300"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-xl-3 col-md-6 mb-4">
+                <div class="card border-left-dark shadow h-100 py-2">
+                    <div class="card-body">
+                        <div class="row no-gutters align-items-center">
+                            <div class="col mr-2">
+                                <div class="text-xs font-weight-bold text-success text-uppercase mb-1">Remaining payment </div>
+                                <div class="h5 mb-0 font-weight-bold text-gray-800"><span id="remainingpayment"></span></div>
+                            </div>
+                            <div class="col-auto">
+                                <i class="fas fa-rupee-sign fa-2x text-gray-300"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- DataTales Example -->
+        <div class="card shadow mb-4">
+            <div class="card-header py-3">
+                <a class=" btn btn-primary" href="/employee/loaderspayment">Loaders Payments</a>
+
+                <br>
+                <br>
+
+            </div>
+
+
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                        <thead>
+                            <tr>
+                                <th>Name</th>
+                                <th>Bags loaded</th>
+                                <th>Total kooli</th>
+                                <th>Amount paid</th>
+                                <th>Remaining</th>
+
+
+                            </tr>
+                        </thead>
+                        <tfoot>
+                            <tr>
+
+                                <th>Name</th>
+                                <th>Bags loaded</th>
+                                <th>Total kooli</th>
+                                <th>Amount paid</th>
+                                <th>Remaining</th>
+
+                            </tr>
+                        </tfoot>
+                        <tbody>
+
+                            <%
+                            var totalbags = 0;
+                            var totalamount = 0;
+                            var totalamountpaid = 0;
+                   
+                 
+                            for(let dic of docs){
+                                totalbags = parseInt(dic.totalbags) + parseInt(totalbags)
+                                totalamount = parseInt(dic.totalamount) + parseInt(totalamount)
+                                totalamountpaid = parseInt(dic.totalpaid) + parseInt(totalamountpaid)
+                                
+                                %>
+                                <tr>
+
+                                    <td>
+                                        <a href="/individualpayments/<%=dic.name%>">
+                                            <%=dic.name%>
+                                        </a>
+
+                                    </td>
+                                    <td>
+                                        <%=dic.totalbags.toLocaleString()%>
+                                    </td>
+                                    <td>
+                                        <%=dic.totalamount.toLocaleString()%>
+                                    </td>
+                                    <td>
+                                        <%=dic.totalpaid.toLocaleString()%>
+                                    </td>
+                                    <td>
+                                        <%= (parseInt(dic.totalamount) - parseInt(dic.totalpaid)).toLocaleString()  %>
+                                    </td>
+
+                                </tr>
+                                <%}%>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        $(document).ready(function() {
+            $('#dataTable').DataTable({
+
+                "ordering": false,
+
+            });
+
+            totalbags = <%=totalbags%>;
+            totalamount = <%=totalamount%>;
+            totalamountpaid = <%=totalamountpaid%>;
+            remaining = totalamount - totalamountpaid
+            document.getElementById('totalpurchasekg').innerText = totalbags.toLocaleString();
+
+            document.getElementById('totalpurchasesum').innerText = totalamount.toLocaleString();
+            document.getElementById('totalpurchasepaid').innerText = totalamountpaid.toLocaleString();
+            document.getElementById('remainingpayment').innerText = remaining.toLocaleString();
+        });
+    </script>
+    <%- include('./includes/end.ejs') %>

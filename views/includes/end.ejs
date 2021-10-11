@@ -59,7 +59,9 @@
         $('.js-example-basic-single').select2();
     });
     $(document).ready(function($) {
-
+        $(window).on('back_forward', function() {
+            location.reload(true);
+        });
         //Use this inside your document ready jQuery 
         const [entry] = performance.getEntriesByType("navigation");
 

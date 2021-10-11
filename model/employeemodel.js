@@ -48,8 +48,13 @@ var employees = new Schema({
     careoff: String,
     duty: String,
     salary: String,
-    borrowed: Number,
-    returned: Number,
+    borrowal: [{
+        date: Date,
+        id: String,
+        borrowed: Number,
+        returned: Number,
+    }],
+
     leave: [{
         date: Date
     }],
@@ -64,7 +69,7 @@ var employees = new Schema({
         date: Date,
         hint: String,
         amount: Number,
-    }]
+    }],
 
 
 });

@@ -183,6 +183,7 @@
                         </thead>
                         <tfoot>
                             <tr>
+
                                 <th>Name</th>
                                 <th>Total purchase kg</th>
                                 <th>Purchase amount</th>
@@ -193,12 +194,13 @@
                         </tfoot>
                         <tbody>
 
+
                             <%
                             var purchaseamount = 0;
                             var purchasekg = 0;
                             var purchasepaid = 0;
                  
-                            for(let doc of docs){
+                            for(let doc of dics){
                                 purchaseamount = parseInt(doc.totalsales) + parseInt(purchaseamount)
                                 purchasekg = parseInt(doc.totalkg) + parseInt(purchasekg)
                                 purchasepaid = parseInt(doc.totalpaid) + parseInt(purchasepaid)
@@ -259,9 +261,9 @@
                         <thead>
                             <tr>
                                 <th>Name</th>
-                                <th>Total purchase kg</th>
-                                <th>Purchase amount</th>
-                                <th>Amount Paid</th>
+                                <th>Total Sales kg</th>
+                                <th>Sales amount</th>
+                                <th>Amount Recieved</th>
                                 <th>Remaining</th>
 
                             </tr>
@@ -270,9 +272,9 @@
                             <tr>
                                 <tr>
                                     <th>Name</th>
-                                    <th>Total purchase kg</th>
-                                    <th>Purchase amount</th>
-                                    <th>Amount Paid</th>
+                                    <th>Total Sales kg</th>
+                                    <th>Sales amount</th>
+                                    <th>Amount Recieved</th>
                                     <th>Remaining</th>
                                 </tr>
                         </tfoot>
@@ -282,29 +284,29 @@
                             var saleskg = 0;
                             var salespaid = 0;
                  
-                            for(let doc of docs){
-                                salestotal = parseInt(doc.totalsales) + parseInt(salestotal)
-                                saleskg = parseInt(doc.totalkg) + parseInt(saleskg)
-                                salespaid = parseInt(doc.totalpaid) + parseInt(salespaid)
+                            for(let dic of docs){
+                                salestotal = parseInt(dic.totalsales) + parseInt(salestotal)
+                                saleskg = parseInt(dic.totalkg) + parseInt(saleskg)
+                                salespaid = parseInt(dic.totalpaid) + parseInt(salespaid)
                                 %>
                                 <tr>
 
                                     <td>
-                                        <a href="/individualsales/<%=doc.name%>">
-                                            <%=doc.name%>
+                                        <a href="/individualsales/<%=dic.name%>">
+                                            <%=dic.name%>
                                         </a>
                                     </td>
                                     <td>
-                                        <%=doc.totalkg.toLocaleString()%>
+                                        <%=dic.totalkg.toLocaleString()%>
                                     </td>
                                     <td>
-                                        <%=doc.totalsales.toLocaleString()%>
+                                        <%=dic.totalsales.toLocaleString()%>
                                     </td>
                                     <td>
-                                        <%=doc.totalpaid.toLocaleString()%>
+                                        <%=dic.totalpaid.toLocaleString()%>
                                     </td>
                                     <td>
-                                        <%= (parseInt(doc.totalsales) - parseInt(doc.totalpaid)).toLocaleString()  %>
+                                        <%= (parseInt(dic.totalsales) - parseInt(dic.totalpaid)).toLocaleString()  %>
                                     </td>
 
                                 </tr>

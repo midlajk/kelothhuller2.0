@@ -18,12 +18,7 @@ exports.postloginpage = (req, res) => {
     var password = req.body.password
     Users.findOne({ name: name }).then(docs => {
         if (!docs) {
-            req.session.userPrevileage = "admin";
-            req.session.isadminlogged = true;
-            req.session.user = {
-                name: "midlaj",
-                role: "engineer"
-            };
+
             req.flash('error', 'No user registered.');
             return res.redirect('/login');
         } else {

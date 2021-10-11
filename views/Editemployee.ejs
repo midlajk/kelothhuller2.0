@@ -14,7 +14,7 @@
         <!-- DataTales Example -->
         <div class="card shadow mb-4">
             <div class="card-header py-3">
-                <a class="btn btn-success float-right mr-2" href="/paymentcontroller/salary">Salary Manage</a>
+                <a class="btn btn-primary " href="/paymentcontroller/salary">Salary Manage</a>
 
                 <% if (errorMessage) { %>
                     <h5 class="text-center">
@@ -75,11 +75,13 @@
                         <thead>
                             <tr>
                                 <th>Name</th>
-                                <th>Phone</th>
-                                <th>Careof</th>
-                                <th>Salary</th>
-                                <th>Pending payment</th>
-                                <th>Pending Borrowal</th>
+                                <th>Total Salary</th>
+                                <th>Amount paid</th>
+                                <th>Remaining Salary</th>
+                                <th>Total Borrowal</th>
+                                <th>Amount returned</th>
+                                <th>Remaining Borrowal</th>
+                                <th>Remaining settlemet</th>
                                 <th>Edit</th>
 
                             </tr>
@@ -87,11 +89,13 @@
                         <tfoot>
                             <tr>
                                 <th>Name</th>
-                                <th>Phone</th>
-                                <th>Careof</th>
-                                <th>Salary</th>
-                                <th>Pending payment</th>
-                                <th>Pending Borrowal</th>
+                                <th>Total Salary</th>
+                                <th>Amount paid</th>
+                                <th>Remaining Salary</th>
+                                <th>Total Borrowal</th>
+                                <th>Amount returned</th>
+                                <th>Remaining Borrowal</th>
+                                <th>Remaining settlemet</th>
                                 <th>Edit</th>
 
                             </tr>
@@ -106,19 +110,25 @@
 
                                     </td>
                                     <td>
-                                        <%=docs[i].phone%>
+                                        <%=docs[i].totalsalary.toLocaleString()%>
                                     </td>
                                     <td>
-                                        <%=docs[i].careoff%>
+                                        <%=docs[i].totalpaid.toLocaleString()%>
                                     </td>
                                     <td>
-                                        <%=docs[i].salary%>
+                                        <%= (parseInt(docs[i].totalsalary) - parseInt(docs[i].totalpaid)).toLocaleString()  %>
                                     </td>
                                     <td>
-
+                                        <%=docs[i].borrowed.toLocaleString()%>
                                     </td>
                                     <td>
-
+                                        <%=docs[i].returned.toLocaleString()%>
+                                    </td>
+                                    <td>
+                                        <%= (parseInt(docs[i].borrowed) - parseInt(docs[i].returned)).toLocaleString()  %>
+                                    </td>
+                                    <td>
+                                        <%= ((parseInt(docs[i].totalsalary) - parseInt(docs[i].totalpaid))- (parseInt(docs[i].borrowed) - parseInt(docs[i].returned))).toLocaleString()%>
                                     </td>
 
                                     <td>
@@ -213,6 +223,11 @@
             $('#submit').click(function() {
                 $('#submit').hide();
                 $('#button-spinner').show();
+
+            });
+            $('#dataTable').DataTable({
+
+                "ordering": false,
 
             });
         });

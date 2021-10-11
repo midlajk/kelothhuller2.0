@@ -26,7 +26,7 @@
         <div class="card shadow mb-4">
             <div class="card-header py-3">
                 <a class="float-right btn btn-danger ml-2" href="" href="" data-toggle="modal" data-target="#filtermodel">Filter</a>
-                <%if(!individual){%> <a class="btn btn-success" href="/paymentcontroller/borrows">Borrowers List</a>
+                <%if(!individual){%> <a class="btn btn-primary" href="/borrowlist">Borrowers List</a>
 
                     <%}else{%>
                         <a class="btn btn-primary" href="/paymentcontroller/borrows">Manage Borrowal </a>
@@ -76,7 +76,7 @@
                                     <td><input required autofocus tabindex="1" name="date" class="form-control" style="width: 175px;" type="date" value="<%=todaydate%>" id=""></td>
                                     <%if(!individual){%>
                                         <td><input required autofocus autocomplete="off" class="p-1 form-control" style="width: 200px;" tabIndex="2" type="text" list="billto" name="billto" id=""></td>
-                                        <datalist id="billto">  <%for(let docs of borrevers){%>
+                                        <datalist id="billto">  <%for(let docs of names){%>
                                             <option value="<%=docs%>">
                                           <%}%></datalist>
                                         <%}else{%> <input type="hidden" name="sec" value="individual">

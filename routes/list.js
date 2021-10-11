@@ -5,5 +5,8 @@ const mongoose = require('mongoose');
 const mainList = require('../controller/list');
 const isAdmin = require('../middleware/is-admin');
 router.get('/dealerslist',isAdmin, mainList.dealerslist);
-
+router.get('/payeelist',isAdmin, mainList.payeelist);
+router.get('/borrowlist',isAdmin, mainList.borrowlist);
+router.get('/lorilist',isAdmin, mainList.rentlist);
+router.get('/loaderslist',isAdmin, mainList.loaderslist);
 module.exports = router;
