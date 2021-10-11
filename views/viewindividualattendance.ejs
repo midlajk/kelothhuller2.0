@@ -2,16 +2,23 @@
     <div class="container-fluid">
 
         <!-- Page Heading -->
+        <h1 class="h3 mb-0 text-gray-800">
+            Attendance of
+            <%=name%>
+        </h1>
 
+        <h6>
+
+            From
+            <%=moment(start).format( 'DD-MM-YYYY')%> to
+                <%=moment(end).format( 'DD-MM-YYYY')%>
+
+        </h6>
 
         <!-- DataTales Example -->
         <div class="card shadow mb-4">
             <div class="card-header py-3">
-                <h6 class="m-0 font-weight-bold text-primary">Attendance of
-                    <%=name%> from
-                        <%=moment(start).format( 'DD-MM-YYYY')%> to
-                            <%=moment(end).format( 'DD-MM-YYYY')%>
-                </h6>
+
                 <a class="float-right btn btn-danger ml-2" href="" data-toggle="modal" data-target="#filtermodel">Filter</a>
                 <a class="float-right btn btn-info" href="/employee/viewattendance">View All</a>
             </div>
