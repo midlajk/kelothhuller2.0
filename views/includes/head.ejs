@@ -162,7 +162,7 @@
     <div id="wrapper">
 
         <!-- Sidebar -->
-        <%if(mainpath !='/mainpage'){%>
+        <%if(currentuser.isadminlogged){%>
             <ul class="navbar-nav bg-gradient-primary sidebar sidebar-dark accordion" id="accordionSidebar">
 
                 <!-- Sidebar - Brand -->
@@ -274,19 +274,90 @@
                 </div>
 
             </ul>
-            <%}%>
-                <!-- End of Sidebar -->
+            <%}else{%>
+                <ul class="navbar-nav bg-gradient-primary sidebar sidebar-dark accordion" id="accordionSidebar">
 
-                <!-- Content Wrapper -->
-                <div id="content-wrapper" class="d-flex flex-column">
+                    <!-- Sidebar - Brand -->
+                    <a class="sidebar-brand d-flex align-items-center justify-content-center" href="/employee/addkooli">
+                        <div class="sidebar-brand-icon rotate-n-15">
 
-                    <!-- Main Content -->
-                    <div id="content">
+                        </div>
+                        <div class="sidebar-brand-text mx-3">KelothHuller <sup></sup></div>
+                    </a>
 
-                        <!-- Topbar -->
-                        <nav class="navbar navbar-expand navbar-light bg-white topbar mb-4 static-top shadow">
+                    <!-- Divider -->
+                    <hr class="sidebar-divider my-0">
 
-                            <%if(mainpath!='/mainpage'){%>
+                    <!-- Nav Item - Dashboard -->
+
+
+                    <li class="nav-item">
+                        <a class="nav-link <%= mainpath === '/addkooli' ? 'active' : '' %>" href="/employee/addkooli">
+                            <i class="fas fa-fw fa-plus-circle"></i>
+                            <span>Add Load</span></a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link <%= mainpath === '/viewkooli' ? 'active' : '' %>" href="/employee/viewkooli">
+                            <i class="fas fa-fw fa-eye"></i>
+                            <span>View Load</span></a>
+                    </li>
+
+                    <li class="nav-item">
+                        <a class="nav-link <%= mainpath === '/markattendance' ? 'active' : '' %>" href="/employee/markattendance">
+                            <i class="fas fa-fw fa-list"></i>
+                            <span>Mark attendance</span></a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link <%= mainpath === '/viewattedance' ? 'active' : '' %>" href="/employee/viewattendance">
+                            <i class="fas fa-fw fa-eye"></i>
+                            <span>View attendance</span></a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link <%= mainpath === '/maddlorirent' ? 'active' : '' %>" href="/manager/addlorirent">
+                            <i class="fas fa-fw fa-tractor"></i>
+                            <span> Add loari rent</span></a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link <%= mainpath === '/addlorirent' ? 'active' : '' %>" href="/addlorirent">
+                            <i class="fas fa-fw fa-money-bill-wave"></i>
+                            <span> View lori rent</span></a>
+                    </li>
+                    <hr class="sidebar-divider">
+                    <!-- Heading -->
+
+
+                    <!-- Divider -->
+
+                    <!-- Heading -->
+
+
+
+
+                    <!-- Nav Item - Tables -->
+
+
+                    <!-- Divider -->
+                    <hr class="sidebar-divider d-none d-md-block">
+
+                    <!-- Sidebar Toggler (Sidebar) -->
+                    <div class="text-center d-none d-md-inline">
+                        <button class="rounded-circle border-0" id="sidebarToggle"></button>
+                    </div>
+
+                </ul>
+                <%}%>
+                    <!-- End of Sidebar -->
+
+                    <!-- Content Wrapper -->
+                    <div id="content-wrapper" class="d-flex flex-column">
+
+                        <!-- Main Content -->
+                        <div id="content">
+
+                            <!-- Topbar -->
+                            <nav class="navbar navbar-expand navbar-light bg-white topbar mb-4 static-top shadow">
+
+
                                 <!-- Sidebar Toggle (Topbar) -->
                                 <form class="form-inline">
                                     <button id="sidebarToggleTop" class="btn btn-link d-md-none rounded-circle mr-3">
@@ -332,5 +403,5 @@
                                     </li>
 
                                 </ul>
-                                <%}%>
-                        </nav>
+
+                            </nav>

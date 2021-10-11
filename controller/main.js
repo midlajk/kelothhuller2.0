@@ -27,24 +27,35 @@ exports.postloginpage = (req, res) => {
                 .then(doMatch => {
 
                     if (doMatch) {
+                        req.session.user = docs;
+
                         if (docs.previlage == 'fullprevilage') {
+
                             req.session.userPrevileage = "admin";
                             req.session.isadminlogged = true;
                             req.session.ismanager = false;
+                            return req.session.save(err => {
+                                console.log(err)
+                                res.redirect('/transaction')
+                            });
                         } else {
+
                             req.session.userPrevileage = "manager";
                             req.session.isadminlogged = false;
                             req.session.ismanager = true;
+                            return req.session.save(err => {
+                                console.log(err)
+                                res.redirect('/employee/addkooli')
+                            });
                         }
 
-                        req.session.user = docs;
-                        return req.session.save(err => {
-                            console.log(err)
-                            res.redirect('/transaction')
-                        });
+
+
+                    } else {
+                        req.flash('error', 'Invalid email or password.');
+                        res.redirect('/login');
                     }
-                    req.flash('error', 'Invalid email or password.');
-                    res.redirect('/login');
+
                 }).catch(err => {
                     console.log(err)
                 })

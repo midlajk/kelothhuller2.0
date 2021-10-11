@@ -22,50 +22,53 @@
         <!-- DataTales Example -->
         <div class="card shadow mb-4">
             <div class="card-header py-3">
-                <a class="btn btn-primary" href="/employee/loaderspayment">Loaders payment</a>
+                <%if(currentuser.isadminlogged){%>
+                    <a class="btn btn-primary" href="/employee/loaderspayment">Loaders payment</a>
+                    <%}%>
+                        <a class="float-right btn btn-danger ml-2" href="" href="" data-toggle="modal" data-target="#filtermodel">Filter</a>
+                        <a class="float-right btn btn-info" href="/employee/addkooli">Add load</a>
 
-                <a class="float-right btn btn-danger ml-2" href="" href="" data-toggle="modal" data-target="#filtermodel">Filter</a>
-                <a class="float-right btn btn-info" href="/employee/addkooli">Add load</a>
+                        <br>
 
-                <br>
+                        <form action="" method="GET" id="checkword">
+                            <div id="inputFormRow" class="form-group row">
+                                <div class="col-sm-12  input-group d-flex justify-content-center">
+                                    <button id="individual_account" type="button" class="btn btn-secondary">Individual account</button>
+                                    <button id="individual_load" type="button" class="btn btn-info">Individual load</button>
 
-                <form action="" method="GET" id="checkword">
-                    <div id="inputFormRow" class="form-group row">
-                        <div class="col-sm-12  input-group d-flex justify-content-center">
-                            <button id="individual_account" type="button" class="btn btn-secondary">Individual account</button>
-                            <button id="individual_load" type="button" class="btn btn-info">Individual load</button>
+                                </div>
+                                <div class="col-sm-12 mb-3 mb-sm-0 input-group" id="loader_ind">
 
-                        </div>
-                        <div class="col-sm-12 mb-3 mb-sm-0 input-group" id="loader_ind">
-
-                            <select class="form-control form-control-user js-example-basic-single" id="list_loaders" onchange="check_loader()">
+                                    <select class="form-control form-control-user js-example-basic-single" id="list_loaders" onchange="check_loader()">
                                 <option value="">Search names</option>
                                   <%for(let docs of loads){%>
-                                    <option value="<%=docs%>"><%=docs%></option>
-                                  <%}%>
+                        <option value="<%=docs%>">
+                            <%=docs%>
+                        </option>
+                        <%}%>
                             </select>
-                            <div class="input-group-append">
+                                    <div class="input-group-append">
 
-                                <input type="submit" class="btn btn-danger" value="Search loader"></input>
-                            </div>
-                        </div>
+                                        <input type="submit" class="btn btn-danger" value="Search loader"></input>
+                                    </div>
+                                </div>
 
-                        <div class="col-sm-12 mb-3 mb-sm-0 input-group" id="seller_buyer" style="display: none;" style="width: 100%;">
+                                <div class="col-sm-12 mb-3 mb-sm-0 input-group" id="seller_buyer" style="display: none;" style="width: 100%;">
 
-                            <select class="form-control form-control-user js-example-basic-single" style="width: 80%;" id="list_sellers" onchange="check_seller()">
+                                    <select class="form-control form-control-user js-example-basic-single" style="width: 80%;" id="list_sellers" onchange="check_seller()">
                                 <option value="">Search names</option>
                                   <%for(let docs of loads){%>
                                     <option value="<%=docs%>"><%=docs%></option>
                                   <%}%>
                              </select>
 
-                            <div class="input-group-append">
-                                <input type="submit" class="btn btn-primary" value="Search seller/buyer"></input>
-                            </div>
-                        </div>
+                                    <div class="input-group-append">
+                                        <input type="submit" class="btn btn-primary" value="Search seller/buyer"></input>
+                                    </div>
+                                </div>
 
-                    </div>
-                </form>
+                            </div>
+                        </form>
             </div>
             <div class="card-body">
                 <div class="table-responsive">
