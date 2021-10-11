@@ -90,26 +90,27 @@
                                 <%}%>
                                     <br>
                                     <br>
-                                    <form action="" method="GET" id="checkword">
-                                        <div id="inputFormRow" class="form-group row">
+                                    <%if(currentuser.isadminlogged){%>
+                                        <form action="" method="GET" id="checkword">
+                                            <div id="inputFormRow" class="form-group row">
 
 
-                                            <div class="col-sm-12 mb-3 mb-sm-0 input-group" id="seller_buyer">
-                                                <select class="form-control form-control-user js-example-basic-single" id="list_sellers" onchange="check_user()">
+                                                <div class="col-sm-12 mb-3 mb-sm-0 input-group" id="seller_buyer">
+                                                    <select class="form-control form-control-user js-example-basic-single" id="list_sellers" onchange="check_user()">
                                                                     <option value="">Search names</option>
                                                                     <%for(let docs of loari){%>
                                                                         <option value="<%=docs%>"><%=docs%></option>
                                                                       <%}%>
                                                                  </select>
 
-                                                <div class="input-group-append">
-                                                    <input type="submit" class="btn btn-primary" value="Search Loari"></input>
+                                                    <div class="input-group-append">
+                                                        <input type="submit" class="btn btn-primary" value="Search Loari"></input>
+                                                    </div>
                                                 </div>
+
                                             </div>
-
-                                        </div>
-                                    </form>
-
+                                        </form>
+                                        <%}%>
             </div>
             <%if(currentuser.isadminlogged){%>
                 <div class="card-body">
