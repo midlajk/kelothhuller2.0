@@ -28,6 +28,7 @@ var loaders = new Schema({
         numberofsack: Number,
         loadof: String,
         date: Date,
+        added: String
     }],
     payed: [{
         amount: Number,
@@ -80,6 +81,7 @@ module.exports = Employees;
 var attendance = new Schema({
     sdate: String,
     date: Date,
+    added: String,
     name: []
 });
 

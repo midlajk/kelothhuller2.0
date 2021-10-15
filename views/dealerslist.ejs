@@ -178,7 +178,7 @@
                                 <th>Purchase amount</th>
                                 <th>Amount Paid</th>
                                 <th>Remaining</th>
-
+                                <th>Delete</th>
                             </tr>
                         </thead>
                         <tfoot>
@@ -189,7 +189,7 @@
                                 <th>Purchase amount</th>
                                 <th>Amount Paid</th>
                                 <th>Remaining</th>
-
+                                <th>Delete</th>
                             </tr>
                         </tfoot>
                         <tbody>
@@ -200,31 +200,31 @@
                             var purchasekg = 0;
                             var purchasepaid = 0;
                  
-                            for(let doc of dics){
-                                purchaseamount = parseInt(doc.totalsales) + parseInt(purchaseamount)
-                                purchasekg = parseInt(doc.totalkg) + parseInt(purchasekg)
-                                purchasepaid = parseInt(doc.totalpaid) + parseInt(purchasepaid)
+                            for(var i = 0; i < dics.length; i++){
+                                purchaseamount = parseInt(dics[i].totalsales) + parseInt(purchaseamount)
+                                purchasekg = parseInt(dics[i].totalkg) + parseInt(purchasekg)
+                                purchasepaid = parseInt(dics[i].totalpaid) + parseInt(purchasepaid)
                                 %>
                                 <tr>
 
                                     <td>
-                                        <a href="/individualpurchase/<%=doc.name%>">
-                                            <%=doc.name%>
+                                        <a href="/individualpurchase/<%=dics[i].name%>">
+                                            <%= dics[i].name%>
                                         </a>
                                     </td>
                                     <td>
-                                        <%=doc.totalkg.toLocaleString()%>
+                                        <%= dics[i].totalkg.toLocaleString()%>
                                     </td>
                                     <td>
-                                        <%=doc.totalsales.toLocaleString()%>
+                                        <%= dics[i].totalsales.toLocaleString()%>
                                     </td>
                                     <td>
-                                        <%=doc.totalpaid.toLocaleString()%>
+                                        <%= dics[i].totalpaid.toLocaleString()%>
                                     </td>
                                     <td>
-                                        <%= (parseInt(doc.totalsales) - parseInt(doc.totalpaid)).toLocaleString()  %>
+                                        <%= (parseInt(dics[i].totalsales) - parseInt(dics[i].totalpaid)).toLocaleString()  %>
                                     </td>
-
+                                    <td><a href="#" onclick="deletedealer('<%=i%>','purchase')" class="btn btn-primary">edit</a>
                                 </tr>
                                 <%}%>
 
@@ -265,7 +265,7 @@
                                 <th>Sales amount</th>
                                 <th>Amount Recieved</th>
                                 <th>Remaining</th>
-
+                                <th>Delete</th>
                             </tr>
                         </thead>
                         <tfoot>
@@ -276,6 +276,7 @@
                                     <th>Sales amount</th>
                                     <th>Amount Recieved</th>
                                     <th>Remaining</th>
+                                    <th>Delete</th>
                                 </tr>
                         </tfoot>
                         <tbody>
@@ -284,31 +285,31 @@
                             var saleskg = 0;
                             var salespaid = 0;
                  
-                            for(let dic of docs){
-                                salestotal = parseInt(dic.totalsales) + parseInt(salestotal)
-                                saleskg = parseInt(dic.totalkg) + parseInt(saleskg)
-                                salespaid = parseInt(dic.totalpaid) + parseInt(salespaid)
+                            for(var i = 0; i < docs.length; i++){
+                                salestotal = parseInt(docs[i].totalsales) + parseInt(salestotal)
+                                saleskg = parseInt(docs[i].totalkg) + parseInt(saleskg)
+                                salespaid = parseInt(docs[i].totalpaid) + parseInt(salespaid)
                                 %>
                                 <tr>
 
                                     <td>
-                                        <a href="/individualsales/<%=dic.name%>">
-                                            <%=dic.name%>
+                                        <a href="/individualsales/<%=docs[i].name%>">
+                                            <%=docs[i].name%>
                                         </a>
                                     </td>
                                     <td>
-                                        <%=dic.totalkg.toLocaleString()%>
+                                        <%=docs[i].totalkg.toLocaleString()%>
                                     </td>
                                     <td>
-                                        <%=dic.totalsales.toLocaleString()%>
+                                        <%=docs[i].totalsales.toLocaleString()%>
                                     </td>
                                     <td>
-                                        <%=dic.totalpaid.toLocaleString()%>
+                                        <%=docs[i].totalpaid.toLocaleString()%>
                                     </td>
                                     <td>
-                                        <%= (parseInt(dic.totalsales) - parseInt(dic.totalpaid)).toLocaleString()  %>
+                                        <%= (parseInt(docs[i].totalsales) - parseInt(docs[i].totalpaid)).toLocaleString()  %>
                                     </td>
-
+                                    <td><a href="#" onclick="deletedealer('<%=i%>','sales')" class="btn btn-primary">edit</a>
                                 </tr>
                                 <%}%>
 
@@ -317,8 +318,58 @@
                 </div>
             </div>
         </div>
+        <div class="modal fade" id="deletemodal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="exampleModalLabel">Are you sure you want to delete ?</h5>
+                        <a class="close" type="button" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">×</span>
+                        </a>
+                    </div>
+
+                    <div class="modal-body">
+                        <h5 class="text-danger" id="exampleModalLabel">This action will delete <span id="accountcategory"></span> account of <span id="dealername"></span> </h5>
+                        <form id="form1" action="" method="POST">
+                            <div class="form-group row">
+                                <div class="col-sm-12 mb-3 mb-sm-0">
+                                    <label for="">Enter admin password to continue</label>
+                                    <input type="text" required value="" class="form-control form-control-user" id="exampleFirstName" name="password" placeholder="Enter password">
+                                </div>
+                                <input type="hidden" name="objectid" id="objectid">
+                            </div>
+                        </form>
+
+                    </div>
+                    <div class="modal-footer">
+                        <button class="btn btn-secondary" type="button" data-dismiss="modal">Cancel</button>
+                        <button class="btn btn-primary" type="submit" form="form1">Delete</button>
+                    </div>
+                </div>
+
+            </div>
+        </div>
 
         <script>
+            function deletedealer(i, section) {
+                var obj
+                form = document.getElementById('form1')
+                if (section == 'sales') {
+                    obj = <%- JSON.stringify(docs) %>;
+                    document.getElementById('accountcategory').innerText = "Sales";
+                    form.action = '/deletedealersales'
+                } else {
+                    document.getElementById('accountcategory').innerText = "Purchase";
+                    obj = <%- JSON.stringify(dics) %>;
+                    form.action = '/deletedealerpurchase'
+                }
+
+
+                document.getElementById('dealername').innerText = obj[i].name;
+                document.getElementById('objectid').value = obj[i].id;
+                $('#deletemodal').modal('show')
+                console.log(section)
+            }
             $("#buyerslistbutton").click(function() {
 
                 $('#buyerslist').show();

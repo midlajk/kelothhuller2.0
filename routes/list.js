@@ -5,6 +5,8 @@ const mongoose = require('mongoose');
 const mainList = require('../controller/list');
 const isAdmin = require('../middleware/is-admin');
 router.get('/dealerslist',isAdmin, mainList.dealerslist);
+router.post('/deletedealersales',isAdmin, mainList.deletedealersales);
+router.post('/deletedealerpurchase',isAdmin, mainList.deletedealerpurchase);
 router.get('/payeelist',isAdmin, mainList.payeelist);
 router.get('/borrowlist',isAdmin, mainList.borrowlist);
 router.get('/lorilist',isAdmin, mainList.rentlist);

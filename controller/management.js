@@ -48,18 +48,24 @@ exports.accountmanagement = (req, res) => {
             },
 
         }]).sort({ "deal.date": -1, "deal._id": -1 }).exec((err, datas) => {
-            Names.find().distinct('name').then(names => {
-                res.render('accountmanagement', {
-                    mainpath: '/stockmanagement',
-                    subpath: '',
-                    buyer: data,
-                    seller: datas,
-                    start: start,
-                    end: end,
-                    names: names,
-                    errorMessage: message
-                })
-            }).catch(err => console.log(err));
+            Buyers.find().distinct('name').then(buyers => {
+                Sellers.find().distinct('name').then(sellers => {
+                    namesnew = buyers.concat(sellers);
+                    var uniqueSet = new Set(namesnew);
+                    var uniqueArr = Array.from(uniqueSet);
+
+                    res.render('accountmanagement', {
+                        mainpath: '/stockmanagement',
+                        subpath: '',
+                        buyer: data,
+                        seller: datas,
+                        start: start,
+                        end: end,
+                        names: uniqueArr,
+                        errorMessage: message
+                    })
+                }).catch(err => console.log(err));
+            })
         })
     })
 
@@ -140,19 +146,25 @@ exports.filtrsales = (req, res) => {
 
     Buyers.aggregate(filter).sort({ "deal.date": -1, "deal._id": -1 }).exec((err, data) => {
         Sellers.aggregate(filter).sort({ "deal.date": -1, "deal._id": -1 }).exec((err, datas) => {
-            Names.find().distinct('name').then(names => {
-                res.render('accountmanagement', {
-                    mainpath: '/stockmanagement',
-                    subpath: '',
-                    buyer: data,
-                    seller: datas,
-                    start: start,
-                    end: end,
-                    names: names,
-                    errorMessage: message
-                })
-            }).catch(err => console.log(err));
+            Buyers.find().distinct('name').then(buyers => {
+                Sellers.find().distinct('name').then(sellers => {
+                    namesnew = buyers.concat(sellers);
+                    var uniqueSet = new Set(namesnew);
+                    var names = Array.from(uniqueSet);
 
+                    res.render('accountmanagement', {
+                        mainpath: '/stockmanagement',
+                        subpath: '',
+                        buyer: data,
+                        seller: datas,
+                        start: start,
+                        end: end,
+                        names: names,
+                        errorMessage: message
+                    })
+                }).catch(err => console.log(err));
+
+            })
         })
     })
 
@@ -240,23 +252,7 @@ exports.postdetailedbuyerdata = (req, res) => {
 
             })
 
-            Names.findOne({ $and: [{ name: name }, { relation: "seller" }] }).then(docs => {
-                if (docs) {
 
-                } else {
-                    var names = new Names({
-
-                        name: name,
-                        relation: "seller",
-                    })
-                    names.save((err, docs) => {
-                        if (err) {
-                            console.log(err);
-
-                        }
-                    })
-                }
-            })
 
         }
     }).then((err, docs) => {
@@ -424,23 +420,6 @@ exports.postbuyerform = (req, res) => {
 
             })
 
-            Names.findOne({ $and: [{ name: name }, { relation: "buyer" }] }).then(docs => {
-                if (docs) {
-
-                } else {
-                    var names = new Names({
-
-                        name: name,
-                        relation: "buyer",
-                    })
-                    names.save((err, docs) => {
-                        if (err) {
-                            console.log(err);
-
-                        }
-                    })
-                }
-            })
 
         }
     }).then(docs => {
@@ -555,18 +534,22 @@ exports.salesmanagement = (req, res) => {
 
 
     ]).sort({ "deal.date": -1, "deal._id": -1 }).exec((err, datas) => {
-        Names.find().distinct('name').then(names => {
-
-            res.render('salesmanagement', {
-                mainpath: '/stockmanagement',
-                subpath: '',
-                buyer: datas,
-                names: names,
-                errorMessage: message,
-                start: start,
-                end: end,
-            })
-        }).catch(err => console.log(err));
+        Buyers.find().distinct('name').then(buyers => {
+            Sellers.find().distinct('name').then(sellers => {
+                namesnew = buyers.concat(sellers);
+                var uniqueSet = new Set(namesnew);
+                var names = Array.from(uniqueSet);
+                res.render('salesmanagement', {
+                    mainpath: '/stockmanagement',
+                    subpath: '',
+                    buyer: datas,
+                    names: names,
+                    errorMessage: message,
+                    start: start,
+                    end: end,
+                })
+            }).catch(err => console.log(err));
+        })
     })
 
 }
@@ -645,21 +628,25 @@ exports.salesfilter = (req, res) => {
     }
 
     Buyers.aggregate(filter).sort({ "deal.date": -1, "deal._id": -1 }).exec((err, data) => {
-        Names.find().distinct('name').then(names => {
-            res.render('salesmanagement', {
-                mainpath: '/stockmanagement',
-                subpath: '',
-                buyer: data,
-                names: names,
-                errorMessage: message,
-                start: start,
-                end: end,
+        Buyers.find().distinct('name').then(buyers => {
+            Sellers.find().distinct('name').then(sellers => {
+                namesnew = buyers.concat(sellers);
+                var uniqueSet = new Set(namesnew);
+                var names = Array.from(uniqueSet);
+                res.render('salesmanagement', {
+                    mainpath: '/stockmanagement',
+                    subpath: '',
+                    buyer: data,
+                    names: names,
+                    errorMessage: message,
+                    start: start,
+                    end: end,
 
-            })
-        }).catch(err => console.log(err));
+                })
+            }).catch(err => console.log(err));
 
+        })
     })
-
 
 }
 exports.purchasemanagement = (req, res) => {
@@ -683,17 +670,22 @@ exports.purchasemanagement = (req, res) => {
         },
 
     }]).sort({ "deal.date": -1, "deal._id": -1 }).exec((err, datas) => {
-        Names.find().distinct('name').then(names => {
-            res.render('purchasemanagement', {
-                mainpath: '/stockmanagement',
-                subpath: '',
-                seller: datas,
-                names: names,
-                errorMessage: message,
-                start: start,
-                end: end,
-            })
-        }).catch(err => console.log(err));
+        Buyers.find().distinct('name').then(buyers => {
+            Sellers.find().distinct('name').then(sellers => {
+                namesnew = buyers.concat(sellers);
+                var uniqueSet = new Set(namesnew);
+                var names = Array.from(uniqueSet);
+                res.render('purchasemanagement', {
+                    mainpath: '/stockmanagement',
+                    subpath: '',
+                    seller: datas,
+                    names: names,
+                    errorMessage: message,
+                    start: start,
+                    end: end,
+                })
+            }).catch(err => console.log(err));
+        })
     })
 
 }
@@ -773,18 +765,23 @@ exports.purchasefilter = (req, res) => {
 
     Sellers.aggregate(filter).sort({ "deal.date": -1, "deal._id": -1 }).exec((err, data) => {
 
-        Names.find().distinct('name').then(names => {
-            res.render('purchasemanagement', {
-                mainpath: '/stockmanagement',
-                subpath: '',
-                seller: data,
-                names: names,
-                errorMessage: message,
-                start: start,
-                end: end,
-            })
-        }).catch(err => console.log(err));
+        Buyers.find().distinct('name').then(buyers => {
+            Sellers.find().distinct('name').then(sellers => {
+                namesnew = buyers.concat(sellers);
+                var uniqueSet = new Set(namesnew);
+                var names = Array.from(uniqueSet);
+                res.render('purchasemanagement', {
+                    mainpath: '/stockmanagement',
+                    subpath: '',
+                    seller: data,
+                    names: names,
+                    errorMessage: message,
+                    start: start,
+                    end: end,
+                })
+            }).catch(err => console.log(err));
 
+        })
     })
 
 
@@ -816,18 +813,23 @@ exports.individualpurchase = (req, res) => {
                 }
             }
         }]).sort({ "deal.date": -1, "deal._id": -1 }).exec((err, docs) => {
-            Names.find().distinct('name').then(names => {
-                res.render('individualsalesandpurchase', {
-                    mainpath: '/stockmanagement',
-                    category: 'purchase',
-                    subpath: '',
-                    data: docs,
-                    errorMessage: message,
-                    start: start,
-                    end: end,
-                    name: req.params.id.toUpperCase(),
-                    names: names
+            Buyers.find().distinct('name').then(buyers => {
+                Sellers.find().distinct('name').then(sellers => {
+                    namesnew = buyers.concat(sellers);
+                    var uniqueSet = new Set(namesnew);
+                    var names = Array.from(uniqueSet);
+                    res.render('individualsalesandpurchase', {
+                        mainpath: '/stockmanagement',
+                        category: 'purchase',
+                        subpath: '',
+                        data: docs,
+                        errorMessage: message,
+                        start: start,
+                        end: end,
+                        name: req.params.id.toUpperCase(),
+                        names: names
 
+                    })
                 })
             }).catch(err => console.log(err));
         })
@@ -936,20 +938,25 @@ exports.individualpurchasefilter = (req, res) => {
 
         Sellers.aggregate(filter).sort({ "deal.date": -1, "deal._id": -1 }).exec((err, data) => {
 
-            Names.find().distinct('name').then(names => {
-                res.render('individualsalesandpurchase', {
-                    mainpath: '/stockmanagement',
-                    category: 'purchase',
-                    subpath: '',
-                    data: data,
-                    names: names,
-                    errorMessage: message,
-                    start: start,
-                    end: end,
-                    name: req.body.id.toUpperCase()
-                })
-            }).catch(err => console.log(err));
+            Buyers.find().distinct('name').then(buyers => {
+                Sellers.find().distinct('name').then(sellers => {
+                    namesnew = buyers.concat(sellers);
+                    var uniqueSet = new Set(namesnew);
+                    var names = Array.from(uniqueSet);
+                    res.render('individualsalesandpurchase', {
+                        mainpath: '/stockmanagement',
+                        category: 'purchase',
+                        subpath: '',
+                        data: data,
+                        names: names,
+                        errorMessage: message,
+                        start: start,
+                        end: end,
+                        name: req.body.id.toUpperCase()
+                    })
+                }).catch(err => console.log(err));
 
+            })
         })
     }).catch(err => console.log(err));
 
@@ -982,17 +989,23 @@ exports.individualsales = (req, res) => {
                 }
             }
         }]).sort({ "deal.date": -1, "deal._id": -1 }).exec((err, docs) => {
-            Names.find().distinct('name').then(names => {
-                res.render('individualsalesandpurchase', {
-                    mainpath: '/stockmanagement',
-                    category: 'sales',
-                    subpath: '',
-                    data: docs,
-                    errorMessage: message,
-                    start: start,
-                    end: end,
-                    name: req.params.id.toUpperCase(),
-                    names: names
+            Buyers.find().distinct('name').then(buyers => {
+                Sellers.find().distinct('name').then(sellers => {
+                    namesnew = buyers.concat(sellers);
+                    var uniqueSet = new Set(namesnew);
+                    var names = Array.from(uniqueSet);
+                    res.render('individualsalesandpurchase', {
+                        mainpath: '/stockmanagement',
+                        category: 'sales',
+                        subpath: '',
+                        data: docs,
+                        errorMessage: message,
+                        start: start,
+                        end: end,
+                        name: req.params.id.toUpperCase(),
+                        names: names
+                    })
+
                 })
             }).catch(err => console.log(err));
         })
@@ -1101,19 +1114,24 @@ exports.individualsalesfilter = (req, res) => {
     }).then(name => {
         Buyers.aggregate(filter).sort({ "deal.date": -1, "deal._id": -1 }).exec((err, data) => {
 
-            Names.find().distinct('name').then(names => {
-                res.render('individualsalesandpurchase', {
-                    mainpath: '/stockmanagement',
-                    category: 'sales',
-                    data: data,
-                    names: names,
-                    errorMessage: message,
-                    start: start,
-                    end: end,
-                    name: req.body.id.toUpperCase()
-                })
-            }).catch(err => console.log(err));
+            Buyers.find().distinct('name').then(buyers => {
+                Sellers.find().distinct('name').then(sellers => {
+                    namesnew = buyers.concat(sellers);
+                    var uniqueSet = new Set(namesnew);
+                    var names = Array.from(uniqueSet);
+                    res.render('individualsalesandpurchase', {
+                        mainpath: '/stockmanagement',
+                        category: 'sales',
+                        data: data,
+                        names: names,
+                        errorMessage: message,
+                        start: start,
+                        end: end,
+                        name: req.body.id.toUpperCase()
+                    })
+                }).catch(err => console.log(err));
 
+            })
         })
     })
 
