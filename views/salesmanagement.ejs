@@ -3,7 +3,7 @@
 
     <div class="container-fluid">
         <div class="d-sm-flex align-items-center justify-content-between mb-4">
-            <h1 class="h3 mb-0 text-gray-800">Sales management</h1>
+            <h1 class="h3 mb-0 text-gray-800">Sales Report</h1>
             <h6>
                 <%=moment(start).format( 'DD-MMM-YYYY')%> to
                     <%=moment(end).format( 'DD-MMM-YYYY')%>
@@ -103,8 +103,8 @@
 
                     </p>
                     <% } %>
-                        <a href="/purchasemanagement" class="btn btn-primary">Purchase management</a>
-                        <a href="/accountmanagement" class="btn btn-success">Detailed Report</a>
+                        <a href="/purchasemanagement" class="btn btn-primary">Purchase Report</a>
+                        <a href="/accountmanagement" class="btn btn-success">Purchase and Sales</a>
 
                         <a href="" data-toggle="modal" data-target="#filtermodel" style="float:right" class="btn btn-danger">Filter table</a>
                         <a class="btn btn-primary float-right mr-2" href="/dealerslist">View dealers list</a>
@@ -428,7 +428,7 @@
             <ul class="floatingMenu">
 
                 <li>
-                    <a href="/accountmanagement" class="btn btn-primary"> Sales and Purchase</a>
+                    <a href="/accountmanagement" class="btn btn-primary"> Purchase and Sales</a>
                 </li>
                 <li>
                     <a href="/purchasemanagement" class="btn btn-primary">Purchase Report</a></li>

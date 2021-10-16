@@ -123,8 +123,9 @@ exports.deletedealersales = (req, res) => {
     bcrypt.compare(req.body.password, req.session.user.password)
         .then(doMatch => {
             if (doMatch) {
-                Buyers.findById(req.body.objectid).then(docs => {
+                Buyers.findOne({ id: req.body.objectid }).then(docs => {
                     if (docs) {
+
                         docs.deal.forEach(one => {
 
 
@@ -150,8 +151,9 @@ exports.deletedealerpurchase = (req, res) => {
     bcrypt.compare(req.body.password, req.session.user.password)
         .then(doMatch => {
             if (doMatch) {
-                Sellers.findById(req.body.objectid).then(docs => {
+                Sellers.findOne({ id: req.body.objectid }).then(docs => {
                     if (docs) {
+
                         docs.deal.forEach(one => {
 
 

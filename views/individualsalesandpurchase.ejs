@@ -106,43 +106,35 @@
                     </p>
                     <% } %>
                         <%if(category =='sales'){%>
-                            <a href="/salesmanagement" class="btn btn-primary">Detailed Sales</a>
-                            <a href="/accountmanagement" class="btn btn-success">Detailed Report</a>
+                            <a href="/salesmanagement" class="btn btn-primary"> Sales Report</a>
+                            <a href="/accountmanagement" class="btn btn-primary">Purchase and Sales</a>
 
-                            <%}else{%> <a href="/purchasemanagement" class="btn btn-primary"> Deatailed Purchase</a>
-                                <a href="/accountmanagement" class="btn btn-success">Detailed Report</a>
+                            <%}else{%> <a href="/purchasemanagement" class="btn btn-primary"> Purchase Report</a>
+                                <a href="/accountmanagement" class="btn btn-primary">Purchase and Sales</a>
 
 
                                 <% } %>
 
                                     <a href="" data-toggle="modal" data-target="#filtermodel" style="float:right" class="btn btn-danger">Filter table</a>
-                                    <%if(category =='sales'){%>
-                                        <a href="/individualpurchase/<%=name%>" class="btn btn-primary float-right mr-2">
-                                            <%=name%>'s Purchase account </a>
-
-
-                                        <%}else{%>
-                                            <a href="/individualsales/<%=name%>" class="btn btn-primary float-right mr-2">
-                                                <%=name%>'s Sales account </a>
-
-
-
-                                            <% } %>
+                                    <a class="btn btn-primary float-right mr-2" href="/dealerslist">View dealers list</a>
 
             </div>
             <div class="card-header py-3">
 
                 <form>
+
                     <div class="col-sm-12 mb-3 mb-sm-0 input-group">
-                        <select tabindex="99" class="form-control form-control-user js-example-basic-single" style="padding: 20px;" id="mylistofsellers" onchange="check_user()">
-                            <option value="">Search names</option>
+                        <input type="text" class="form-control form-control-user" id="mylistofsellers" onchange="check_user()" list="mynmes" placeholder="Search names">
+                        <datalist id="mynmes"> 
+            
                               <%for(let docs of names){%>
-                                <option value="<%=docs%>"><%=docs%></option>
-                              <%}%>
-                         </select>
+                                <option value="<%=docs%>">
+                              <%}%></datalist>
+
+
 
                         <div class="input-group-append">
-                            <select tabindex="100" class="form-control form-control-user" name="" onchange="check_user()" id="inputselection">
+                            <select tabindex="100" class="form-control form-control-user list-group-item-success" name="" onchange="check_user()" id="inputselection">
                                 <option value="Purchase">Purchase Account</option>
                                 <option value="Sales">Sales account</option>
                             </select>
@@ -482,6 +474,17 @@
                 <i class="fa fa-plus icon-default"></i>
             </a>
             <ul class="floatingMenu">
+                <li>
+                    <%if(category =='sales'){%>
+                        <a href="/individualpurchase/<%=name%>" class="btn btn-primary">
+                            <%=name%>'s Purchase account </a>
+
+
+                        <%}else{%>
+                            <a href="/individualsales/<%=name%>" class="btn btn-primary ">
+                                <%=name%>'s Sales account </a>
+                            <% } %>
+                </li>
 
                 <li>
 

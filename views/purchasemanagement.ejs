@@ -1,7 +1,7 @@
 <%- include('./includes/head.ejs') %>
     <div class="container-fluid">
         <div class="d-sm-flex align-items-center justify-content-between mb-4">
-            <h1 class="h3 mb-0 text-gray-800">Purchase management</h1>
+            <h1 class="h3 mb-0 text-gray-800">Purchase Report</h1>
             <h6>
                 <%=moment(start).format( 'DD-MMM-YYYY')%> to
                     <%=moment(end).format( 'DD-MMM-YYYY')%>
@@ -99,8 +99,8 @@
 
                     </p>
                     <% } %>
-                        <a href="/salesmanagement" class="btn btn-primary">Detailed Sales</a>
-                        <a href="/accountmanagement" class="btn btn-success">Detailed Report</a>
+                        <a href="/salesmanagement" class="btn btn-primary">Sales Report</a>
+                        <a href="/accountmanagement" class="btn btn-success">Purchase and sales</a>
 
                         <a href="" data-toggle="modal" data-target="#filtermodel" style="float:right" class="btn btn-danger">Filter table</a>
                         <a class="btn btn-primary float-right mr-2" href="/dealerslist">View dealers list</a>
@@ -411,7 +411,7 @@
             <ul class="floatingMenu">
 
                 <li>
-                    <a href="/accountmanagement" class="btn btn-primary"> Sales and Purchase</a>
+                    <a href="/accountmanagement" class="btn btn-primary"> Purchase and sales</a>
 
                 </li>
 
