@@ -12,6 +12,7 @@ var loaderskooli = new Schema({
         total: Number,
         loaders: [],
         date: Date,
+        monitor: String
     }]
 
 });
@@ -28,7 +29,8 @@ var loaders = new Schema({
         numberofsack: Number,
         loadof: String,
         date: Date,
-        added: String
+        added: String,
+        monitor: String
     }],
     payed: [{
         amount: Number,

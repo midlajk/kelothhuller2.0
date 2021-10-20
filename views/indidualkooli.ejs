@@ -125,10 +125,13 @@
                         <thead>
                             <tr>
                                 <th>Date</th>
-                                <th>Seller</th>
+                                <th>Load of</th>
                                 <th>Bags</th>
                                 <th>kooli</th>
                                 <th>hint</th>
+                                <%if(currentuser.isadminlogged){%>
+                                    <th>Monitor</th>
+                                    <%}%>
 
 
 
@@ -138,10 +141,14 @@
                             <tr>
                                 <tr>
                                     <th>Date</th>
-                                    <th>Seller</th>
+                                    <th>Load of</th>
                                     <th>Bags</th>
                                     <th>kooli</th>
                                     <th>hint</th>
+                                    <%if(currentuser.isadminlogged){%>
+                                        <th>Monitor</th>
+                                        <%}%>
+
 
 
 
@@ -167,11 +174,16 @@
                                         <%=doc.work.numberofsack%>
                                     </td>
                                     <td>
-                                        <%=doc.work.kooli%>
+                                        <%=parseInt(doc.work.kooli)%>
                                     </td>
                                     <td>
                                         <%=doc.work.product%>
                                     </td>
+                                    <%if(currentuser.isadminlogged){%>
+                                        <td>
+                                            <%=doc.work.monitor%>
+                                        </td>
+                                        <%}%>
 
 
                                 </tr>

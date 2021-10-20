@@ -340,6 +340,7 @@ exports.postaddkooli = (req, res) => {
                                     workers: workers,
                                     loaders: req.body.workername,
                                     date: req.body.date,
+                                    monitor:req.session.user.name
                                 }
                             }
                         }, { safe: true, upsert: true },
@@ -358,7 +359,7 @@ exports.postaddkooli = (req, res) => {
                             workers: workers,
                             loaders: req.body.workername,
                             date: req.body.date,
-
+                            monitor:req.session.user.name
                         }]
                     })
                     loaderskooli.save((err, data) => {
@@ -409,6 +410,7 @@ exports.postaddkooli = (req, res) => {
                                         workers: workers,
                                         loadof: seller,
                                         date: req.body.date,
+                                        monitor:req.session.user.name
                                     }
                                 }
                             }, { safe: true, upsert: true },
@@ -426,6 +428,7 @@ exports.postaddkooli = (req, res) => {
                                 workers: workers,
                                 loadof: seller,
                                 date: req.body.date,
+                                monitor:req.session.user.name
                             }]
                         })
                         loaders.save((err, data) => {
@@ -456,6 +459,7 @@ exports.postaddkooli = (req, res) => {
                                     workers: workers,
                                     loadof: seller,
                                     date: req.body.date,
+                                    monitor:req.session.user.name
                                 }
                             }
                         }, { safe: true, upsert: true },
@@ -473,6 +477,7 @@ exports.postaddkooli = (req, res) => {
                             workers: workers,
                             loadof: seller,
                             date: req.body.date,
+                            monitor:req.session.user.name
                         }]
                     })
                     loaders.save((err, data) => {

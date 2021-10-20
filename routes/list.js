@@ -11,4 +11,6 @@ router.get('/payeelist',isAdmin, mainList.payeelist);
 router.get('/borrowlist',isAdmin, mainList.borrowlist);
 router.get('/lorilist',isAdmin, mainList.rentlist);
 router.get('/loaderslist',isAdmin, mainList.loaderslist);
+router.get('/deleteloader/:id',isAdmin, mainList.deleteloader);
+router.get('/deleteloari/:id',isAdmin, mainList.deleteloari);
 module.exports = router;

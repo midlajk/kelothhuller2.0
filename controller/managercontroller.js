@@ -36,7 +36,7 @@ exports.postLorirent = (req, res) => {
                             product: req.body.content,
                             driver: req.body.driver,
                             rent: req.body.rent,
-
+                            monitor:req.session.user.name
                         }
                     }
                 }, { safe: true, upsert: true },
@@ -56,6 +56,7 @@ exports.postLorirent = (req, res) => {
                     product: req.body.content,
                     driver: req.body.driver,
                     rent: req.body.rent,
+                     monitor:req.session.user.name
                 }],
             })
             lorirent.save((err, docs) => {

@@ -174,3 +174,23 @@ exports.deletedealerpurchase = (req, res) => {
 
         })
 }
+exports.deleteloader = (req, res) => {
+
+
+    Loaders.findByIdAndDelete(req.params.id).then((err, docs) => {
+        if (err) console.log(err)
+        return res.redirect('/loaderslist')
+    })
+
+
+}
+exports.deleteloari = (req, res) => {
+
+
+    Lorirent.findByIdAndDelete(req.params.id).then((err, docs) => {
+        if (err) console.log(err)
+        return res.redirect('/lorilist')
+    })
+
+
+}

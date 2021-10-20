@@ -86,7 +86,7 @@
                                 <th>Total rent</th>
                                 <th>Amount paid</th>
                                 <th>Remaining</th>
-
+                                <th>Delete</th>
 
                             </tr>
                         </thead>
@@ -97,7 +97,7 @@
                                 <th>Total rent</th>
                                 <th>Amount paid</th>
                                 <th>Remaining</th>
-
+                                <th>Delete</th>
                             </tr>
                         </tfoot>
                         <tbody>
@@ -131,7 +131,7 @@
                                     <td>
                                         <%= (parseInt(dic.totalrent) - parseInt(dic.totalpaid)).toLocaleString()  %>
                                     </td>
-
+                                    <td><a onclick="return confirm('This action will delete entire account')" href="/deleteloari/<%=dic._id%>" class="btn btn-danger">Delete</a></td>
                                 </tr>
                                 <%}%>
                         </tbody>

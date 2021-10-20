@@ -86,7 +86,8 @@ var lorirent = new Schema({
         product: String,
         driver: String,
         rent: Number,
-        added:String
+        added:String,
+        monitor:String
     }],
     paid: [{
         date: Date,
