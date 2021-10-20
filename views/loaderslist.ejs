@@ -151,7 +151,12 @@
                                     <td>
                                         <%= (parseInt(dic.totalamount) - parseInt(dic.totalpaid)).toLocaleString()  %>
                                     </td>
-                                    <td><a onclick="return confirm('This action will delete entire account')" href="/deleteloader/<%=dic._id%>" class="btn btn-danger">Delete</a></td>
+                                    <td>
+                                        <form onsubmit="return confirm('This action will delete entire account')" action="/deleteloader" method="POST">
+                                            <input type="hidden" value="<%=dic._id%>" name="id">
+                                            <input class="btn btn-danger" type="submit" value="Delete">
+                                        </form>
+
                                 </tr>
                                 <%}%>
                         </tbody>

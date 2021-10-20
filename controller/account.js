@@ -943,7 +943,7 @@ exports.deletepayment = (req, res) => {
 exports.deleteloader = (req, res) => {
 
 
-    Loaders.findByIdAndDelete(req.params.id).then((docs, err) => {
+    Loaders.findByIdAndDelete(req.body.id).then((docs, err) => {
         if (err) console.log(err)
         return res.redirect('/loaderslist')
     })
@@ -953,7 +953,7 @@ exports.deleteloader = (req, res) => {
 exports.deleteloari = (req, res) => {
 
 
-    Lorirent.findByIdAndDelete(req.params.id).then((docs, err) => {
+    Lorirent.findByIdAndDelete(req.body.id).then((docs, err) => {
         if (err) console.log(err)
         return res.redirect('/lorilist')
     })
