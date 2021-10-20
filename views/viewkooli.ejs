@@ -164,7 +164,9 @@
                                                 </td>
                                                 <%}%>
                                                     <td>
-                                                        <a href="/employee/deleteload/<%=docs[i].order._id%>/<%=docs[i].seller%>" class="btn btn-danger" onclick="return confirm('do you want to delete')">Delete</a>
+                                                        <%if(currentuser.isadminlogged | currentuser.user.name == docs[i].order.monitor){%>
+                                                            <a href="/employee/deleteload/<%=docs[i].order._id%>/<%=docs[i].seller%>" class="btn btn-danger" onclick="return confirm('do you want to delete')">Delete</a>
+                                                            <%}%>
                                                     </td>
                                 </tr>
 

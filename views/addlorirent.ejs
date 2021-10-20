@@ -246,13 +246,15 @@
                                                             <%=docs[i].trips.monitor%>
                                                         </td>
                                                         <%}%>
-
-                                                            <%if(!individual){%>
-                                                                <td><a href="/deleteloarirent/<%=docs[i].registration%>/<%=docs[i].trips._id%>/all" onclick="return confirm('Are you sure')" class="btn btn-danger">Delete</a></td>
-                                                                <%}else{%>
-                                                                    <td><a href="/deleteloarirent/<%=docs[i].registration%>/<%=docs[i].trips._id%>/individual" onclick="return confirm('Are you sure')" class="btn btn-danger">Delete</a></td>
-                                                                    <%}%>
-
+                                                            <%if(currentuser.isadminlogged | currentuser.user.name == docs[i].trips.monitor){%>
+                                                                <%if(!individual){%>
+                                                                    <td><a href="/deleteloarirent/<%=docs[i].registration%>/<%=docs[i].trips._id%>/all" onclick="return confirm('Are you sure')" class="btn btn-danger">Delete</a></td>
+                                                                    <%}else{%>
+                                                                        <td><a href="/deleteloarirent/<%=docs[i].registration%>/<%=docs[i].trips._id%>/individual" onclick="return confirm('Are you sure')" class="btn btn-danger">Delete</a></td>
+                                                                        <%}%>
+                                                                            <%}else{%>
+                                                                                <td></td>
+                                                                                <%}%>
                                         </tr>
                                         <%}%>
 
