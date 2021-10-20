@@ -1,9 +1,10 @@
 require('../model/accountsmodal')
+require('../model/employeemodel')
 const mongoose = require('mongoose');
 const Utility = mongoose.model('Utility');
 var fs = require('fs');
 const Transaction = mongoose.model('Transaction');
-
+const Loaders = mongoose.model('Loaders');
 const Lorirent = mongoose.model('Lorirent');
 const Payments = mongoose.model('Payments');
 exports.addlorirent = (req, res) => {
@@ -937,4 +938,23 @@ exports.deletepayment = (req, res) => {
     })
 
 
+}
+
+exports.deleteloader = (req, res) => {
+
+
+    Loaders.findByIdAndDelete(req.params.id).then((docs, err) => {
+        if (err) console.log(err)
+        return res.redirect('/loaderslist')
+    })
+
+
+}
+exports.deleteloari = (req, res) => {
+
+
+    Lorirent.findByIdAndDelete(req.params.id).then((docs, err) => {
+        if (err) console.log(err)
+        return res.redirect('/lorilist')
+    })
 }

@@ -25,4 +25,6 @@ router.post('/filterpayments',isAdmin, accountController.filterpayments);
 router.post('/filterindividualpayments',isAdmin, accountController.filterindividualpayments);
 router.get('/deletepaid/:objectid/:id/:section',isAdmin, accountController.deletepaid);
 router.get('/deletepayment/:objectid/:id/:section',isAdmin, accountController.deletepayment);
+router.get('/deleteloader/:id',isAdmin, accountController.deleteloader);
+router.get('/deleteloari/:id',isAdmin, accountController.deleteloari);
 module.exports = router;
