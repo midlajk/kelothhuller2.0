@@ -1,5 +1,9 @@
+require('../model/employeemodel')
 require('../model/accountsmodal')
 const mongoose = require('mongoose');
+
+
+const Loaders = mongoose.model('Loaders');
 
 var fs = require('fs');
 
@@ -74,4 +78,22 @@ exports.postLorirent = (req, res) => {
 
 
 
+}
+exports.deleteloader = (req, res) => {
+
+
+    Loaders.findByIdAndDelete(req.body.id).then((docs, err) => {
+        if (err) console.log(err)
+        return res.redirect('/loaderslist')
+    })
+
+
+}
+exports.deleteloari = (req, res) => {
+
+
+    Lorirent.findByIdAndDelete(req.body.id).then((docs, err) => {
+        if (err) console.log(err)
+        return res.redirect('/lorilist')
+    })
 }
