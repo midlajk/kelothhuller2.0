@@ -119,82 +119,124 @@
                         </form>
                         </div>
             </div>
-            <div class="card-body">
-                <div class="table-responsive">
-                    <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
-                        <thead>
-                            <tr>
-                                <th>Date</th>
-                                <th>Load of</th>
-                                <th>Bags</th>
-                                <th>kooli</th>
-                                <th>hint</th>
-                                <%if(currentuser.isadminlogged){%>
-                                    <th>Monitor</th>
-                                    <%}%>
-
-
-
-                            </tr>
-                        </thead>
-                        <tfoot>
-                            <tr>
+            <%if(currentuser.isadminlogged){%>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table" width="100%" cellspacing="0">
+                            <thead>
                                 <tr>
                                     <th>Date</th>
                                     <th>Load of</th>
                                     <th>Bags</th>
-                                    <th>kooli</th>
-                                    <th>hint</th>
-                                    <%if(currentuser.isadminlogged){%>
-                                        <th>Monitor</th>
-                                        <%}%>
-
-
-
-
+                                    <th>Kooli</th>
+                                    <th>Hint</th>
+                                    <th>Monitor</th>
+                                    <th>Submit</th>
                                 </tr>
-                        </tfoot>
-                        <tbody>
+                            </thead>
+                            <tbody>
+                                <form id="kooliform" action="/employee/addloaderkooli" method="POST">
+                                    <tr>
+                                        <td><input autofocus required tabindex="21" name="date" class="form-control" value="<%=todaydate%>" type="date" id="date"></td>
 
-                            <%
+                                        <td><input required class="form-control" tabIndex="22" type="text" name="loadof"></td>
+                                        <td><input required class="form-control" tabIndex="23" type="number" name="bags"></td>
+
+                                        <td><input required class="form-control" tabIndex="24" type="number" name="kooli"></td>
+                                        <td><input class="form-control" tabIndex="25" type="text" name="hint" id="hint"></td>
+                                        <td><input class="form-control" tabIndex="26" type="text" name="monitor" id="monitor"></td>
+
+
+                                        <td>
+                                            <button form="kooliform" tabindex="27" class="btn btn-primary" id="submit" type="submit">Submit</button>
+                                            <div id="button-spinner" style="margin-left: 10px; width: 25px; height: 25px; display: none" class="spinner-border"></div>
+                                            <input required type="hidden" name="id" value="<%=names%>">
+                                            <input required type="hidden" name="category" value="individual">
+                                        </td>
+
+                                    </tr>
+                                </form>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <%}%>
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                                <thead>
+                                    <tr>
+                                        <th>Date</th>
+                                        <th>Load of</th>
+                                        <th>Bags</th>
+                                        <th>kooli</th>
+                                        <th>hint</th>
+                                        <%if(currentuser.isadminlogged){%>
+                                            <th>Monitor</th>
+                                            <%}%>
+
+
+
+                                    </tr>
+                                </thead>
+                                <tfoot>
+                                    <tr>
+                                        <tr>
+                                            <th>Date</th>
+                                            <th>Load of</th>
+                                            <th>Bags</th>
+                                            <th>kooli</th>
+                                            <th>hint</th>
+                                            <%if(currentuser.isadminlogged){%>
+                                                <th>Monitor</th>
+                                                <%}%>
+
+
+
+
+                                        </tr>
+                                </tfoot>
+                                <tbody>
+
+                                    <%
                                 var bags = 0;
                                 var kooli =0;
                                 for (let doc of docs){
                                     bags = parseInt(bags) + parseInt(doc.work.numberofsack);
                                     kooli= parseInt(kooli) + parseInt(doc.work.kooli);
                                     %>
-                                <tr>
-                                    <td>
-                                        <%= moment(doc.work.date).format( 'DD-MMM-YYYY') %>
-                                    </td>
-                                    <td>
-                                        <%=doc.work.loadof%>
-                                    </td>
-                                    <td>
-                                        <%=doc.work.numberofsack%>
-                                    </td>
-                                    <td>
-                                        <%=parseInt(doc.work.kooli)%>
-                                    </td>
-                                    <td>
-                                        <%=doc.work.product%>
-                                    </td>
-                                    <%if(currentuser.isadminlogged){%>
-                                        <td>
-                                            <%=doc.work.monitor%>
-                                        </td>
+                                        <tr>
+                                            <td>
+                                                <%= moment(doc.work.date).format( 'DD-MMM-YYYY') %>
+                                            </td>
+                                            <td>
+                                                <%=doc.work.loadof%>
+                                            </td>
+                                            <td>
+                                                <%=doc.work.numberofsack%>
+                                            </td>
+                                            <td>
+                                                <%=parseInt(doc.work.kooli)%>
+                                            </td>
+                                            <td>
+                                                <%=doc.work.product%>
+                                            </td>
+                                            <%if(currentuser.isadminlogged){%>
+                                                <td>
+                                                    <%=doc.work.monitor%>
+                                                </td>
+                                                <%}%>
+
+
+                                        </tr>
                                         <%}%>
 
 
-                                </tr>
-                                <%}%>
 
-
-
-                        </tbody>
-                    </table>
-                </div>
-            </div>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
 
 
         </div>

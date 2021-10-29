@@ -7,7 +7,10 @@
                 Loads Details
                 <%if(individual){%> of
                     <%=names%>
-                        <%}%>
+                        <%if(currentuser.isadminlogged){%>
+                            <a href="#" onclick="editname('<%=names%>')" style="color: black;"> <i class="fas fa-fw fa-edit"></i></a>
+                            <%}%>
+                                <%}%>
             </h1>
 
             <h6>
@@ -165,8 +168,12 @@
                                                 <%}%>
                                                     <td>
                                                         <%if(currentuser.isadminlogged | currentuser.user.name == docs[i].order.monitor){%>
-                                                            <a href="/employee/deleteload/<%=docs[i].order._id%>/<%=docs[i].seller%>" class="btn btn-danger" onclick="return confirm('do you want to delete')">Delete</a>
-                                                            <%}%>
+                                                            <%if(!individual){%>
+                                                                <a href="#" onclick="editkooliseperate('<%=i%>')" class="btn btn-danger">edit</a>
+                                                                <%}else{%>
+                                                                    <a href="#" onclick="editkooliindiv('<%=i%>')" class="btn btn-danger">edit</a>
+                                                                    <%}%>
+                                                                        <%}%>
                                                     </td>
                                 </tr>
 
@@ -222,6 +229,70 @@
 
         </div>
     </div>
+    <div class="modal fade" id="editmodel" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel"><span id="editcustomers"></span> <span id="edittype"></span></h5>
+                    <a class="close" type="button" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">×</span>
+                    </a>
+                </div>
+                <div class="modal-body">
+                    <form id="editform" action="/employee/editload" method="POST">
+                        <div class="form-group row">
+                            <div class="col-sm-6 mb-3 mb-sm-0">
+                                <label for="">Edit Date</label>
+                                <input type="date" class="form-control form-control-user" id="editdate" tabindex="41" name="editdate">
+                            </div>
+                            <input type="hidden" class="form-control form-control-user" id="type" name="type">
+                            <input type="hidden" value="" name="arrayid" id="arrayid">
+                            <input type="hidden" value="" name="objectid" id="objectid">
+                        </div>
+                    </form>
+
+                </div>
+                <div class="modal-footer">
+                    <a id="deletebutton" class="btn btn-danger" onclick="return confirm('are you sure you want to delete this?')">Delete</a>
+
+                    <button tabindex="51" form="editform" class="btn btn-primary" type="submit">Edit Deal</button>
+                </div>
+            </div>
+
+        </div>
+    </div>
+    <div class="modal fade" id="editname" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel"><span id="editcustomers"></span> <span id="edittype"></span></h5>
+                    <a class="close" type="button" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">×</span>
+                    </a>
+                </div>
+                <div class="modal-body">
+                    <form id="editnameform" action="/employee/editname" method="POST">
+                        <div class="form-group row">
+                            <div class="col-sm-6 mb-3 mb-sm-0">
+                                <label for="">Edit Name</label>
+                                <input type="text" class="form-control form-control-user" id="editnames" tabindex="41" name="editname">
+                            </div>
+
+                            <input type="hidden" value="" name="arrayid" id="arrayi">
+
+                        </div>
+                    </form>
+
+                </div>
+                <div class="modal-footer">
+                    <a id="deletebuttons" class="btn btn-danger" onclick="return confirm('are you sure you want to delete this?')">Delete</a>
+
+                    <button tabindex="51" form="editnameform" class="btn btn-primary" type="submit">Edit Name</button>
+                </div>
+            </div>
+
+        </div>
+    </div>
     <script>
         $("#individual_account").click(function() {
             $('#seller_buyer').hide();
@@ -231,6 +302,39 @@
             $('#seller_buyer').show();
             $('#loader_ind').hide();
         })
+
+        function editname(i) {
+            var value = i;
+            document.getElementById("deletebuttons").href = "/employee/deleteloadseller/" + value;
+            document.getElementById("editnames").value = value
+            document.getElementById('arrayi').value = value;
+            $('#editname').modal('show')
+
+        }
+
+        function editkooliseperate(i) {
+            var obj = <%- JSON.stringify(docs) %>;
+            document.getElementById("deletebutton").href = "/employee/deleteload/" + obj[i].order._id + "/" + obj[i]._id + "/seperate";
+            var today = moment(obj[i].order.date).format('YYYY-MM-DD');
+            document.getElementById("editdate").value = today;
+            document.getElementById('arrayid').value = obj[i].seller;
+            document.getElementById('objectid').value = obj[i].order._id;
+            document.getElementById('type').value = "seperate";
+            $('#editmodel').modal('show')
+
+        }
+
+        function editkooliindiv(i) {
+            var obj = <%- JSON.stringify(docs) %>;
+            document.getElementById("deletebutton").href = "/employee/deleteload/" + obj[i].order._id + "/" + obj[i]._id + "/individual";
+            var today = moment(obj[i].order.date).format('YYYY-MM-DD');
+            document.getElementById("editdate").value = today;
+            document.getElementById('arrayid').value = obj[i].seller;
+            document.getElementById('objectid').value = obj[i].order._id;
+            document.getElementById('type').value = "individual";
+            $('#editmodel').modal('show')
+
+        }
 
         function check_seller() {
             var st = document.getElementById("list_sellers").value;

@@ -184,7 +184,7 @@ exports.postdetailedbuyerdata = (req, res) => {
 
     const objectid = new mongoose.Types.ObjectId()
     const arrayid = new mongoose.Types.ObjectId()
-    var name = req.body.buyer.toUpperCase();
+    var name = req.body.buyer.toUpperCase().trim();
 
     Sellers.findOne({ name: name }).then((docs, err) => {
 
@@ -228,7 +228,6 @@ exports.postdetailedbuyerdata = (req, res) => {
             )
 
         } else {
-
             var sellers = new Sellers({
 
                 id: objectid,
@@ -351,7 +350,7 @@ exports.postbuyerform = (req, res) => {
     }
     const objectid = new mongoose.Types.ObjectId()
     const arrayid = new mongoose.Types.ObjectId()
-    var name = req.body.buyer.toUpperCase();
+    var name = req.body.buyer.toUpperCase().trim();
 
     Buyers.findOne({ name: name }).then(docs => {
         if (docs) {
@@ -1184,7 +1183,7 @@ exports.postadduser = (req, res) => {
 
 }
 exports.postedituser = (req, res) => {
-    var name = req.body.names.toUpperCase()
+    var name = req.body.names.toUpperCase().trim()
     var password = req.body.password
     Users.findOneAndUpdate({ name: name })
         .then(userDoc => {
@@ -1255,7 +1254,7 @@ exports.utility = (req, res) => {
 }
 exports.utilityform = (req, res) => {
     const arrayid = new mongoose.Types.ObjectId()
-    var name = req.body.billto.toUpperCase()
+    var name = req.body.billto.toUpperCase().trim()
     date = new Date(req.body.date)
     Utility.findOne({ name: name }).then(docs => {
         if (docs) {

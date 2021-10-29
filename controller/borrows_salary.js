@@ -118,7 +118,7 @@ exports.indivdualborrowsfilter = (req, res) => {
 }
 exports.borrowform = (req, res) => {
     const arrayid = new mongoose.Types.ObjectId()
-    var name = req.body.billto.toUpperCase()
+    var name = req.body.billto.toUpperCase().trim()
     date = new Date(req.body.date)
     var amount
     var amounts

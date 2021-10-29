@@ -3,7 +3,6 @@ require('../model/accountsmodal')
 const mongoose = require('mongoose');
 var fs = require('fs');
 const Transaction = mongoose.model('Transaction');
-
 const Loaderskooli = mongoose.model('Loaderskooli');
 const Loaders = mongoose.model('Loaders');
 const Employees = mongoose.model('Employees');
@@ -123,16 +122,14 @@ exports.Editemployee = (req, res) => {
     } else {
         message = null;
     }
-    Employees.aggregate( [
-        {
-          $addFields: {
-            totalsalary: { $sum: "$payment.amount" } ,
+    Employees.aggregate([{
+        $addFields: {
+            totalsalary: { $sum: "$payment.amount" },
             totalpaid: { $sum: "$detail.amount" },
-            borrowed: { $sum: "$borrowal.borrowed" } ,
+            borrowed: { $sum: "$borrowal.borrowed" },
             returned: { $sum: "$borrowal.returned" },
-          }
         }
-     ]).sort({ "_id": -1 }).exec((err, docs) => {
+    }]).sort({ "_id": -1 }).exec((err, docs) => {
 
         res.render('Editemployee', {
             mainpath: '/editemployee',
@@ -144,7 +141,7 @@ exports.Editemployee = (req, res) => {
 }
 exports.PostEditemployee = (req, res) => {
 
-    name = req.body.names.toUpperCase()
+    name = req.body.names.toUpperCase().trim()
     Employees.findOne({ name: name }).then(docs => {
         if (docs) {
             Employees.findByIdAndUpdate(req.body.objectid).then(docs => {
@@ -181,7 +178,7 @@ exports.deleteemployee = (req, res) => {
 }
 exports.postaddemployee = (req, res) => {
     value = 0;
-    name = req.body.name.toUpperCase()
+    name = req.body.name.toUpperCase().trim()
     Employees.findOne({ name: name }).then(docs => {
         if (docs) {
             req.flash('error', "user already exist")
@@ -242,7 +239,7 @@ exports.postmarkattendance = (req, res) => {
                 name = req.body.list;
                 if (Array.isArray(name)) {
                     for (i = 0; i < name.length; i++) {
-                        var names = name[i].toUpperCase()
+                        var names = name[i].toUpperCase().trim()
                         Employees.findOne({ name: names }).then(docs => {
                             if (docs) {
                                 docs.updateOne({
@@ -261,7 +258,7 @@ exports.postmarkattendance = (req, res) => {
                         })
                     }
                 } else {
-                    var names = name.toUpperCase()
+                    var names = name.toUpperCase().trim()
                     Employees.findOne({ name: names }).then(docs => {
                         if (docs) {
 
@@ -316,7 +313,7 @@ exports.postaddkooli = (req, res) => {
     let arrProps = Object.entries(req.body);
     s = process(0);
     var workers
-    var seller = req.body.seller.toUpperCase()
+    var seller = req.body.seller.toUpperCase().trim()
 
 
     function process(index) {
@@ -325,7 +322,7 @@ exports.postaddkooli = (req, res) => {
             doStuff(arrProps[index], () => process(index + 1));
         } else {
 
-            Loaderskooli.findOne({ seller: req.body.seller.toUpperCase() }).then(docs => {
+            Loaderskooli.findOne({ seller: seller }).then(docs => {
 
                 if (docs) {
 
@@ -340,7 +337,7 @@ exports.postaddkooli = (req, res) => {
                                     workers: workers,
                                     loaders: req.body.workername,
                                     date: req.body.date,
-                                    monitor:req.session.user.name
+                                    monitor: req.session.user.name
                                 }
                             }
                         }, { safe: true, upsert: true },
@@ -359,7 +356,7 @@ exports.postaddkooli = (req, res) => {
                             workers: workers,
                             loaders: req.body.workername,
                             date: req.body.date,
-                            monitor:req.session.user.name
+                            monitor: req.session.user.name
                         }]
                     })
                     loaderskooli.save((err, data) => {
@@ -410,7 +407,7 @@ exports.postaddkooli = (req, res) => {
                                         workers: workers,
                                         loadof: seller,
                                         date: req.body.date,
-                                        monitor:req.session.user.name
+                                        monitor: req.session.user.name
                                     }
                                 }
                             }, { safe: true, upsert: true },
@@ -428,7 +425,7 @@ exports.postaddkooli = (req, res) => {
                                 workers: workers,
                                 loadof: seller,
                                 date: req.body.date,
-                                monitor:req.session.user.name
+                                monitor: req.session.user.name
                             }]
                         })
                         loaders.save((err, data) => {
@@ -459,7 +456,7 @@ exports.postaddkooli = (req, res) => {
                                     workers: workers,
                                     loadof: seller,
                                     date: req.body.date,
-                                    monitor:req.session.user.name
+                                    monitor: req.session.user.name
                                 }
                             }
                         }, { safe: true, upsert: true },
@@ -477,7 +474,7 @@ exports.postaddkooli = (req, res) => {
                             workers: workers,
                             loadof: seller,
                             date: req.body.date,
-                            monitor:req.session.user.name
+                            monitor: req.session.user.name
                         }]
                     })
                     loaders.save((err, data) => {
@@ -744,7 +741,7 @@ exports.indidualkoolifilter = (req, res) => {
 }
 exports.addloaderpayment = (req, res) => {
     const arrayid = new mongoose.Types.ObjectId()
-    name = req.body.id.toUpperCase()
+    name = req.body.id.toUpperCase().trim()
     date = new Date(req.body.date)
     Loaders.findOne({ name: name }).then(docs => {
 
@@ -777,24 +774,74 @@ exports.addloaderpayment = (req, res) => {
                     })
                 })
         } else {
-       
+
         }
 
     }).then(docs => {
-        if (req.body.category == 'all') {
+        if (req.body.category == 'individual') {
             req.flash('payment', true)
             res.redirect('/employee/indidualkooli/' + name)
         } else {
-            req.flash('payment',true)
+            req.flash('payment', true)
+            res.redirect('/employee/loaderspayment')
+        }
+    })
+}
+exports.addloaderkooli = (req, res) => {
+    name = req.body.id.toUpperCase().trim()
+    date = new Date(req.body.date)
+    Loaders.findOne({ name: name }).then(docs => {
+
+        if (docs) {
+
+            docs.updateOne({
+                    $push: {
+                        "work": {
+                            product: req.body.hint,
+                            kooli: req.body.kooli,
+                            numberofsack: req.body.bags,
+                            loadof: req.body.loadof,
+                            date: req.body.date,
+                            monitor: req.body.monitor
+                        }
+                    }
+                }, { safe: true, upsert: true },
+                function(err, model) {
+
+                })
+        } else {
+            var loaders = new Loaders({
+                name: name,
+                "work": {
+                    product: req.body.hint,
+                    kooli: req.body.kooli,
+                    numberofsack: req.body.bags,
+                    loadof: req.body.loadof,
+                    date: req.body.date,
+                    monitor: req.body.monitor
+                }
+
+            })
+            loaders.save((err, docs) => {
+                if (err) console.log(err)
+            })
+        }
+
+    }).then(docs => {
+        if (req.body.category == 'individual') {
+            req.flash('payment', false)
+            res.redirect('/employee/indidualkooli/' + name)
+        } else {
+            req.flash('payment', false)
             res.redirect('/employee/loaderspayment')
         }
     })
 }
 exports.deleteload = (req, res) => {
-    name = req.params.name.toUpperCase()
 
-    Loaderskooli.findOne({ seller: name }).then(docs => {
-
+    var seller
+    Loaderskooli.findById(req.params.name).then(docs => {
+            seller = docs.seller
             if (docs) {
 
                 docs.updateOne({
@@ -829,12 +876,65 @@ exports.deleteload = (req, res) => {
 
         })
         .then(docs => {
-            res.redirect('/employee/viewkooli')
+            if (req.params.type == 'seperate') {
+                res.redirect('/employee/viewkooli')
+            } else {
+                res.redirect('/employee/viewkooli/' + seller)
+            }
+        })
+
+}
+exports.editload = (req, res) => {
+    type = req.body.type;
+
+    Loaderskooli.findOneAndUpdate({ seller: req.body.arrayid, order: { $elemMatch: { _id: req.body.objectid } } }, {
+
+                $set: {
+
+                    'order.$.date': new Date(req.body.editdate),
+
+                }
+            }, // list fields you like to change
+            { 'new': true, 'safe': true, 'upsert': true })
+        .then(docs => {
+            if (type == 'seperate') {
+                res.redirect('/employee/viewkooli')
+            } else {
+                res.redirect('/employee/viewkooli/' + req.body.arrayid)
+            }
+
         }).catch(err => {
             console.log(err)
         })
 
 }
+exports.editname = (req, res) => {
+    Loaderskooli.findOneAndUpdate({
+        seller: req.body.arrayid
+    }).then(docs => {
+        docs.seller = req.body.editname.toUpperCase().trim()
+        docs.save()
+    }).then(docs => {
+
+        res.redirect('/employee/viewkooli/' + req.body.editname.toUpperCase().trim())
+
+    }).catch(err => {
+        console.log(err)
+    })
+
+}
+exports.deleteloadseller = (req, res) => {
+
+    Loaderskooli.findOneAndRemove({ seller: req.params.arrayid }).then(docs => {
+        res.redirect('/employee/viewkooli')
+
+    }).catch(err => {
+        console.log(err)
+        res.redirect('/employee/viewkooli')
+    })
+
+}
+
 exports.deletepayment = (req, res) => {
     name = req.params.name.toUpperCase()
     Loaders.findOne({ name: name }).then(docs => {
@@ -852,10 +952,10 @@ exports.deletepayment = (req, res) => {
                 Transaction.findByIdAndDelete(req.params.arrayid).then((err, docs) => {
 
                     if (req.params.type == 'individual') {
-                        req.flash('payment',true)
+                        req.flash('payment', true)
                         res.redirect('/employee/indidualkooli/' + name)
                     } else {
-                        req.flash('payment',true)
+                        req.flash('payment', true)
                         res.redirect('/employee/loaderspayment')
                     }
                 })
@@ -867,13 +967,13 @@ exports.deletepayment = (req, res) => {
     })
 
 }
-exports.loaderspayment = (req, res) => { 
+exports.loaderspayment = (req, res) => {
     let payment = req.flash('payment');
-if (payment.length > 0) {
-    payment = payment[0];
-} else {
-    payment = false;
-}
+    if (payment.length > 0) {
+        payment = payment[0];
+    } else {
+        payment = false;
+    }
     var start = new Date()
     var end = new Date()
     end.setDate(end.getDate() + 1)
@@ -911,7 +1011,6 @@ if (payment.length > 0) {
                     docs: docs,
                     dics: dics,
                     mainpath: '/loaderspayment',
-                  
                     start: start,
                     end: end,
                     loaders: loaders,
@@ -967,7 +1066,7 @@ exports.filterloaderspayment = (req, res) => {
                     docs: docs,
                     dics: dics,
                     mainpath: '/loaderspayment',
-                   
+
                     start: start,
                     end: end,
                     loaders: loaders,

@@ -58,7 +58,7 @@ exports.addlorirent = (req, res) => {
 }
 exports.postaddlorirent = (req, res) => {
 
-    var number = req.body.loari.toUpperCase()
+    var number = req.body.loari.toUpperCase().trim();
     Lorirent.findOne({ registration: number }).then(docs => {
         if (docs) {
             docs.updateOne({
@@ -117,7 +117,7 @@ exports.postaddlorirent = (req, res) => {
 }
 exports.addloripayment = (req, res) => {
     const arrayid = new mongoose.Types.ObjectId()
-    var number = req.body.loari.toUpperCase()
+    var number = req.body.loari.toUpperCase().trim()
     Lorirent.findOne({ registration: number }).then(docs => {
         if (docs) {
             docs.updateOne({
@@ -232,8 +232,7 @@ exports.addindividuallorirent = (req, res) => {
     } else {
         payment = false;
     }
-    name = req.params.id.toUpperCase()
-    console.log(req.params.id.toUpperCase())
+    name = req.params.id.toUpperCase();
     var start = new Date()
     var end = new Date()
     end.setDate(end.getDate() + 1)
@@ -717,7 +716,7 @@ exports.filterindividualpayments = (req, res) => {
 }
 exports.paidamountform = (req, res) => {
 
-    var name = req.body.name
+    var name = req.body.name.toUpperCase().trim();
     date = new Date(req.body.date)
     var amount = req.body.amount;
     const arrayid = new mongoose.Types.ObjectId()
@@ -746,7 +745,7 @@ exports.paidamountform = (req, res) => {
         } else {
 
             var paymentmanagent = new Payments({
-                name: name.toUpperCase(),
+                name: name,
                 payment: [{
                     _id: arrayid,
                     date: date,
@@ -796,7 +795,7 @@ exports.paidamountform = (req, res) => {
 
 exports.postpaid = (req, res) => {
 
-    var name = req.body.name
+    var name = req.body.name.toUpperCase().trim()
     date = new Date(req.body.date)
     var amount = req.body.amount;
     const arrayid = new mongoose.Types.ObjectId()
@@ -826,7 +825,7 @@ exports.postpaid = (req, res) => {
         } else {
 
             var paymentmanagent = new Payments({
-                name: name.toUpperCase(),
+                name: name,
                 paid: [{
                     _id: arrayid,
                     date: date,

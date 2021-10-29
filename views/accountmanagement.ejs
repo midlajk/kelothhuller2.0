@@ -147,24 +147,10 @@
         <div class="row">
 
             <!-- Earnings (Monthly) Card Example -->
-            <div class="col-xl-3 col-md-6 mb-4">
-                <div class="card border-left-primary shadow h-100 py-2">
-                    <div class="card-body">
-                        <div class="row no-gutters align-items-center">
-                            <div class="col mr-2">
-                                <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">Total Sales kg</div>
-                                <div class="h5 mb-0 font-weight-bold text-gray-800"><span id="totalsaleskg"></span></div>
-                            </div>
-                            <div class="col-auto">
-                                <i class="fas fa-save fa-2x text-gray-300"></i>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
+
 
             <!-- Earnings (Monthly) Card Example -->
-            <div class="col-xl-3 col-md-6 mb-4">
+            <div class="col-xl-4 col-md-6 mb-4">
                 <div class="card border-left-success shadow h-100 py-2">
                     <div class="card-body">
                         <div class="row no-gutters align-items-center">
@@ -180,7 +166,7 @@
                 </div>
             </div>
 
-            <div class="col-xl-3 col-md-6 mb-4">
+            <div class="col-xl-4 col-md-6 mb-4">
                 <div class="card border-left-info shadow h-100 py-2">
                     <div class="card-body">
                         <div class="row no-gutters align-items-center">
@@ -200,7 +186,7 @@
             <!-- Earnings (Monthly) Card Example -->
 
             <!-- Pending Requests Card Example -->
-            <div class="col-xl-3 col-md-6 mb-4">
+            <div class="col-xl-4 col-md-6 mb-4">
                 <div class="card border-left-warning shadow h-100 py-2">
                     <div class="card-body">
                         <div class="row no-gutters align-items-center">
@@ -219,24 +205,9 @@
         <div class="row">
 
             <!-- Earnings (Monthly) Card Example -->
-            <div class="col-xl-3 col-md-6 mb-4">
-                <div class="card border-left-primary shadow h-100 py-2">
-                    <div class="card-body">
-                        <div class="row no-gutters align-items-center">
-                            <div class="col mr-2">
-                                <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">Total Purchase kg</div>
-                                <div class="h5 mb-0 font-weight-bold text-gray-800"><span id="totalpurchasekg"></span></div>
-                            </div>
-                            <div class="col-auto">
-                                <i class="fas fa-save fa-2x text-gray-300"></i>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
 
             <!-- Earnings (Monthly) Card Example -->
-            <div class="col-xl-3 col-md-6 mb-4">
+            <div class="col-xl-4 col-md-6 mb-4">
                 <div class="card border-left-success shadow h-100 py-2">
                     <div class="card-body">
                         <div class="row no-gutters align-items-center">
@@ -252,7 +223,7 @@
                 </div>
             </div>
 
-            <div class="col-xl-3 col-md-6 mb-4">
+            <div class="col-xl-4 col-md-6 mb-4">
                 <div class="card border-left-info shadow h-100 py-2">
                     <div class="card-body">
                         <div class="row no-gutters align-items-center">
@@ -272,7 +243,7 @@
             <!-- Earnings (Monthly) Card Example -->
 
             <!-- Pending Requests Card Example -->
-            <div class="col-xl-3 col-md-6 mb-4">
+            <div class="col-xl-4 col-md-6 mb-4">
                 <div class="card border-left-warning shadow h-100 py-2">
                     <div class="card-body">
                         <div class="row no-gutters align-items-center">
@@ -288,49 +259,7 @@
                 </div>
             </div>
         </div>
-        <div class="row">
 
-            <!-- Earnings (Monthly) Card Example -->
-            <div class="col-xl-6 col-md-6 mb-4">
-                <div class="card border-left-primary shadow h-100 py-2">
-                    <div class="card-body">
-                        <div class="row no-gutters align-items-center">
-                            <div class="col mr-2">
-                                <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">Total kg Remaining</div>
-                                <div class="h5 mb-0 font-weight-bold text-gray-800"><span id="remainingkg"></span></div>
-                            </div>
-                            <div class="col-auto">
-                                <i class="fas fa-save fa-2x text-gray-300"></i>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Earnings (Monthly) Card Example -->
-            <div class="col-xl-6 col-md-6 mb-4">
-                <div class="card border-left-success shadow h-100 py-2">
-                    <div class="card-body">
-                        <div class="row no-gutters align-items-center">
-                            <div class="col mr-2">
-                                <div class="text-xs font-weight-bold text-success text-uppercase mb-1">Expected Profit</div>
-                                <div class="h5 mb-0 font-weight-bold text-gray-800"><span id="expectedprofit"></span></div>
-                            </div>
-                            <div class="col-auto">
-                                <i class="fas fa-rupee-sign fa-2x text-gray-300"></i>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-
-
-            <!-- Earnings (Monthly) Card Example -->
-
-            <!-- Pending Requests Card Example -->
-
-        </div>
 
         <!-- DataTales Example -->
 
@@ -499,24 +428,20 @@
             var totalsaleskg = <%= bagsales%>;
             var totalsalesremaining = 0;
 
-            var remainingbags = parseInt(totalpurchasekg) - parseInt(totalsaleskg);
-            var expectedrevenue = parseInt(totalsalesamount) - parseInt(totalpurchaseamount);
+
             totalpurchaseremaining = parseInt(totalpurchaseamount - totalpurchasepaid);
             totalsalesremaining = parseInt(totalsalesamount - totalsalespaid);
+
             document.getElementById('totalpurchaseamount').innerText = totalpurchaseamount.toLocaleString();
             document.getElementById('totalpurchasepaid').innerText = totalpurchasepaid.toLocaleString();
             document.getElementById('totalpurchaseremaining').innerText = totalpurchaseremaining.toLocaleString();
-            document.getElementById('totalpurchasekg').innerText = totalpurchasekg.toLocaleString();
-
-            document.getElementById('expectedprofit').innerText = expectedrevenue.toLocaleString();
 
 
-            document.getElementById('totalsaleskg').innerText = totalsaleskg.toLocaleString();
+
             document.getElementById('totalsalesamount').innerText = totalsalesamount.toLocaleString();
             document.getElementById('totalsalesamountgot').innerText = totalsalespaid.toLocaleString();
             document.getElementById('totalsalespending').innerText = totalsalesremaining.toLocaleString();
 
-            document.getElementById('remainingkg').innerText = remainingbags.toLocaleString();
         });
     </script>
     <script>
