@@ -12,7 +12,10 @@
                 <%if(individual){%>
                     of
                     <%=id%>
-                        <%}%>
+                        <%if(currentuser.isadminlogged){%>
+                            <a href="/deleteutilitycomplete/<%=id%>" style="color: black;" onclick="return confirm('Are you sure?')"> <i class="fas fa-fw fa-trash"></i></a>
+                            <%}%>
+                                <%}%>
             </h1>
 
             <h6>
@@ -71,8 +74,12 @@
                                 <tr>
                                     <td><input required tabindex="1" name="date" class="form-control" type="date" value="<%=todaydate%>" id=""></td>
                                     <%if(!individual){%>
-                                        <td><input required autofocus class="p-1 form-control" style="width: 200px;" tabIndex="2" type="text" name="billto" id=""></td>
-
+                                        <td><input required autofocus class="p-1 form-control" style="width: 200px;" tabIndex="2" type="text" name="billto" autocomplete="off" list="utilitynames" id=""></td>
+                                        <datalist id="utilitynames">
+                                            <%for(let docs of utitlity){%>
+                                            <option value="<%=docs%>">
+                                          <%}%>
+                                        </datalist>
                                         <%}else{%> <input type="hidden" name="type" value="individual">
                                             <input type="hidden" name="billto" value="<%=id%>">
                                             <%}%>

@@ -18,6 +18,7 @@ router.post('/indidualkoolifilter',isMorA, employeeController.indidualkoolifilte
 router.post('/addloaderpayment',isAdmin, employeeController.addloaderpayment);
 router.post('/addloaderkooli',isAdmin, employeeController.addloaderkooli);
 router.get('/deletepayment/:arrayid/:name/:type',isAdmin, employeeController.deletepayment);
+router.get('/deleteindividualkooli/:arrayid/:name/:type',isAdmin, employeeController.deleteindividualkooli);
 router.get('/viewattendance',isMorA, employeeController.viewattendance);
 router.get('/viewattendance/:id',isMorA, employeeController.viewattendanceperson);
 router.post('/viewattendanceindividual',isMorA, employeeController.viewattendanceindividual);

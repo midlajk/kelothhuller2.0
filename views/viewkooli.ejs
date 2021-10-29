@@ -26,7 +26,7 @@
         <div class="card shadow mb-4">
             <div class="card-header py-3">
                 <%if(currentuser.isadminlogged){%>
-                    <a class="btn btn-primary" href="/employee/loaderspayment">Loaders payment</a>
+                    <a class="btn btn-primary" href="/employee/loaderspayment">Loaders payment & Works</a>
                     <%}%>
                         <a class="float-right btn btn-danger ml-2" href="" href="" data-toggle="modal" data-target="#filtermodel">Filter</a>
                         <a class="float-right btn btn-info" href="/employee/addkooli">Add load</a>
@@ -37,8 +37,8 @@
                             <form action="" method="GET" id="checkword">
                                 <div id="inputFormRow" class="form-group row">
                                     <div class="col-sm-12  input-group d-flex justify-content-center">
-                                        <button id="individual_account" type="button" class="btn btn-secondary">Individual account</button>
-                                        <button id="individual_load" type="button" class="btn btn-info">Individual load</button>
+                                        <button id="individual_account" type="button" class="btn btn-light">Loaders Individual account</button> |
+                                        <button id="individual_load" type="button" class="btn btn-light">Dealers Individual loads</button>
 
                                     </div>
                                     <div class="col-sm-12 mb-3 mb-sm-0 input-group" id="loader_ind">

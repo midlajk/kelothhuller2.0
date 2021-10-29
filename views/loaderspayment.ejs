@@ -93,7 +93,7 @@
         <!-- DataTales Example -->
         <div class="card shadow mb-4" style="<%if(payment){%>display: none;<%}%>" id="loadingdeatils">
             <div class="card-header py-3">
-                <a href="/employee/viewkooli" class="btn btn-primary" id="">Loads</a>
+                <a href="/employee/viewkooli" class="btn btn-primary" id="">Complete Loads</a>
                 <a href="/loaderslist" class="btn btn-primary" id="">Loaders list</a>
                 <a href="" class="btn btn-danger float-right ml-2" data-toggle="modal" data-target="#filtermodel">Filter</a>
                 <button class="btn btn-success float-right" id="paymentbutton">View payments</button>
@@ -117,8 +117,9 @@
                                 <input type="submit" class="btn btn-danger" value="Search loader"></input>
                             </div>
                         </div>
+                    </div>
                 </form>
-                </div>
+
             </div>
             <div class="card-body">
                 <div class="table-responsive">
@@ -174,6 +175,7 @@
                                 <th>hint</th>
                                 <%if(currentuser.isadminlogged){%>
                                     <th>Monitor</th>
+                                    <th>Delete</th>
                                     <%}%>
 
 
@@ -191,6 +193,7 @@
                                     <th>hint</th>
                                     <%if(currentuser.isadminlogged){%>
                                         <th>Monitor</th>
+                                        <th>Delete</th>
                                         <%}%>
 
 
@@ -235,6 +238,9 @@
                                         <td>
                                             <%=doc.work.monitor%>
                                         </td>
+                                        <td>
+                                            <a onclick="return confirm('are you sure?')" href="/employee/deleteindividualkooli/<%=doc.work._id%>/<%=doc.name%>/all" class="btn btn-danger">Delete</a>
+                                        </td>
                                         <%}%>
 
 
@@ -253,7 +259,8 @@
         <div class="card shadow mb-4" style="<%if(!payment){%>display: none;<%}%>" id="paymentdetails">
             <div class="card-header py-3">
                 <a href="/loaderslist" class="btn btn-primary" id="">Loaders list</a>
-                <button class="btn btn-success float-right" id="loadingbutton">View Loading</button>
+                <a href="" class="btn btn-danger float-right ml-2" data-toggle="modal" data-target="#filtermodel">Filter</a>
+                <button class="btn btn-success float-right" id="loadingbutton">View Loading Works</button>
 
                 <br>
 

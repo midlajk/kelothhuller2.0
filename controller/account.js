@@ -938,3 +938,13 @@ exports.deletepayment = (req, res) => {
 
 
 }
+exports.deleteutilitycomplete = (req, res) => {
+
+    Utility.findOneAndDelete({ name: req.params.name }).then((err, docs) => {
+        if (err) console.log(err)
+        res.redirect('/utility')
+    })
+
+
+
+}

@@ -7,7 +7,7 @@ const Loaderskooli = mongoose.model('Loaderskooli');
 const Loaders = mongoose.model('Loaders');
 const Employees = mongoose.model('Employees');
 const Attendance = mongoose.model('Attendance');
-
+const ObjectId = mongoose.Types.ObjectId;
 exports.viewattendance = (req, res) => {
     var start = new Date()
     var end = new Date()
@@ -889,23 +889,40 @@ exports.editload = (req, res) => {
 
     Loaderskooli.findOneAndUpdate({ seller: req.body.arrayid, order: { $elemMatch: { _id: req.body.objectid } } }, {
 
-                $set: {
+            $set: {
 
-                    'order.$.date': new Date(req.body.editdate),
+                'order.$.date': new Date(req.body.editdate),
+
+            }
+        }, // list fields you like to change
+        { 'new': true, 'safe': true, 'upsert': true }).then(docs => {
+
+        Loaderskooli.aggregate([{
+            $match: {
+                seller: req.body.arrayid
+            }
+        }, { $unwind: "$order" }, {
+            $match: {
+                "order._id": ObjectId(req.body.objectid)
+            }
+        }]).then(docs => {
+            Loaders.update({ 'work._id': req.body.objectid }, {
+                '$set': {
+                    'work.$.date': new Date(req.body.editdate),
 
                 }
-            }, // list fields you like to change
-            { 'new': true, 'safe': true, 'upsert': true })
-        .then(docs => {
-            if (type == 'seperate') {
-                res.redirect('/employee/viewkooli')
-            } else {
-                res.redirect('/employee/viewkooli/' + req.body.arrayid)
-            }
+            }, function(err) {})
 
-        }).catch(err => {
-            console.log(err)
+
         })
+    }).then(docs => {
+        if (type == 'seperate') {
+            res.redirect('/employee/viewkooli')
+        } else {
+            res.redirect('/employee/viewkooli/' + req.body.arrayid)
+        }
+
+    })
 
 }
 exports.editname = (req, res) => {
@@ -959,6 +976,37 @@ exports.deletepayment = (req, res) => {
                         res.redirect('/employee/loaderspayment')
                     }
                 })
+
+            })
+
+    }).catch(err => {
+        console.log(err)
+    })
+
+}
+exports.deleteindividualkooli = (req, res) => {
+    name = req.params.name.toUpperCase()
+    Loaders.findOne({ name: name }).then(docs => {
+
+        docs.updateOne({
+                $pull: {
+                    "work": {
+                        _id: req.params.arrayid,
+
+
+                    }
+                }
+            }, { safe: true, upsert: true },
+            function(err, model) {
+
+                if (req.params.type == 'individual') {
+                    req.flash('payment', false)
+                    res.redirect('/employee/indidualkooli/' + name)
+                } else {
+                    req.flash('payment', false)
+                    res.redirect('/employee/loaderspayment')
+                }
+
 
             })
 

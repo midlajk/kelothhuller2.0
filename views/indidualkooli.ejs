@@ -173,6 +173,7 @@
                                         <th>hint</th>
                                         <%if(currentuser.isadminlogged){%>
                                             <th>Monitor</th>
+                                            <th>Delete</th>
                                             <%}%>
 
 
@@ -189,6 +190,7 @@
                                             <th>hint</th>
                                             <%if(currentuser.isadminlogged){%>
                                                 <th>Monitor</th>
+                                                <th>Delete</th>
                                                 <%}%>
 
 
@@ -225,9 +227,10 @@
                                                 <td>
                                                     <%=doc.work.monitor%>
                                                 </td>
+                                                <td>
+                                                    <a onclick="return confirm('are you sure?')" href="/employee/deleteindividualkooli/<%=doc.work._id%>/<%=doc.name%>/individual" class="btn btn-danger">Delete</a>
+                                                </td>
                                                 <%}%>
-
-
                                         </tr>
                                         <%}%>
 
@@ -244,7 +247,8 @@
             <div class="card shadow mb-4" style="<%if(!payment){%>display: none;<%}%>" id="paymentdetails">
                 <div class="card-header py-3">
                     <a href="/employee/loaderspayment" class="btn btn-primary" id="">Complete payments</a>
-                    <button class="btn btn-success float-right" id="loadingbutton">View Loading</button>
+                    <a href="" class="btn btn-danger float-right ml-2" data-toggle="modal" data-target="#filtermodel">Filter</a>
+                    <button class="btn btn-success float-right" id="loadingbutton">View Loading Works</button>
 
                     <br>
 
