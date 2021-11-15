@@ -22,10 +22,10 @@ exports.accountmanagement = (req, res) => {
     } else {
         message = null;
     }
-    var start = new Date()
+    var start = new Date(08 / 03 / 2000)
     var end = new Date()
-    end.setDate(end.getDate() + 1)
-    start.setMonth(start.getMonth() - 1);
+
+
     Buyers.aggregate([{ $unwind: "$deal" }, {
             $match: {
 
@@ -517,10 +517,8 @@ exports.salesmanagement = (req, res) => {
     } else {
         message = null;
     }
-    var start = new Date()
+    var start = new Date(08 / 03 / 2000)
     var end = new Date()
-    end.setDate(end.getDate() + 1)
-    start.setMonth(start.getMonth() - 1);
     Buyers.aggregate([{ $unwind: "$deal" }, {
             $match: {
 
@@ -655,10 +653,8 @@ exports.purchasemanagement = (req, res) => {
     } else {
         message = null;
     }
-    var start = new Date()
+    var start = new Date(08 / 03 / 2000)
     var end = new Date()
-    end.setDate(end.getDate() + 1)
-    start.setMonth(start.getMonth() - 1);
     Sellers.aggregate([{ $unwind: "$deal" }, {
         $match: {
 
@@ -792,10 +788,8 @@ exports.individualpurchase = (req, res) => {
     } else {
         message = null;
     }
-    var start = new Date()
+    var start = new Date(08 / 03 / 2000)
     var end = new Date()
-    end.setDate(end.getDate() + 1)
-    start.setMonth(start.getMonth() - 1);
     Sellers.findOne({
         name: req.params.id
     }).then(name => {
@@ -967,10 +961,8 @@ exports.individualsales = (req, res) => {
     } else {
         message = null;
     }
-    var start = new Date()
+    var start = new Date(08 / 03 / 2000)
     var end = new Date()
-    end.setDate(end.getDate() + 1)
-    start.setMonth(start.getMonth() - 1);
     Buyers.findOne({
         name: req.params.id
     }).then(name => {
@@ -1224,10 +1216,8 @@ exports.deleteuser = (req, res) => {
 }
 
 exports.utility = (req, res) => {
-    var start = new Date()
+    var start = new Date(08 / 03 / 2000)
     var end = new Date()
-    end.setDate(end.getDate() + 1)
-    start.setMonth(start.getMonth() - 1);
     Utility.aggregate([{ $unwind: "$detail" }, {
         $match: {
 
@@ -1457,10 +1447,8 @@ exports.editorder = (req, res) => {
     }
 }
 exports.getTransaction = (req, res) => {
-    var start = new Date()
+    var start = new Date(08 / 03 / 2000)
     var end = new Date()
-    end.setDate(end.getDate() + 1)
-    start.setMonth(start.getMonth() - 1);
     Transaction.find({ //query today up to tonight
             Date: {
                 $lt: end,

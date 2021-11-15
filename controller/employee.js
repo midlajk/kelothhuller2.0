@@ -9,10 +9,8 @@ const Employees = mongoose.model('Employees');
 const Attendance = mongoose.model('Attendance');
 const ObjectId = mongoose.Types.ObjectId;
 exports.viewattendance = (req, res) => {
-    var start = new Date()
+    var start = new Date(08 / 03 / 2000)
     var end = new Date()
-    end.setDate(end.getDate() + 1)
-    start.setMonth(start.getMonth() - 1);
     Attendance.aggregate([{
         $match: {
 
@@ -58,10 +56,8 @@ exports.viewattendancefilter = (req, res) => {
 }
 exports.viewattendanceperson = (req, res) => {
 
-    var start = new Date()
+    var start = new Date(08 / 03 / 2000)
     var end = new Date()
-    end.setDate(end.getDate() + 1)
-    start.setMonth(start.getMonth() - 1);
     Employees.aggregate([{
         $match: {
             "name": req.params.id
@@ -493,10 +489,8 @@ exports.postaddkooli = (req, res) => {
     }
 }
 exports.viewkooli = (req, res) => {
-    var start = new Date()
+    var start = new Date(08 / 03 / 2000)
     var end = new Date()
-    end.setDate(end.getDate() + 1)
-    start.setMonth(start.getMonth() - 1);
     Loaderskooli.aggregate([{ $unwind: "$order" }, {
         $match: {
 
@@ -551,10 +545,8 @@ exports.koolifilter = (req, res) => {
 
 }
 exports.individualloads = (req, res) => {
-    var start = new Date()
+    var start = new Date(08 / 03 / 2000)
     var end = new Date()
-    end.setDate(end.getDate() + 1)
-    start.setMonth(start.getMonth() - 1);
     Loaderskooli.aggregate([{
         $match: {
             "seller": req.params.id
@@ -624,10 +616,8 @@ exports.indidualkooli = (req, res) => {
     } else {
         payment = false;
     }
-    var start = new Date()
+    var start = new Date(08 / 03 / 2000)
     var end = new Date()
-    end.setDate(end.getDate() + 1)
-    start.setMonth(start.getMonth() - 1);
     name = req.params.id.toUpperCase();
     Loaders.aggregate([{
             "$match": { "name": name }
@@ -1022,10 +1012,8 @@ exports.loaderspayment = (req, res) => {
     } else {
         payment = false;
     }
-    var start = new Date()
+    var start = new Date(08 / 03 / 2000)
     var end = new Date()
-    end.setDate(end.getDate() + 1)
-    start.setMonth(start.getMonth() - 1);
 
     Loaders.aggregate([
         { $unwind: "$work" }, {

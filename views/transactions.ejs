@@ -17,38 +17,9 @@
         <div class="row">
 
             <!-- Earnings (Monthly) Card Example -->
-            <div class="col-xl-3 col-md-6 mb-4">
-                <div class="card border-left-primary shadow h-100 py-2">
-                    <div class="card-body">
-                        <div class="row no-gutters align-items-center">
-                            <div class="col mr-2">
-                                <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">Total Turnover</div>
-                                <div class="h5 mb-0 font-weight-bold text-gray-800"><span id="Turnover"></span></div>
-                            </div>
-                            <div class="col-auto">
-                                <i class="fas fa-save fa-2x text-gray-300"></i>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
 
             <!-- Earnings (Monthly) Card Example -->
-            <div class="col-xl-3 col-md-6 mb-4">
-                <div class="card border-left-success shadow h-100 py-2">
-                    <div class="card-body">
-                        <div class="row no-gutters align-items-center">
-                            <div class="col mr-2">
-                                <div class="text-xs font-weight-bold text-success text-uppercase mb-1">Total Revenue</div>
-                                <div class="h5 mb-0 font-weight-bold text-gray-800"><span id="revenue"></span></div>
-                            </div>
-                            <div class="col-auto">
-                                <i class="fas fa-rupee-sign fa-2x text-gray-300"></i>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
+
 
             <div class="col-xl-3 col-md-6 mb-4">
                 <div class="card border-left-info shadow h-100 py-2">
@@ -77,6 +48,21 @@
                             <div class="col mr-2">
                                 <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">Total Debit</div>
                                 <div class="h5 mb-0 font-weight-bold text-gray-800"><span id="amountdebit"></span></div>
+                            </div>
+                            <div class="col-auto">
+                                <i class="fas fa-rupee-sign fa-2x text-gray-300"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-xl-3 col-md-6 mb-4">
+                <div class="card border-left-success shadow h-100 py-2">
+                    <div class="card-body">
+                        <div class="row no-gutters align-items-center">
+                            <div class="col mr-2">
+                                <div class="text-xs font-weight-bold text-success text-uppercase mb-1">Amount in hand</div>
+                                <div class="h5 mb-0 font-weight-bold text-gray-800"><span id="revenue"></span></div>
                             </div>
                             <div class="col-auto">
                                 <i class="fas fa-rupee-sign fa-2x text-gray-300"></i>
@@ -268,9 +254,7 @@
                     <form id="form4" class="ml-1" style="float: left;" action="/filterTransaction" method="POST">
                         <input type="hidden" name="type" value="year"><button type="submit" form="form4" class="btn btn-primary">1 Year</button>
                     </form>
-                    <form id="form5" class="ml-1" style="float: left;" action="/filterTransaction" method="POST">
-                        <input type="hidden" name="type" value="all"> <button type="submit" form="form5" class="btn btn-primary">All records</button>
-                    </form>
+
                 </div>
                 <div class="modal-footer">
                     <button class="btn btn-secondary" type="button" data-dismiss="modal">Cancel</button>
@@ -509,11 +493,9 @@
             var totalrevenue = 0;
             var totaldebit = <%=debit%>;
             var totalcredit = <%=credit%>;
-            var totalturnover = <%=total%>;
 
-            totalturnover = totalcredit + totaldebit
             totalrevenue = totalcredit - totaldebit
-            document.getElementById('Turnover').innerText = totalturnover.toLocaleString();
+
             document.getElementById('revenue').innerText = totalrevenue.toLocaleString();
             document.getElementById('amountcredit').innerText = totalcredit.toLocaleString();
             document.getElementById('amountdebit').innerText = totaldebit.toLocaleString();

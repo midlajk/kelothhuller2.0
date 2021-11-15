@@ -14,10 +14,8 @@ exports.addlorirent = (req, res) => {
     } else {
         payment = false;
     }
-    var start = new Date()
+    var start = new Date(08 / 03 / 2000)
     var end = new Date()
-    end.setDate(end.getDate() + 1)
-    start.setMonth(start.getMonth() - 1);
     Lorirent.aggregate([{ $unwind: "$trips" }, {
         $match: {
 
@@ -233,10 +231,8 @@ exports.addindividuallorirent = (req, res) => {
         payment = false;
     }
     name = req.params.id.toUpperCase();
-    var start = new Date()
+    var start = new Date(08 / 03 / 2000)
     var end = new Date()
-    end.setDate(end.getDate() + 1)
-    start.setMonth(start.getMonth() - 1);
     Lorirent.aggregate([{
         $match: {
             "registration": req.params.id.toUpperCase()
@@ -438,10 +434,8 @@ exports.filterutility = (req, res) => {
 
 exports.indivual_utility = (req, res) => {
     name = req.params.id.toUpperCase()
-    var start = new Date()
+    var start = new Date(08 / 03 / 2000)
     var end = new Date()
-    end.setDate(end.getDate() + 1)
-    start.setMonth(start.getMonth() - 1);
     Utility.aggregate([{
         $match: {
             "name": req.params.id.toUpperCase()
