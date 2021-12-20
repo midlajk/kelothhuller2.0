@@ -166,7 +166,7 @@
 
 
                                     <td><input required class="form-control price-control" tabIndex="5" type="number" step=".01" name="kilogram" style="width: 125px;" id="kilogram"></td>
-                                    <td><input required class="p-1 form-control price-control" tabIndex="6" type="number" step=".01" style="width: 125px;" name="price" id="price"></td>
+                                    <td><input required class="p-1 form-control price-control" tabIndex="6" type="number" step=".01" style="width: 125px;" name="price" onkeydown="isKeyPressed(event)" id="price"></td>
                                     <td><input required class="p-1 form-control" style="width: 150px;" tabIndex="7" type="number" step=".01" name="paid" id="paid"></td>
                                     <td><input required class="p-1" tabIndex="8" type="number" step=".01" style="width: 150px;" name="total" id="total"></td>
 
@@ -530,6 +530,17 @@
                 $('#date').focus();
             })
         });
+
+        function isKeyPressed(event) {
+            var x = document.getElementById("price");
+            if (event.shiftKey) {
+
+                var x = document.getElementById("price").value;
+                document.getElementById("price").value = x / 50;
+            } else {
+
+            }
+        }
     </script>
     <script>
         $(document).ready(function() {

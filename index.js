@@ -17,8 +17,8 @@ app.set('view engine', 'ejs');
 app.set('views', 'views');
 
 
- // const url = 'mongodb://127.0.0.1:27017'
-  const url = "mongodb+srv://Fazil2000:Fazil2000@cluster0.6qacz.mongodb.net/myFirstDatabase?retryWrites=true&w=majority";
+ const url = 'mongodb://127.0.0.1:27017'
+// const url = "mongodb+srv://Fazil2000:Fazil2000@cluster0.6qacz.mongodb.net/myFirstDatabase?retryWrites=true&w=majority";
 
 const store = new MongoDBStore({
     uri: url,

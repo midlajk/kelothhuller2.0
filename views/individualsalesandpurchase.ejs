@@ -174,7 +174,7 @@
                                     <td><input autofocus required tabindex="1" name="date" class="form-control" value="<%=todaydate%>" type="date" id="date"></td>
 
                                     <td><input required class="form-control price-control" tabIndex="2" type="number" step=".01" name="kilogram" style="width: 125px;" id="kilogram"></td>
-                                    <td><input required class="p-1 form-control price-control" tabIndex="3" type="number" step=".01" style="width: 125px;" name="price" id="price"></td>
+                                    <td><input required class="p-1 form-control price-control" tabIndex="3" onkeydown="isKeyPressed(event)" type="number" step=".01" style="width: 125px;" name="price" id="price"></td>
                                     <%if(category =='sales'){%>
                                         <td><input required class="p-1 form-control" style="width: 150px;" tabIndex="4" type="number" step=".01" name="paid" id="paid"></td>
                                         <td><input required class="p-1" tabIndex="5" type="number" step=".01" style="width: 150px;" name="total" id="total"></td>
@@ -568,6 +568,17 @@
 
             $('#editmodel').modal('show')
 
+        }
+
+        function isKeyPressed(event) {
+            var x = document.getElementById("price");
+            if (event.shiftKey) {
+                console.log("here")
+                var x = document.getElementById("price").value;
+                document.getElementById("price").value = x / 50;
+            } else {
+
+            }
         }
     </script>
     <script type="text/javascript">
