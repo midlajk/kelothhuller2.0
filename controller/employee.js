@@ -896,7 +896,7 @@ exports.editload = (req, res) => {
                 "order._id": ObjectId(req.body.objectid)
             }
         }]).then(docs => {
-            Loaders.update({ 'work._id': req.body.objectid }, {
+            Loaders.updateMany({ 'work._id': req.body.objectid }, {
                 '$set': {
                     'work.$.date': new Date(req.body.editdate),
 

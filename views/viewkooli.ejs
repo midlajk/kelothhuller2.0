@@ -167,7 +167,7 @@
                                                 </td>
                                                 <%}%>
                                                     <td>
-                                                        <%if(currentuser.isadminlogged | currentuser.user.name == docs[i].order.monitor){%>
+                                                        <%if(currentuser.isadminlogged | currentuser.user.name == docs[i].order.monitor | currentuser.user.name == "SUHAIR"){%>
                                                             <%if(!individual){%>
                                                                 <a href="#" onclick="editkooliseperate('<%=i%>')" class="btn btn-danger">edit</a>
                                                                 <%}else{%>
