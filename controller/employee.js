@@ -362,7 +362,7 @@ exports.postaddkooli = (req, res) => {
                 }
 
             }).then(docs => {
-                req.flash('error', "succefully added")
+                req.flash('error', "Data added! Date : " + req.body.date + ",  Seller : " + seller + ", Bag : " + req.body.bags + ", Kooli : " + req.body.kooli + ", workers : [ " + req.body.workername + " ]")
                 res.redirect('/employee/addkooli')
             }).catch(err => {
                 console.log(err)

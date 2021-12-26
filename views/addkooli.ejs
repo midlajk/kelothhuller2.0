@@ -1,5 +1,5 @@
 <%- include('./includes/head.ejs') %>
-    <div class="container-fluid">
+    <div id="log" class="container-fluid">
 
         <!-- Page Heading -->
 
@@ -73,7 +73,7 @@
                                     <div id="newRow"></div>
 
 
-                                    <input type="button" tabindex="7" value="Add worker" id="addRow" class="btn btn-success mb-3"></input>
+                                    <input type="button" tabindex="6" value="Add worker" id="addRow" class="btn btn-success mb-3"></input>
                                     <button style="display: none;" id="submitbtn" type="submit" form="addloading" class="btn btn-primary btn-user btn-block col-sm-12 mb-3 mb-sm-0 ">
             Add Kooli
           </button>
@@ -103,7 +103,7 @@
             var html = '';
             html += '<div id="inputFormRow" class="form-group row">';
             html += '<div class="col-sm-12 mb-3 mb-sm-0 input-group">';
-            html += '<input id="newworker" required type="text" name="workername" class="form-control form-control-user " placeholder="Enter Worker name" list="browsers" onblur="this.value=removeSpaces(this.value);" autocomplete="off">';
+            html += '<input id="newworker" required type="text" name="workername" class="form-control form-control-user newinput " placeholder="Enter Worker name" list="browsers" onblur="this.value=removeSpaces(this.value);" autocomplete="off">';
             html += '<div class="input-group-append">';
             html += '<button id="removeRow" type="button" class="btn btn-danger">Remove</button>';
             html += '</div>';
@@ -111,10 +111,41 @@
 
             $('#newRow').append(html);
             $('#submitbtn').show();
+            s = document.getElementsByClassName('newinput')
+            s[s.length - 1].focus()
+
         });
         $(document).on('click', '#removeRow', function() {
             $(this).closest('#inputFormRow').remove();
+            s = document.getElementsByClassName('newinput')
+            s[s.length - 1].focus()
         });
+
+        const log = document.getElementById('log');
+
+        document.addEventListener('keydown', logKey);
+
+        function logKey(e) {
+            if (e.shiftKey) {
+                var html = '';
+                html += '<div id="inputFormRow" class="form-group row">';
+                html += '<div class="col-sm-12 mb-3 mb-sm-0 input-group">';
+                html += '<input id="newworker" required type="text" name="workername" class="form-control form-control-user newinput " placeholder="Enter Worker name" list="browsers" onblur="this.value=removeSpaces(this.value);" autocomplete="off">';
+                html += '<div class="input-group-append">';
+                html += '<button id="removeRow" type="button" class="btn btn-danger">Remove</button>';
+                html += '</div>';
+                html += '</div>';
+                $('#newRow').append(html);
+                $('#submitbtn').show();
+                s = document.getElementsByClassName('newinput')
+                s[s.length - 1].focus()
+            } else if (e.altKey) {
+                $("#addloading").submit()
+            } else {
+
+            }
+        }
+
 
         $(function() {
             var tabindex = 1;
