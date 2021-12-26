@@ -6,8 +6,12 @@
                 <%=moment(start).format( 'DD-MMM-YYYY')%> to
                     <%=moment(end).format( 'DD-MMM-YYYY')%>
             </h6>
-
         </div>
+
+        <!-- <button style="color:#6D9F00;text-decoration:none;" class="printfriendly" id="btnprint" title="Print">Print</button>
+  
+
+ -->
 
         <!-- Content Row -->
         <div class="row">
@@ -81,12 +85,10 @@
                     </div>
                 </div>
             </div>
+
         </div>
 
         <!-- Content Row -->
-
-        <!-- Page Heading -->
-
 
         <!-- DataTales Example -->
         <div class="card shadow mb-4">
@@ -196,22 +198,7 @@
                                 <th>Edit</th>
                             </tr>
                         </thead>
-                        <tfoot>
-                            <tr>
-                                <th>Date</th>
-                                <th>Seller</th>
 
-                                <th id="totalkg"></th>
-                                <th>Prize</th>
-                                <th id="totalamount"></th>
-                                <th id="totalpaid"></th>
-                                <th id="totalremaining"></th>
-                                <th>Through</th>
-                                <th>Hint</th>
-                                <th>Edit</th>
-
-                            </tr>
-                        </tfoot>
                         <tbody>
 
                             <% var bag = 0;
@@ -268,6 +255,20 @@
                                             <%}%>
 
                         </tbody>
+                        <tr>
+                            <th>Date</th>
+                            <th>Seller</th>
+
+                            <th id="totalkg"></th>
+                            <th>Prize</th>
+                            <th id="totalamount"></th>
+                            <th id="totalpaid"></th>
+                            <th id="totalremaining"></th>
+                            <th>Through</th>
+                            <th>Hint</th>
+                            <th>Edit</th>
+
+                        </tr>
                     </table>
                 </div>
             </div>

@@ -188,27 +188,7 @@
 
                                     </tr>
                                 </thead>
-                                <tfoot>
-                                    <tr>
-                                        <th>Date</th>
-                                        <%if(!individual){%>
-                                            <th>Lori number</th>
-                                            <%}%>
 
-
-                                                <th>Total Rent = </th>
-                                                <th colspan="3" id="total" class="badge-info">
-
-                                                </th>
-
-                                                <%if(currentuser.isadminlogged){%>
-                                                    <th>Monitor</th>
-                                                    <%}%>
-
-                                                        <th>Edit</th>
-
-                                    </tr>
-                                </tfoot>
                                 <tbody>
                                     <% var total = 0;
                             for(var i = 0; i < docs.length; i++){
@@ -259,6 +239,27 @@
                                         <%}%>
 
                                 </tbody>
+
+                                <tr>
+                                    <th>Date</th>
+                                    <%if(!individual){%>
+                                        <th>Lori number</th>
+                                        <%}%>
+
+
+                                            <th>Total Rent = </th>
+                                            <th colspan="3" id="total" class="badge-info">
+
+                                            </th>
+
+                                            <%if(currentuser.isadminlogged){%>
+                                                <th>Monitor</th>
+                                                <%}%>
+
+                                                    <th>Edit</th>
+
+                                </tr>
+
                             </table>
                         </div>
                     </div>
@@ -346,24 +347,7 @@
 
                                 </tr>
                             </thead>
-                            <tfoot>
-                                <tr>
-                                    <th>Date</th>
-                                    <%if(!individual){%>
-                                        <th>Lori number</th>
-                                        <%}%>
 
-
-
-                                            <th id="totalpaids" class="badge-info">
-
-                                            </th>
-
-                                            <th>Hint</th>
-                                            <th>Edit</th>
-
-                                </tr>
-                            </tfoot>
                             <tbody>
                                 <% var totalpaid = 0;
                             for(var i = 0; i < dics.length; i++){
@@ -400,6 +384,22 @@
                                     <%}%>
 
                             </tbody>
+                            <tr>
+                                <th>Date</th>
+                                <%if(!individual){%>
+                                    <th>Lori number</th>
+                                    <%}%>
+
+
+
+                                        <th id="totalpaids" class="badge-info">
+
+                                        </th>
+
+                                        <th>Hint</th>
+                                        <th>Edit</th>
+
+                            </tr>
                         </table>
                     </div>
                 </div>

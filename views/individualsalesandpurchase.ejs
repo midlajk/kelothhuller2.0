@@ -227,31 +227,7 @@
 
                             </tr>
                         </thead>
-                        <tfoot>
-                            <tr>
 
-                                <tr>
-                                    <th>Date</th>
-
-                                    <th id="totalbag"></th>
-                                    <th>Price</th>
-                                    <%if(category =='sales'){%>
-                                        <th id="totalpai">Paid</th>
-                                        <th id="totalamount">Total</th>
-
-                                        <%}else{%>
-                                            <th id="totalamount">Total</th>
-                                            <th id="totalpai">Paid</th>
-                                            <%}%>
-
-
-                                                <th id="totalremaining">Remaining</th>
-                                                <th>Through</th>
-
-                                                <th>Hint</th>
-                                                <th>Edit</th>
-                                </tr>
-                        </tfoot>
                         <tbody>
 
 
@@ -317,6 +293,27 @@
                                 </tr>
                                 <%}%>
                         </tbody>
+                        <tr>
+                            <th>Date</th>
+
+                            <th id="totalbag"></th>
+                            <th>Price</th>
+                            <%if(category =='sales'){%>
+                                <th id="totalpai">Paid</th>
+                                <th id="totalamount">Total</th>
+
+                                <%}else{%>
+                                    <th id="totalamount">Total</th>
+                                    <th id="totalpai">Paid</th>
+                                    <%}%>
+
+
+                                        <th id="totalremaining">Remaining</th>
+                                        <th>Through</th>
+
+                                        <th>Hint</th>
+                                        <th>Edit</th>
+                        </tr>
                     </table>
                 </div>
             </div>

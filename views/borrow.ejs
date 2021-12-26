@@ -120,28 +120,7 @@
 
                             </tr>
                         </thead>
-                        <tfoot>
-                            <tr>
 
-                                <%if(!individual){%>
-                                    <th>Date</th>
-                                    <th>Total amount </th>
-                                    <th colspan="2" id="total" class="badge-info">
-
-
-                                    </th>
-
-                                    <%}else{%>
-                                        <th>Total amount </th>
-                                        <th colspan="2" id="total" class="badge-info">
-
-                                        </th>
-                                        <%}%>
-                                            <th>Hint</th>
-                                            <th>Edit</th>
-
-                            </tr>
-                        </tfoot>
                         <tbody>
 
                             <%
@@ -179,6 +158,26 @@
                                 </tr>
                                 <%}%>
                         </tbody>
+                        <tr>
+
+                            <%if(!individual){%>
+                                <th>Date</th>
+                                <th>Total amount </th>
+                                <th colspan="2" id="total" class="badge-info">
+
+
+                                </th>
+
+                                <%}else{%>
+                                    <th>Total amount </th>
+                                    <th colspan="2" id="total" class="badge-info">
+
+                                    </th>
+                                    <%}%>
+                                        <th>Hint</th>
+                                        <th>Edit</th>
+
+                        </tr>
                     </table>
                 </div>
             </div>
