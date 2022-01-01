@@ -110,17 +110,7 @@
 
                             </tr>
                         </thead>
-                        <tfoot>
-                            <tr>
 
-                                <th>Name</th>
-                                <th>Bags loaded</th>
-                                <th>Total kooli</th>
-                                <th>Amount paid</th>
-                                <th>Remaining</th>
-                                <th>Delete</th>
-                            </tr>
-                        </tfoot>
                         <tbody>
 
                             <%
@@ -163,6 +153,17 @@
 
                                 </tr>
                                 <%}%>
+
+                                    <tr>
+
+                                        <th>Total</th>
+                                        <th id="totalbagsfooter"></th>
+                                        <th id="totalkoolifooter"></th>
+                                        <th id="totalpaidfooter"></th>
+                                        <th id="remainingfooter"></th>
+                                        <th>Total</th>
+                                    </tr>
+
                         </tbody>
                     </table>
                 </div>
@@ -228,6 +229,11 @@
             document.getElementById('totalpurchasesum').innerText = totalamount.toLocaleString();
             document.getElementById('totalpurchasepaid').innerText = totalamountpaid.toLocaleString();
             document.getElementById('remainingpayment').innerText = remaining.toLocaleString();
+            document.getElementById('totalbagsfooter').innerText = totalbags.toLocaleString();
+
+            document.getElementById('totalkoolifooter').innerText = totalamount.toLocaleString();
+            document.getElementById('totalpaidfooter').innerText = totalamountpaid.toLocaleString();
+            document.getElementById('remainingfooter').innerText = remaining.toLocaleString();
         });
     </script>
     <%- include('./includes/end.ejs') %>
