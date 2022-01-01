@@ -71,4 +71,6 @@ app.use(accounts);
 app.use(list);
 app.use('/paymentcontroller',borrows);
 app.use('/manager',manager);
+const bill = require('./routes/bill');
+app.use(bill);
 app.listen(PORT)

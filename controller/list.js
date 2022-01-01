@@ -99,6 +99,8 @@ exports.rentlist = (req, res) => {
 
 }
 exports.loaderslist = (req, res) => {
+    var start = new Date(08 / 03 / 2000)
+    var end = new Date()
     Loaders.aggregate([{
         $addFields: {
             totalbags: { $sum: "$work.numberofsack" },
@@ -113,7 +115,8 @@ exports.loaderslist = (req, res) => {
             mainpath: '/loaderspayment',
             docs: data,
 
-
+            start: start,
+            end: end,
 
         })
     })

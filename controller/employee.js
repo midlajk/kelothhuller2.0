@@ -1115,3 +1115,34 @@ exports.filterloaderspayment = (req, res) => {
     })
 
 }
+
+exports.loaderslistfilter = (req, res) => {
+    start = new Date(req.body.sdate);
+    end = new Date(req.body.edate);
+    Loaders.aggregate([{
+        $match: {
+
+            "work.date": {
+                $lt: end,
+                $gte: start
+            }
+        }
+    }, {
+        $addFields: {
+            totalbags: { $sum: "$work.numberofsack" },
+            totalamount: { $sum: "$work.kooli" },
+            totalpaid: { $sum: "$payed.amount" },
+
+        }
+    }]).sort({ "_id": -1 }).exec((err, data) => {
+
+
+        res.render('loaderslist', {
+            mainpath: '/loaderspayment',
+            docs: data,
+            start: start,
+            end: end,
+        })
+    })
+
+}

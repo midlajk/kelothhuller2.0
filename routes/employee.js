@@ -33,4 +33,5 @@ router.get('/addkooli',isMorA, employeeController.addkooli);
 router.post('/addkooli',isMorA, employeeController.postaddkooli);
 router.get('/loaderspayment',isAdmin, employeeController.loaderspayment);
 router.post('/filterloaderspayment',isAdmin, employeeController.filterloaderspayment);
+router.post('/loaderslistfilter',isAdmin, employeeController.loaderslistfilter);
 module.exports = router;
