@@ -154,17 +154,18 @@
                                 </tr>
                                 <%}%>
 
-                                    <tr>
-
-                                        <th>Total</th>
-                                        <th id="totalbagsfooter"></th>
-                                        <th id="totalkoolifooter"></th>
-                                        <th id="totalpaidfooter"></th>
-                                        <th id="remainingfooter"></th>
-                                        <th>Total</th>
-                                    </tr>
 
                         </tbody>
+                        <tr>
+
+                            <th>Total Kooli</th>
+                            <th id="totalkoolifooter"></th>
+                            <th>Total Paid</th>
+                            <th id="totalpaidfooter"></th>
+                            <th>Balance Payment</th>
+                            <th id="remainingfooter"></th>
+
+                        </tr>
                     </table>
                 </div>
             </div>
@@ -229,7 +230,6 @@
             document.getElementById('totalpurchasesum').innerText = totalamount.toLocaleString();
             document.getElementById('totalpurchasepaid').innerText = totalamountpaid.toLocaleString();
             document.getElementById('remainingpayment').innerText = remaining.toLocaleString();
-            document.getElementById('totalbagsfooter').innerText = totalbags.toLocaleString();
 
             document.getElementById('totalkoolifooter').innerText = totalamount.toLocaleString();
             document.getElementById('totalpaidfooter').innerText = totalamountpaid.toLocaleString();

@@ -491,15 +491,7 @@ exports.postaddkooli = (req, res) => {
 exports.viewkooli = (req, res) => {
     var start = new Date(08 / 03 / 2000)
     var end = new Date()
-    Loaderskooli.aggregate([{ $unwind: "$order" }, {
-        $match: {
-
-            "order.date": {
-                $lt: end,
-                $gte: start
-            }
-        }
-    }]).sort({ "order.date": -1, "order._id": -1 }).exec((err, docs) => {
+    Loaderskooli.aggregate([{ $unwind: "$order" }]).sort({ "order.date": -1, "order._id": -1 }).exec((err, docs) => {
         Loaders.find().distinct('name').then(loaders => {
             Loaderskooli.find().distinct('seller').then(loads => {
                 res.render('viewkooli', {
@@ -622,19 +614,10 @@ exports.indidualkooli = (req, res) => {
     Loaders.aggregate([{
             "$match": { "name": name }
         },
-        { $unwind: "$work" }, {
-            $match: {
-
-                "work.date": {
-                    $lt: end,
-                    $gte: start
-                }
-            }
-        }
+        { $unwind: "$work" }
 
 
     ]).sort({ "work.date": -1, "work._id": -1 }).exec((err, docs) => {
-
         Loaders.aggregate([{
                 "$match": { "name": name }
             },
@@ -1164,6 +1147,7 @@ exports.loaderslistfilter = (req, res) => {
 
 
     ]).sort({ "_id": -1 }).exec((err, data) => {
+        console.log(data)
         res.render('loaderslist', {
             mainpath: '/loaderspayment',
             docs: data,
