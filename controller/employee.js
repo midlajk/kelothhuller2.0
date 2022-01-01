@@ -1120,23 +1120,50 @@ exports.loaderslistfilter = (req, res) => {
     start = new Date(req.body.sdate);
     end = new Date(req.body.edate);
     Loaders.aggregate([{
-        $match: {
+            "$match": {
+                "work.date": { $gte: start, $lt: end }
+            }
+        },
+        {
+            "$project": {
+                "name": 1,
+                "values": {
+                    "$filter": {
+                        "input": "$work",
+                        "as": "value",
+                        "cond": {
+                            "$and": [
+                                { "$gt": ["$$value.date", start] },
+                                { "$lt": ["$$value.date", end] }
+                            ]
+                        }
+                    }
+                },
+                "payment": {
+                    "$filter": {
+                        "input": "$payed",
+                        "as": "pay",
+                        "cond": {
+                            "$and": [
+                                { "$gt": ["$$pay.date", start] },
+                                { "$lt": ["$$pay.date", end] }
+                            ]
+                        }
+                    }
+                }
+            }
+        },
+        {
+            $addFields: {
+                totalbags: { $sum: "$values.numberofsack" },
+                totalamount: { $sum: "$values.kooli" },
+                totalpaid: { $sum: "$payment.amount" },
 
-            "work.date": {
-                $lt: end,
-                $gte: start
             }
         }
-    }, {
-        $addFields: {
-            totalbags: { $sum: "$work.numberofsack" },
-            totalamount: { $sum: "$work.kooli" },
-            totalpaid: { $sum: "$payed.amount" },
-
-        }
-    }]).sort({ "_id": -1 }).exec((err, data) => {
 
 
+    ]).sort({ "_id": -1 }).exec((err, data) => {
         res.render('loaderslist', {
             mainpath: '/loaderspayment',
             docs: data,
