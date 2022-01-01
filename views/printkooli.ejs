@@ -42,10 +42,10 @@
 
 
 
-                                <%for(let docs of loads){%>
+                                <%for(let totalamount of total){%>
                                     <th>
-                                        <a href="/employee/indidualkooli/<%=docs%>">
-                                            <%=docs%>
+                                        <a href="/employee/indidualkooli/<%=totalamount.name%>">
+                                            <%=totalamount.name%>
                                         </a>
 
                                     </th>
@@ -89,17 +89,16 @@
                                     <td>
                                         <%=parseInt(docs[i].order.total/docs[i].order.numberofsack)%>
                                     </td>
-                                    <%for(let dic of loads){
+                                    <%for(let totalamount of total){
                                         data= docs[i].order.loaders
-                                        %>
-                                        <%if(data.includes(dic)|data.includes(dic.toLowerCase())){%>
-                                            <td>
-                                                <%=parseInt(docs[i].order.kooli)%>
-                                            </td>
-                                            <%}else{%>
-                                                <td></td>
+                                    if(data.includes(totalamount.name)|data.includes(totalamount.name.toLowerCase())){%>
+                                        <td>
+                                            <%=parseInt(docs[i].order.kooli)%>
+                                        </td>
+                                        <%}else{%>
+                                            <td></td>
+                                            <%}%>
                                                 <%}%>
-                                                    <%}%>
 
 
                                 </tr>
@@ -117,12 +116,9 @@
                             <th id="totalkooli">Total</th>
                             <th>Individual Total</th>
 
-                            <%for(var i=0;i<total.length;i++ ){%>
+                            <%for(let totalamount of total){%>
                                 <th>
-                                    <%if(total[i].name ==loads[i]){%>
-                                        <%=parseInt(total[i].totalamount)%>
-                                            <%}else{%>
-                                                <%}%>
+                                    <%=parseInt(totalamount.totalamount)%>
                                 </th>
                                 <%}%>
 
@@ -137,13 +133,10 @@
 
 
                             <th style="color: red;">individual settlement</th>
-                            <%for(var i=0;i<total.length;i++ ){%>
-                                <th>
-                                    <%if(total[i].name ==loads[i]){%>
-                                        <%=parseInt(total[i].totalpaid)%>
-                                            <%}else{%>
-                                                <%}%>
 
+                            <%for(let totalamount of total){%>
+                                <th>
+                                    <%=parseInt(totalamount.totalpaid)%>
                                 </th>
                                 <%}%>
 
@@ -158,13 +151,9 @@
 
                             <th style="color: green;">Individual Balance</th>
 
-                            <%for(var i=0;i<total.length;i++ ){%>
+                            <%for(let totalamount of total){%>
                                 <th>
-                                    <%if(total[i].name ==loads[i]){%>
-                                        <%= (parseInt(total[i].totalamount) - parseInt(total[i].totalpaid)).toLocaleString()  %>
-                                            <%}else{%>
-                                                <%}%>
-
+                                    <%= (parseInt(totalamount.totalamount) - parseInt(totalamount.totalpaid)).toLocaleString()  %>
 
                                 </th>
                                 <%}%>

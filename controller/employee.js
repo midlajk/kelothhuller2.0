@@ -1162,27 +1162,27 @@ exports.printkooli = (req, res) => {
     var start = new Date(08 / 03 / 2000)
     var end = new Date()
     Loaderskooli.aggregate([{ $unwind: "$order" }]).sort({ "order.date": -1, "order._id": -1 }).exec((err, docs) => {
-        Loaders.find().distinct('name').then(loaders => {
-            Loaders.aggregate([{
-                $addFields: {
-                    totalbags: { $sum: "$work.numberofsack" },
-                    totalamount: { $sum: "$work.kooli" },
-                    totalpaid: { $sum: "$payed.amount" },
 
-                }
-            }]).sort({ "name": 1 }).exec((err, data) => {
+        Loaders.aggregate([{
+            $addFields: {
+                totalbags: { $sum: "$work.numberofsack" },
+                totalamount: { $sum: "$work.kooli" },
+                totalpaid: { $sum: "$payed.amount" },
 
-                res.render('printkooli', {
-                    total: data,
-                    docs: docs,
-                    mainpath: '/printkooli',
-                    start: start,
-                    end: end,
-                    individual: false,
-                    loads: loaders,
+            }
+        }]).sort({ "name": 1 }).exec((err, data) => {
 
-                })
+            res.render('printkooli', {
+                total: data,
+                docs: docs,
+                mainpath: '/printkooli',
+                start: start,
+                end: end,
+                individual: false,
+
+
             })
+
         })
     })
 
@@ -1202,65 +1202,65 @@ exports.printkoolifilter = (req, res) => {
             }
         }
     }]).sort({ "order.date": -1, "order._id": -1 }).exec((err, docs) => {
-        Loaders.find().distinct('name').then(loaders => {
-            Loaders.aggregate([{
-                    "$match": {
-                        "work.date": { $gte: startb, $lt: end }
-                    }
-                },
-                {
-                    "$project": {
-                        "name": 1,
-                        "values": {
-                            "$filter": {
-                                "input": "$work",
-                                "as": "value",
-                                "cond": {
-                                    "$and": [
-                                        { "$gt": ["$$value.date", startb] },
-                                        { "$lt": ["$$value.date", end] }
-                                    ]
-                                }
+
+        Loaders.aggregate([{
+                "$match": {
+                    "work.date": { $gte: startb, $lt: end }
+                }
+            },
+            {
+                "$project": {
+                    "name": 1,
+                    "values": {
+                        "$filter": {
+                            "input": "$work",
+                            "as": "value",
+                            "cond": {
+                                "$and": [
+                                    { "$gt": ["$$value.date", startb] },
+                                    { "$lt": ["$$value.date", end] }
+                                ]
                             }
-                        },
-                        "payment": {
-                            "$filter": {
-                                "input": "$payed",
-                                "as": "pay",
-                                "cond": {
-                                    "$and": [
-                                        { "$gt": ["$$pay.date", startb] },
-                                        { "$lt": ["$$pay.date", end] }
-                                    ]
-                                }
+                        }
+                    },
+                    "payment": {
+                        "$filter": {
+                            "input": "$payed",
+                            "as": "pay",
+                            "cond": {
+                                "$and": [
+                                    { "$gt": ["$$pay.date", startb] },
+                                    { "$lt": ["$$pay.date", end] }
+                                ]
                             }
                         }
                     }
-                },
-                {
-                    $addFields: {
-                        totalbags: { $sum: "$values.numberofsack" },
-                        totalamount: { $sum: "$values.kooli" },
-                        totalpaid: { $sum: "$payment.amount" },
-
-                    }
                 }
+            },
+            {
+                $addFields: {
+                    totalbags: { $sum: "$values.numberofsack" },
+                    totalamount: { $sum: "$values.kooli" },
+                    totalpaid: { $sum: "$payment.amount" },
+
+                }
+            }
 
 
-            ]).sort({ "name": 1 }).exec((err, data) => {
+        ]).sort({ "name": 1 }).exec((err, data) => {
 
-                res.render('printkooli', {
-                    total: data,
-                    docs: docs,
-                    mainpath: '/printkooli',
-                    start: start,
-                    end: end,
-                    individual: false,
-                    loads: loaders,
+            res.render('printkooli', {
+                total: data,
+                docs: docs,
+                mainpath: '/printkooli',
+                start: start,
+                end: end,
+                individual: false,
 
-                })
+
             })
         })
+
     })
 
 }
