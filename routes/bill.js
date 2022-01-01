@@ -8,4 +8,5 @@ router.get('/addbill', mainController.addbill);
 router.post('/addcoffeebill', mainController.addcoffeebill);
 router.get('/coffeebill', mainController.coffeebill);
 router.get('/pepperbill', mainController.pepperbill);
+router.post('/addpepperbill', mainController.addpepperbill);
 module.exports = router;

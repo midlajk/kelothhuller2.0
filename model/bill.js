@@ -9,16 +9,18 @@ var coffee_bill = new Schema({
         category: String,
         numberofsack: Number,
         kg: [],
-        totalkg:Number,
+        totalkg: Number,
         cutting_per_bag: Number,
         moisture: Number,
         autumn: Number,
         cutting_autumn: Number,
         market: Number,
-        price_perkg:Number,
-        price_perbag:Number,
-        paid:Number,
-        monitor: String
+        price_perkg: Number,
+        price_perbag: Number,
+        paid: Number,
+        monitor: String,
+        total: Number,
+        balance: Number
     }]
 
 });
@@ -35,12 +37,13 @@ var pepper_bill = new Schema({
         category: String,
         numberofsack: Number,
         kg: [],
-        totalkg:Number,
+        totalkg: Number,
         cutting_per_bag: Number,
-        price_perkg:Number,
-        price_perbag:Number,
-        paid:Number,
-        monitor: String
+        market: Number,
+        paid: Number,
+        monitor: String,
+        total: Number,
+        balance: Number
     }]
 
 });

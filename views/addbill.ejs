@@ -58,6 +58,13 @@
                                         </div>
 
                                     </div>
+                                    <div id="hintdiv" style="display: none;" class="form-group row">
+                                        <div class="col-sm-12 mb-3 mb-sm-0">
+                                            <label for="">Comment</label>
+                                            <input tabindex="5" required type="text" name="hint" id="hint" class="form-control form-control-user" id="exampleFirstName" placeholder="Comment">
+                                        </div>
+
+                                    </div>
                                     <div class="form-group row">
                                         <div class="col-sm-12 mb-3 mb-sm-0">
                                             <label for="">Bags</label>
@@ -110,9 +117,9 @@
 
                                         </div>
 
-                                        <a href="#" id="addcutting" onclick="addcutting()" class="btn btn-primary btn-user btn-block col-sm-12 mb-3 mb-sm-0 ">
+                                        <button form="12" id="addcutting" onclick="addcutting()" class="btn btn-primary btn-user btn-block col-sm-12 mb-3 mb-sm-0 ">
             Add Moisture Cutting
-          </a>
+          </button>
                                         <div id="aftercutting" style="display: none;"> <br>
                                             <hr>
                                             <h4>M. C. <span style="float: right;" id="remainingkg"></span> </h4>
@@ -122,17 +129,17 @@
                                             <hr>
 
 
-                                            <div class="form-group row">
-                                                <div class="col-sm-12 mb-3 mb-sm-0">
-                                                    <label for="">Market</label>
-                                                    <input tabindex="10" required type="number" step=".01" name="market" class="form-control form-control-user" id="market" placeholder="Enter Price">
-                                                </div>
 
-                                            </div>
                                         </div>
                                     </div>
-
                                     <div class="form-group row">
+                                        <div class="col-sm-12 mb-3 mb-sm-0">
+                                            <label for="">Market</label>
+                                            <input tabindex="10" required type="number" step=".01" name="market" class="form-control form-control-user" id="market" placeholder="Enter Price">
+                                        </div>
+
+                                    </div>
+                                    <div id="coffeepricedetermine" class="form-group row">
                                         <div class="col-sm-6 mb-3 mb-sm-0">
                                             <label for="">Price per kg</label>
                                             <input type="number" step=".001" name="priceperkg" class="form-control form-control-user " id="kilogramprice" value="0">
@@ -158,8 +165,11 @@
                                         </div>
 
                                     </div>
+
+                                    <input type="hidden" name="total" id="total">
+                                    <input type="hidden" name="balance" id="balance">
                                     <hr>
-                                    <h4>Balance amount <span style="float: right;" id="balance-payment"></span> </h4>
+                                    <h4>Balance amount <span style="float: right;" id="balance_payment"></span> </h4>
                                     <br>
                                     <div class=" form-group row">
                                         <div class="col-sm-12 mb-3 mb-sm-0">
@@ -277,11 +287,18 @@
             $('#market').on('keyup', function() {
                 perbag = (cutting * $(this).val()).toFixed(2);
                 perkg = (perbag / 50).toFixed(2)
-                total = parseInt(sm * perkg);
+                var total
+                if ($('#product').val() == "coffee") {
+                    total = parseInt(sm * perkg);
+                } else {
+                    total = parseInt(sm * $(this).val());
+                }
+
                 document.getElementById('totalprice').innerText = total + "₹"
                 document.getElementById('bagprice').value = perbag
                 document.getElementById('kilogramprice').value = perkg
                 document.getElementById('totalmoney').value = parseInt(total)
+                document.getElementById('total').value = parseInt(total)
             }); //Edited
             $('#bagprice').on('keyup', function() {
                 perkg = ($(this).val() / 50).toFixed(2);
@@ -289,6 +306,7 @@
                 document.getElementById('totalprice').innerText = total + "₹"
                 document.getElementById('kilogramprice').value = perkg
                 document.getElementById('totalmoney').value = parseInt(total)
+                document.getElementById('total').value = parseInt(total)
             });
             $('#kilogramprice').on('keyup', function() {
                 perbag = ($(this).val() * 50).toFixed(2);
@@ -296,12 +314,15 @@
                 document.getElementById('totalprice').innerText = total + "₹"
                 document.getElementById('bagprice').value = perbag
                 document.getElementById('totalmoney').value = parseInt(total)
+                document.getElementById('total').value = parseInt(total)
             });
             var balance
-            $('#paid-amount').on('keyup', function() {
+            $('#paid').on('keyup', function() {
+                console.log("hi")
                 balance = parseInt(total - $(this).val());
-                document.getElementById('balance-payment').innerText = balance + "₹"
-
+                document.getElementById('balance_payment').innerText = balance + "₹"
+                document.getElementById('balance').value = parseInt(balance)
+                console.log(balance)
             });
 
             $('#cutting').on('keyup', function() {
@@ -326,20 +347,20 @@
     </script>
     <script type="text/javascript">
         $(document).ready(function() {
-            $('#submitbtn').click(function() {
-                $('#submitbtn').hide();
 
-            });
 
             $('#product').on('change', function() {
                 console.log($(this).val())
+                var action = $(this).val() == "coffee" ? "/addcoffeebill" : "/addpepperbill";
+                $("#addloading").attr("action", action);
                 if ($(this).val() == "coffee") {
 
                     $('#coffee-type').show();
                     $('#pepper-price').hide();
                     $('#coffee-market').show();
                 } else {
-
+                    $('#hintdiv').show();
+                    $('#coffeepricedetermine').hide();
                     $('#coffee-type').hide();
                     $('#pepper-price').show();
                     $('#coffee-market').hide();
@@ -370,12 +391,15 @@
 
 
         });
-
+        $(document).on("keyup", "#outum", function() {
+            cutting = $(this).val();
+        })
 
         var cutting
         var sm
 
         function addcutting() {
+            $('#market').focus();
 
             var g = 0
             if (document.getElementsByClassName('kg').length < 2) {

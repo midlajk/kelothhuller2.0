@@ -112,7 +112,7 @@ exports.loaderslist = (req, res) => {
 
 
         res.render('loaderslist', {
-            mainpath: '/loaderspayment',
+            mainpath: '/loaderslist',
             docs: data,
 
             start: start,
