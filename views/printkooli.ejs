@@ -117,9 +117,12 @@
                             <th id="totalkooli">Total</th>
                             <th>Individual Total</th>
 
-                            <%for(let totalamount of total){%>
+                            <%for(var i=0;i<total.length;i++ ){%>
                                 <th>
-                                    <%=parseInt(totalamount.totalamount)%>
+                                    <%if(total[i].name ==loads[i]){%>
+                                        <%=parseInt(total[i].totalamount)%>
+                                            <%}else{%>
+                                                <%}%>
                                 </th>
                                 <%}%>
 
@@ -134,10 +137,13 @@
 
 
                             <th style="color: red;">individual settlement</th>
-
-                            <%for(let totalamount of total){%>
+                            <%for(var i=0;i<total.length;i++ ){%>
                                 <th>
-                                    <%=parseInt(totalamount.totalpaid)%>
+                                    <%if(total[i].name ==loads[i]){%>
+                                        <%=parseInt(total[i].totalpaid)%>
+                                            <%}else{%>
+                                                <%}%>
+
                                 </th>
                                 <%}%>
 
@@ -152,9 +158,13 @@
 
                             <th style="color: green;">Individual Balance</th>
 
-                            <%for(let totalamount of total){%>
+                            <%for(var i=0;i<total.length;i++ ){%>
                                 <th>
-                                    <%= (parseInt(totalamount.totalamount) - parseInt(totalamount.totalpaid)).toLocaleString()  %>
+                                    <%if(total[i].name ==loads[i]){%>
+                                        <%= (parseInt(total[i].totalamount) - parseInt(total[i].totalpaid)).toLocaleString()  %>
+                                            <%}else{%>
+                                                <%}%>
+
 
                                 </th>
                                 <%}%>
