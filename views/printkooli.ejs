@@ -92,9 +92,9 @@
                                     <%for(let totalamount of total){
                                         data= docs[i].order.loaders
                                     if(data.includes(totalamount.name)|data.includes(totalamount.name.toLowerCase())){%>
-                                        <td>
+                                        <th>
                                             <%=parseInt(docs[i].order.kooli)%>
-                                        </td>
+                                        </th>
                                         <%}else{%>
                                             <td>0</td>
                                             <%}%>
