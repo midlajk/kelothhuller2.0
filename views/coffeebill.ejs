@@ -294,7 +294,7 @@
                     </a>
                 </div>
                 <div class="modal-body">
-                    <form id="form1" action="/purchasefilter" method="POST">
+                    <form id="form1" action="/filtercoffeebill" method="POST">
                         <div class="form-group row">
                             <div class="col-sm-12 mb-3 mb-sm-0">
                                 <label for="">From date</label>
@@ -314,15 +314,19 @@
 
 
                     </form>
-                    <form id="form2" action="/purchasefilter" method="POST" class="ml-1" style="float: left;">
-                        <input type="hidden" name="type" value="2months"> <button type="submit" form="form2" class="btn btn-primary">Yesterday</button>
+                    <form id="form2" action="/filtercoffeebill" method="POST" class="ml-1" style="float: left;">
+                        <input type="hidden" name="type" value="yestersay"> <button type="submit" form="form2" class="btn btn-primary">Yesterday</button>
                     </form>
-                    <form id="form3" class="ml-1" style="float: left;" action="/purchasefilter" method="POST">
-                        <input type="hidden" name="type" value="5months"><button type="submit" form="form3" class="btn btn-primary">1 month</button>
+                    <form id="form3" class="ml-1" style="float: left;" action="/filtercoffeebill" method="POST">
+                        <input type="hidden" name="type" value="1month"><button type="submit" form="form3" class="btn btn-primary">1 month</button>
                     </form>
-                    <form id="form4" class="ml-1" style="float: left;" action="/purchasefilter" method="POST">
+                    <form id="form4" class="ml-1" style="float: left;" action="/filtercoffeebill" method="POST">
                         <input type="hidden" name="type" value="year"><button type="submit" form="form4" class="btn btn-primary">1 Year</button>
                     </form>
+                    <form id="form8" class="ml-1" style="float: left;" action="/coffeebill" method="GET">
+                        <button type="submit" form="form8" class="btn btn-primary">Today</button>
+                    </form>
+
 
                 </div>
                 <div class="modal-footer">

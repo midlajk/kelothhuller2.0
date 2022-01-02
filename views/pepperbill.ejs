@@ -1,7 +1,7 @@
 <%- include('./includes/head.ejs') %>
     <div class="container-fluid">
         <div class="d-sm-flex align-items-center justify-content-between mb-4">
-            <h1 class="h3 mb-0 text-gray-800"> Coffee Purchase Bill</h1>
+            <h1 class="h3 mb-0 text-gray-800"> Pepper Purchase Bill</h1>
             <h6>
                 <%=moment(start).format( 'DD-MMM-YYYY')%> to
                     <%=moment(end).format( 'DD-MMM-YYYY')%>
@@ -104,7 +104,7 @@
                 <a href="/accountmanagement" class="btn btn-success">Old Coffee</a>
                 <a href="" data-toggle="modal" data-target="#filtermodel" style="float:right" class="btn btn-danger">Filter table</a>
 
-                <a class="btn btn-info  float-right mr-2" href="/pepperbill">Pepper Purchae Bill</a><a class="btn btn-dark  float-right mr-2" href="">Unsettled</a>
+                <a class="btn btn-info  float-right mr-2" href="/coffeebill">coffee Purchae Bill</a><a class="btn btn-dark  float-right mr-2" href="">Unsettled</a>
 
             </div>
             <div class="card-header py-3">
@@ -238,7 +238,7 @@
                                         <%=seller[i].product.balance%>
                                     </td>
 
-
+                                    <th></th>
                                     <td><a href="#" onclick="editpurchase('<%=i%>')" class="btn btn-primary">edit</a>
 
                                 </tr>
@@ -273,7 +273,7 @@
                     </a>
                 </div>
                 <div class="modal-body">
-                    <form id="form1" action="/purchasefilter" method="POST">
+                    <form id="form1" action="/filterpepperbill" method="POST">
                         <div class="form-group row">
                             <div class="col-sm-12 mb-3 mb-sm-0">
                                 <label for="">From date</label>
@@ -293,15 +293,19 @@
 
 
                     </form>
-                    <form id="form2" action="/purchasefilter" method="POST" class="ml-1" style="float: left;">
-                        <input type="hidden" name="type" value="2months"> <button type="submit" form="form2" class="btn btn-primary">Yesterday</button>
+                    <form id="form2" action="/filterpepperbill" method="POST" class="ml-1" style="float: left;">
+                        <input type="hidden" name="type" value="yestersay"> <button type="submit" form="form2" class="btn btn-primary">Yesterday</button>
                     </form>
-                    <form id="form3" class="ml-1" style="float: left;" action="/purchasefilter" method="POST">
-                        <input type="hidden" name="type" value="5months"><button type="submit" form="form3" class="btn btn-primary">1 month</button>
+                    <form id="form3" class="ml-1" style="float: left;" action="/filterpepperbill" method="POST">
+                        <input type="hidden" name="type" value="1month"><button type="submit" form="form3" class="btn btn-primary">1 month</button>
                     </form>
-                    <form id="form4" class="ml-1" style="float: left;" action="/purchasefilter" method="POST">
+                    <form id="form4" class="ml-1" style="float: left;" action="/filterpepperbill" method="POST">
                         <input type="hidden" name="type" value="year"><button type="submit" form="form4" class="btn btn-primary">1 Year</button>
                     </form>
+                    <form id="form8" class="ml-1" style="float: left;" action="/pepperbill" method="GET">
+                        <button type="submit" form="form8" class="btn btn-primary">Today</button>
+                    </form>
+
 
                 </div>
                 <div class="modal-footer">
