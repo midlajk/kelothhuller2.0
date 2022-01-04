@@ -51,9 +51,9 @@
                                         <div class="col-sm-12 mb-3 mb-sm-0">
                                             <label for="">Type</label>
                                             <select tabindex="5" required class="form-control form-control-user" name="type" id="">
-                                               <option value="coffee">Robust</option>
-                                               <option value="pepper">Arabica</option>
-                                               <option value="pepper">Old</option>
+                                               <option value="robust">Robust</option>
+                                               <option value="arabica">Arabica</option>
+                                               <option value="old">Old</option>
                                            </select>
                                         </div>
 
@@ -351,9 +351,9 @@
 
 
             $('#product').on('change', function() {
-                console.log($(this).val())
+
                 var action = $(this).val() == "coffee" ? "/addcoffeebill" : "/addpepperbill";
-                $("#addloading").attr("action", action);
+                $("#addbill").attr("action", action);
                 if ($(this).val() == "coffee") {
 
                     $('#coffee-type').show();

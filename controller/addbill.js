@@ -19,6 +19,7 @@ exports.addbill = (req, res) => {
 
 }
 exports.addcoffeebill = (req, res) => {
+    console.log(req.body.type)
     var coffeebill = new Coffee_bill({
         seller: req.body.seller,
         product: [{
@@ -52,7 +53,6 @@ exports.addpepperbill = (req, res) => {
         seller: req.body.seller,
         product: [{
             date: req.body.date,
-            category: req.body.type,
             numberofsack: req.body.bags,
             kg: [req.body.weight],
             totalkg: req.body.totalkg,
@@ -269,6 +269,98 @@ exports.filterpepperbill = (req, res) => {
 
         })
     })
+
+
+}
+exports.editcoffeebill = (req, res) => {
+    Coffee_bill.findOneAndUpdate({ _id: req.body.objectid, product: { $elemMatch: { _id: req.body.arrayid } } }, {
+
+                $set: {
+
+                    'product.$.date': req.body.editdate,
+                    'product.$.category': req.body.edittype,
+                    'product.$.numberofsack': req.body.editbags,
+                    'product.$.totalkg': req.body.totalkgedit,
+                    'product.$.price_perbag': req.body.editprize,
+                    'product.$.total': req.body.edittotal,
+                    'product.$.autumn': req.body.autumn,
+                    'product.$.moisture': req.body.moisture,
+                    'product.$.paid': req.body.editpaid,
+                    'product.$.balance': req.body.balancepayment,
+
+                }
+            }, // list fields you like to change
+            { 'new': true, 'safe': true, 'upsert': true })
+        .then(docs => {
+            res.redirect('/coffeebill')
+        })
+}
+exports.editpepperpurchase = (req, res) => {
+    Pepper_bill.findOneAndUpdate({ _id: req.body.objectid, product: { $elemMatch: { _id: req.body.arrayid } } }, {
+
+                $set: {
+
+                    'product.$.date': req.body.editdate,
+                    'product.$.category': req.body.edithint,
+                    'product.$.numberofsack': req.body.editbags,
+                    'product.$.totalkg': req.body.totalkgedit,
+                    'product.$.market': req.body.editprize,
+                    'product.$.total': req.body.edittotal,
+                    'product.$.paid': req.body.editpaid,
+                    'product.$.balance': req.body.balancepayment,
+
+                }
+            }, // list fields you like to change
+            { 'new': true, 'safe': true, 'upsert': true })
+        .then(docs => {
+            res.redirect('/pepperbill')
+        })
+}
+exports.deletecoffeebill = (req, res) => {
+
+    Coffee_bill.findOne({ _id: req.params.objectid }).then((docs, err) => {
+        docs.updateOne({
+                $pull: {
+                    "product": {
+                        _id: req.params.id
+                    }
+                }
+            }, { safe: true, upsert: true },
+            function(err, model) {
+                res.redirect('/coffeebill')
+
+            }
+        )
+
+    }).catch(err => {
+        console.log(err)
+
+    })
+
+
+
+}
+exports.deletepepperbill = (req, res) => {
+
+    Pepper_bill.findOne({ _id: req.params.objectid }).then((docs, err) => {
+        docs.updateOne({
+                $pull: {
+                    "product": {
+                        _id: req.params.id
+                    }
+                }
+            }, { safe: true, upsert: true },
+            function(err, model) {
+                res.redirect('/pepperbill')
+
+            }
+        )
+
+    }).catch(err => {
+        console.log(err)
+
+    })
+
 
 
 }

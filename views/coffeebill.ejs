@@ -98,10 +98,10 @@
 
                     </p>
                     <% } %> -->
-                <a href="/salesmanagement" class="btn btn-primary">All Type</a>
-                <a href="/accountmanagement" class="btn btn-success">Arabica Coffee</a>
-                <a href="/accountmanagement" class="btn btn-success">Robust Coffee</a>
-                <a href="/accountmanagement" class="btn btn-success">Old Coffee</a>
+                <a href="#" id="allbutton" class="btn btn-primary">All Type</a>
+                <a href="#" id="arabicacoffeebutton" class="btn btn-success">Arabica Coffee</a>
+                <a href="#" id="robustcoffeebutton" class="btn btn-success">Robust Coffee</a>
+                <a href="#" id="oldcoffeebutton" class="btn btn-success">Old Coffee</a>
                 <a href="" data-toggle="modal" data-target="#filtermodel" style="float:right" class="btn btn-danger">Filter table</a>
 
                 <a class="btn btn-info  float-right mr-2" href="/pepperbill">Pepper Purchae Bill</a><a class="btn btn-dark  float-right mr-2" href="">Unsettled</a>
@@ -119,10 +119,6 @@
                          </select>
 
                         <div class="input-group-append">
-                            <select tabindex="100" class="form-control form-control-user" name="" onchange="check_user()" id="inputselection">
-                                <option value="Purchase">Purchase Account</option>
-                                <option value="Sales">Sales account</option>
-                            </select>
                             <a href="" tabindex="101" id="check" type="button" class="btn btn-danger">Indivual Purchase</a>
                         </div>
 
@@ -131,54 +127,7 @@
 
 
             </div>
-            <div class="card-body">
-                <div class="table-responsive">
-                    <table class="table" width="100%" cellspacing="0">
-                        <thead>
-                            <tr>
-                                <th>Date</th>
-                                <th>Seller</th>
-                                <th>Kilogram</th>
-                                <th>Price</th>
-                                <th>Total amount</th>
-                                <th>Amount paid</th>
-                                <th>Through</th>
-                                <th>Hint</th>
-                                <th>submit</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <form id="buyerform" action="/detailedbuyerdata" method="POST">
-                                <tr>
-                                    <td><input autofocus required tabindex="3" name="date" class="form-control" id="date" type="date" value="<%=todaydate%>" id="date"></td>
-                                    <td><input required class="p-1 form-control" style="width: 200px;" tabIndex="4" autocomplete="off" list="sellernames" type="text" name="buyer" id="customer">
-                                    </td>
-                                    <datalist id="sellernames">
-                                        <!-- <%for(let docs of names){%>
-                                            <option value="<%=docs%>">
-                                            <%}%> -->
-                                    </datalist>
 
-                                    <td><input required class="form-control price-control" tabIndex="5" type="number" step=".01" name="kilogram" style="width: 125px;" id="kilogram"></td>
-                                    <td><input required class="p-1 form-control price-control" tabIndex="6" onkeydown="isKeyPressed(event)" type="number" step=".01" style="width: 125px;" name="price" id="price"></td>
-                                    <td><input required class="p-1" tabIndex="7" type="number" step=".01" style="width: 150px;" name="total" id="total"></td>
-                                    <td><input required class="p-1 form-control" style="width: 150px;" tabIndex="8" type="number" step=".01" name="paid" id="paid"></td>
-                                    <td><select id="through" required class="p-1 form-control" style="width: 100px;" name="through">
-                                        <option value="bank">Bank</option>
-                                        <option value="quatity">Quatity</option>
-                                    </select></td>
-                                    <td><input class="p-1 form-control" style="width: 100px;" tabIndex="9" type="text" step=".01" name="hint" id="hint"></td>
-                                    <input type="hidden" name="type" value="seperate">
-                                    <td> <button form="buyerform" tabIndex="10" class="btn btn-primary" id="submit" type="submit">Submit</button>
-                                        <div id="button-spinner" style="margin-left: 10px; width: 25px; height: 25px; display: none" class="spinner-border"></div>
-                                    </td>
-
-                                </tr>
-                            </form>
-                        </tbody>
-                    </table>
-                </div>
-            </div>
             <div class="card-body">
                 <div class="table-responsive">
                     <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
@@ -195,7 +144,7 @@
 
                                 <th>Price</th>
                                 <th>Total</th>
-                                <th>Paid</th>
+                                <th>Spot settlement</th>
                                 <th>Balance</th>
 
                                 <th>Edit</th>
@@ -210,7 +159,7 @@
                      
                                  %>
 
-                                <tr id="purchase" class="purchase">
+                                <tr id="" class="<%if(seller[i].product.category==" arabica "){%>arabicacoffee<%}else if(seller[i].product.category=="old "){%>oldcoffee<%}else{%>robust<%}%>">
 
                                     <td>
                                         <%= moment(seller[i].product.date).format( 'DD-MMM-YYYY') %>
@@ -228,7 +177,10 @@
                                         <%=seller[i].product.numberofsack%>
                                     </td>
                                     <td>
-                                        <%=seller[i].product.totalkg%>
+                                        <a href="#" onclick="openweightmodal('<%=i%>')">
+                                            <%=seller[i].product.totalkg%>
+                                        </a>
+
                                     </td>
 
                                     <td>
@@ -264,16 +216,16 @@
                             <th>Date</th>
                             <th>Seller</th>
                             <th>Category</th>
-                            <th>bags</th>
-                            <th>Kilogram</th>
+                            <th id="totalbags">bags</th>
+                            <th id="totalkg"></th>
 
                             <th>Autumn</th>
                             <th>Moisture</th>
 
                             <th>Price</th>
-                            <th>Total</th>
-                            <th>Paid</th>
-                            <th>Balance</th>
+                            <th id="totalamount">Total</th>
+                            <th id="totalpaid">Paid</th>
+                            <th id="totalremaining">Balance</th>
 
                             <th>Edit</th>
 
@@ -337,68 +289,92 @@
 
         </div>
     </div>
-
-    <div class="modal fade" id="editmodel" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal fade" id="bagsweight" tabindex="-5" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
         <div class="modal-dialog" role="document">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="exampleModalLabel"><span id="editcustomers"></span> <span id="edittype"></span></h5>
+                    <h5 class="modal-title" id="exampleModalLabel">Total weights: <span id="totalweightmodal"></span></h5>
                     <a class="close" type="button" data-dismiss="modal" aria-label="Close">
                         <span aria-hidden="true">×</span>
                     </a>
                 </div>
                 <div class="modal-body">
-                    <form id="editform" action="/editorder" method="POST">
+                    <div id="modalweightbody" style="margin-right: 10px;">
+
+
+                    </div>
+                </div>
+                <div class="modal-footer">
+
+                    <button class="btn btn-secondary" type="button" data-dismiss="modal">Cancel</button>
+
+                </div>
+            </div>
+
+        </div>
+    </div>
+    <div class="modal fade" id="editmodel" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Edit purchase from <span id="editcustomers"></span></h5>
+                    <a class="close" type="button" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">×</span>
+                    </a>
+                </div>
+                <div class="modal-body">
+                    <form id="editform" action="/editcoffeebill" method="POST">
                         <div class="form-group row">
                             <div class="col-sm-6 mb-3 mb-sm-0">
                                 <label for="">Date</label>
                                 <input type="date" class="form-control form-control-user" id="editdate" tabindex="41" name="editdate">
                             </div>
-                            <input type="hidden" value="purchase" class="form-control form-control-user" id="section" name="section">
+                            <div class="col-sm-6 mb-3 mb-sm-0">
+                                <label for="">Type</label>
+                                <input type="text" tabindex="42" class="form-control form-control-user" list="coffeetypes" name="edittype" id="edittype">
+
+                            </div>
+
+                            <datalist id="coffeetypes">
+                                    <option value="robust"></option>
+                                    <option value="arabica"></option>
+                                    <option value="old"></option></datalist>
 
                             <input type="hidden" class="form-control form-control-user" value="seperate" name="types">
-
+                            <div class="col-sm-6 mb-3 mb-sm-0">
+                                <label for="">Bags</label>
+                                <input type="number" tabindex="43" class="form-control form-control-user" id="editbags" name="editbags">
+                            </div>
+                            <div class="col-sm-6 mb-3 mb-sm-0">
+                                <label for="">Total kg</label>
+                                <input type="number" tabindex="44" class="form-control form-control-user price-control" id="totalkgedit" step=".01" name="totalkgedit">
+                            </div>
                             <div class="col-sm-6 mb-3 mb-sm-0">
                                 <label for="">Outumn</label>
-                                <input type="number" tabindex="43" class="form-control form-control-user" id="editoutumn" step=".01" name="autumn">
+                                <input type="number" tabindex="45" class="form-control form-control-user" id="editoutumn" step=".01" name="autumn">
                             </div>
                             <div class="col-sm-6 mb-3 mb-sm-0">
                                 <label for="">Moisture</label>
-                                <input type="number" tabindex="44" class="form-control form-control-user" id="editmoisture" step=".01" name="moisture">
-                            </div>
-                            <div class="col-sm-6 mb-3 mb-sm-0">
-                                <label for="">Hint / careoff</label>
-                                <input type="text" tabindex="45" class="form-control form-control-user" id="editcareoff" name="hint">
-                            </div>
-                            <div class="col-sm-6 mb-3 mb-sm-0">
-                                <label for="">Bags</label>
-                                <input type="number" tabindex="46" class="form-control form-control-user" id="editbags" name="editbags">
-                            </div>
-
-                            <div class="col-sm-6 mb-3 mb-sm-0">
-                                <label for="">Kilogram</label>
-                                <input type="number" tabindex="47" class="form-control form-control-user price-control" id="editkilogram" step=".01" name="editkilogram">
+                                <input type="number" tabindex="46" class="form-control form-control-user" id="editmoisture" step=".01" name="moisture">
                             </div>
                             <div class="col-sm-6 mb-3 mb-sm-0">
                                 <label for="">Prize</label>
-                                <input type="number" tabindex="48" class="form-control form-control-user price-control" id="editprize" step=".01" name="editprize">
+                                <input type="number" tabindex="47" class="form-control form-control-user price-control" id="editprize" step=".01" name="editprize">
                             </div>
                             <div class="col-sm-6 mb-3 mb-sm-0">
                                 <label for="">Total</label>
-                                <input required type="number" tabindex="49" class="p-1" id="edittotal" step=".01" name="edittotal">
+                                <input required type="number" tabindex="48" class="form-control form-control-user" id="edittotal" step=".01" name="edittotal">
                             </div>
                             <div class="col-sm-6 mb-3 mb-sm-0">
                                 <label for="">Paid</label>
-                                <input required type="number" tabindex="50" class="form-control form-control-user" id="editpaid" name="editpaid">
+                                <input required type="number" tabindex="49" class="form-control form-control-user" id="editpaid" name="editpaid">
                             </div>
                             <div class="col-sm-6 mb-3 mb-sm-0">
-                                <label for="">Remaining</label>
-                                <h5 id="editremaining"> </h5>
+                                <label for="">Balance Payment</label>
+                                <input required type="number" tabindex="50" class="form-control form-control-user" name="balancepayment" id="balancepayment">
                             </div>
-                            <input type="hidden" name="through" id="thre">
 
-                            <input type="hidden" name="previoustotal" id="previoustotal">
-                            <input type="hidden" name="previouspaid" id="previouspaid">
+
                             <input type="hidden" value="" name="arrayid" id="arrayid">
                             <input type="hidden" value="" name="objectid" id="objectid">
                         </div>
@@ -438,11 +414,225 @@
     <script>
         $(document).ready(function() {
             $('#dataTable').DataTable({
-                dom: 'Bfrtip',
-                buttons: [
-                    'print'
-                ]
+
             });
+            $('#editmodel').on('shown.bs.modal', function() {
+                $('#editdate').focus();
+            })
+        });
+
+        function openweightmodal(i) {
+            var obj = <%- JSON.stringify(seller) %>;
+            weights = obj[i].product.kg
+            document.getElementById('modalweightbody').innerHTML = weights;
+
+            document.getElementById('totalweightmodal').innerText = obj[i].product.totalkg;
+
+            $('#bagsweight').modal('show')
+        }
+
+        function editpurchase(i) {
+            var obj = <%- JSON.stringify(seller) %>;
+
+            document.getElementById("deletebutton").href = "/deletecoffeebill/" + obj[i]._id + "/" + obj[i].product._id
+            var today = moment(obj[i].product.date).format('YYYY-MM-DD');
+            document.getElementById("editdate").value = today;
+            document.getElementById("editcustomers").innerText = obj[i].seller;
+            document.getElementById('edittype').value = obj[i].product.category;
+            document.getElementById('editbags').value = obj[i].product.numberofsack;
+
+            document.getElementById('totalkgedit').value = obj[i].product.totalkg;
+            document.getElementById('editoutumn').value = obj[i].product.autumn;
+            document.getElementById('editmoisture').value = obj[i].product.moisture;
+
+            document.getElementById('editprize').value = obj[i].product.price_perbag;
+
+            document.getElementById('edittotal').value = obj[i].product.total;
+            document.getElementById('editpaid').value = obj[i].product.paid
+
+            document.getElementById('balancepayment').value = obj[i].product.balance;
+            document.getElementById('objectid').value = obj[i]._id;
+            document.getElementById('arrayid').value = obj[i].product._id;
+
+            $('#editmodel').modal('show')
+        }
+    </script>
+    <script>
+        $(document).ready(function() {
+
+            $('#totalkgedit').on('keyup', function() {
+                var price = document.getElementById('editprize').value
+                totalprice = $(this).val() * (price / 50);
+                document.getElementById('edittotal').value = totalprice.toFixed(2);
+            })
+            $('#editprize').on('keyup', function() {
+                var kg = document.getElementById('totalkgedit').value
+                totalprice = kg * ($(this).val() / 50);
+                document.getElementById('edittotal').value = totalprice.toFixed(2);
+            })
+            $('#editpaid').on('keyup', function() {
+                var total = document.getElementById('edittotal').value
+                balance = total - $(this).val()
+                document.getElementById('balancepayment').value = balance.toFixed(2);
+            })
+            seller = <%- JSON.stringify(seller) %>;
+            var totalbag = 0;
+            var totalkg = 0;
+            var total = 0;
+            var totalpaid = 0;
+            var totalremainig = 0;
+            for (var i = 0; i < seller.length; i++) {
+                totalbag = totalbag + seller[i].product.numberofsack;
+                totalkg = totalkg + seller[i].product.totalkg;
+                total = total + seller[i].product.total;
+                totalpaid = totalpaid + seller[i].product.paid;
+                totalremainig = totalremainig + seller[i].product.balance;
+            }
+            document.getElementById('totalpurchaseamount').innerText = total.toLocaleString();
+            document.getElementById('totalpurchasepaid').innerText = totalpaid.toLocaleString();
+            document.getElementById('totalpurchaseremaining').innerText = totalremainig.toLocaleString();
+            document.getElementById('totalpurchasekg').innerText = totalkg.toLocaleString();
+
+            document.getElementById('totalbags').innerHTML = totalbag.toLocaleString();
+            document.getElementById('totalkg').innerHTML = totalkg.toLocaleString();
+            document.getElementById('totalamount').innerHTML = total.toLocaleString();
+            document.getElementById('totalpaid').innerHTML = totalpaid.toLocaleString();
+            document.getElementById('totalremaining').innerHTML = totalremainig.toLocaleString();
+
+            $('#allbutton').on('click', function() {
+                $('.arabicacoffee').show();
+                $('.oldcoffee').show();
+                $('.robust').show();
+
+                totalbag = 0;
+                totalkg = 0;
+                total = 0;
+                totalpaid = 0;
+                totalremainig = 0;
+                for (var i = 0; i < seller.length; i++) {
+                    totalbag = totalbag + seller[i].product.numberofsack;
+                    totalkg = totalkg + seller[i].product.totalkg;
+                    total = total + seller[i].product.total;
+                    totalpaid = totalpaid + seller[i].product.paid;
+                    totalremainig = totalremainig + seller[i].product.balance;
+                }
+                document.getElementById('totalpurchaseamount').innerText = total.toLocaleString();
+                document.getElementById('totalpurchasepaid').innerText = totalpaid.toLocaleString();
+                document.getElementById('totalpurchaseremaining').innerText = totalremainig.toLocaleString();
+                document.getElementById('totalpurchasekg').innerText = totalkg.toLocaleString();
+
+                document.getElementById('totalbags').innerHTML = totalbag.toLocaleString();
+                document.getElementById('totalkg').innerHTML = totalkg.toLocaleString();
+                document.getElementById('totalamount').innerHTML = total.toLocaleString();
+                document.getElementById('totalpaid').innerHTML = totalpaid.toLocaleString();
+                document.getElementById('totalremaining').innerHTML = totalremainig.toLocaleString();
+
+            })
+            $('#arabicacoffeebutton').on('click', function() {
+                $('.arabicacoffee').show();
+                $('.oldcoffee').hide();
+                $('.robust').hide();
+
+                totalbag = 0;
+                totalkg = 0;
+                total = 0;
+                totalpaid = 0;
+                totalremainig = 0;
+                for (var i = 0; i < seller.length; i++) {
+                    if (seller[i].product.category != "arabica") {
+                        continue;
+                    } else {
+                        totalbag = totalbag + seller[i].product.numberofsack;
+                        totalkg = totalkg + seller[i].product.totalkg;
+                        total = total + seller[i].product.total;
+                        totalpaid = totalpaid + seller[i].product.paid;
+                        totalremainig = totalremainig + seller[i].product.balance;
+                    }
+                }
+                document.getElementById('totalpurchaseamount').innerText = total.toLocaleString();
+                document.getElementById('totalpurchasepaid').innerText = totalpaid.toLocaleString();
+                document.getElementById('totalpurchaseremaining').innerText = totalremainig.toLocaleString();
+                document.getElementById('totalpurchasekg').innerText = totalkg.toLocaleString();
+
+                document.getElementById('totalbags').innerHTML = totalbag.toLocaleString();
+                document.getElementById('totalkg').innerHTML = totalkg.toLocaleString();
+                document.getElementById('totalamount').innerHTML = total.toLocaleString();
+                document.getElementById('totalpaid').innerHTML = totalpaid.toLocaleString();
+                document.getElementById('totalremaining').innerHTML = totalremainig.toLocaleString();
+
+
+            })
+            $('#robustcoffeebutton').on('click', function() {
+                $('.arabicacoffee').hide();
+                $('.oldcoffee').hide();
+                $('.robust').show();
+
+
+                totalbag = 0;
+                totalkg = 0;
+                total = 0;
+                totalpaid = 0;
+                totalremainig = 0;
+                for (var i = 0; i < seller.length; i++) {
+                    if (seller[i].product.category == "coffee") {
+                        totalbag = totalbag + seller[i].product.numberofsack;
+                        totalkg = totalkg + seller[i].product.totalkg;
+                        total = total + seller[i].product.total;
+                        totalpaid = totalpaid + seller[i].product.paid;
+                        totalremainig = totalremainig + seller[i].product.balance;
+
+                    } else {
+
+                    }
+                }
+                document.getElementById('totalpurchaseamount').innerText = total.toLocaleString();
+                document.getElementById('totalpurchasepaid').innerText = totalpaid.toLocaleString();
+                document.getElementById('totalpurchaseremaining').innerText = totalremainig.toLocaleString();
+                document.getElementById('totalpurchasekg').innerText = totalkg.toLocaleString();
+
+                document.getElementById('totalbags').innerHTML = totalbag.toLocaleString();
+                document.getElementById('totalkg').innerHTML = totalkg.toLocaleString();
+                document.getElementById('totalamount').innerHTML = total.toLocaleString();
+                document.getElementById('totalpaid').innerHTML = totalpaid.toLocaleString();
+                document.getElementById('totalremaining').innerHTML = totalremainig.toLocaleString();
+
+            });
+            $('#oldcoffeebutton').on('click', function() {
+                $('.arabicacoffee').hide();
+                $('.oldcoffee').show();
+                $('.robust').hide();
+
+
+                totalbag = 0;
+                totalkg = 0;
+                total = 0;
+                totalpaid = 0;
+                totalremainig = 0;
+                for (var i = 0; i < seller.length; i++) {
+                    if (seller[i].product.category != "old") {
+
+                    } else {
+                        totalbag = totalbag + seller[i].product.numberofsack;
+                        totalkg = totalkg + seller[i].product.totalkg;
+                        total = total + seller[i].product.total;
+                        totalpaid = totalpaid + seller[i].product.paid;
+                        totalremainig = totalremainig + seller[i].product.balance;
+                    }
+                }
+                document.getElementById('totalpurchaseamount').innerText = total.toLocaleString();
+                document.getElementById('totalpurchasepaid').innerText = totalpaid.toLocaleString();
+                document.getElementById('totalpurchaseremaining').innerText = totalremainig.toLocaleString();
+                document.getElementById('totalpurchasekg').innerText = totalkg.toLocaleString();
+
+                document.getElementById('totalbags').innerHTML = totalbag.toLocaleString();
+                document.getElementById('totalkg').innerHTML = totalkg.toLocaleString();
+                document.getElementById('totalamount').innerHTML = total.toLocaleString();
+                document.getElementById('totalpaid').innerHTML = totalpaid.toLocaleString();
+                document.getElementById('totalremaining').innerHTML = totalremainig.toLocaleString();
+
+            });
+
+
         });
     </script>
     <%- include('./includes/end.ejs') %>
