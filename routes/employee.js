@@ -36,4 +36,5 @@ router.post('/filterloaderspayment',isAdmin, employeeController.filterloaderspay
 router.post('/loaderslistfilter',isAdmin, employeeController.loaderslistfilter);
 router.get('/printkooli',isAdmin, employeeController.printkooli);
 router.post('/printkoolifilter',isAdmin, employeeController.printkoolifilter);
+router.post('/indidualdailykoolifilter',isMorA, employeeController.indidualdailykoolifilter);
 module.exports = router;

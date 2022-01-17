@@ -4,7 +4,7 @@
         <!-- Page Heading -->
         <div class="d-sm-flex align-items-center justify-content-between mb-4">
             <h1 class="h3 mb-0 text-gray-800">
-                <%=names%> Loading
+                <%=names%> Daily Loading
                     <%if(!payment){%><span id="loadingpayment"></span>
                         <%}else{%><span id="loadingpayment">Payment</span>
                             <%}%> Details
@@ -98,11 +98,11 @@
                 <br> <a href="/employee/viewkooli" class="btn btn-primary" id="">Complete Loads</a>
 
                 <a href="" class="btn btn-danger float-right ml-2" data-toggle="modal" data-target="#filtermodel">Filter</a>
-                <form id="form9" class="ml-1" style="float: right;" action="/employee/indidualdailykoolifilter" method="POST">
+                <form id="form9" class="ml-1" style="float: right;" action="/employee/indidualkoolifilter" method="POST">
                     <input type="hidden" name="id" value="<%=names%>">
-                    <input type="hidden" name="ndate" value="<%=start%>">
-                    <input type="hidden" name="mdate" value="<%=end%>">
-                    <button type="submit" form="form9" class="btn btn-info">Day total</button>
+                    <input type="hidden" name="sdate" value="<%=start%>">
+                    <input type="hidden" name="edate" value="<%=end%>">
+                    <button type="submit" form="form9" class="btn btn-info">Complete list</button>
                 </form>
                 <%if(currentuser.isadminlogged){%>
                     <button class="btn btn-success float-right" id="paymentbutton">View payments</button>
@@ -175,15 +175,9 @@
                                 <thead>
                                     <tr>
                                         <th>Date</th>
-                                        <th>Load of</th>
+
                                         <th>Bags</th>
                                         <th>kooli</th>
-                                        <th>hint</th>
-                                        <%if(currentuser.isadminlogged){%>
-                                            <th>Monitor</th>
-                                            <th>Delete</th>
-                                            <%}%>
-
 
 
                                     </tr>
@@ -192,16 +186,9 @@
                                     <tr>
                                         <tr>
                                             <th>Date</th>
-                                            <th>Load of</th>
+
                                             <th>Bags</th>
                                             <th>kooli</th>
-                                            <th>hint</th>
-                                            <%if(currentuser.isadminlogged){%>
-                                                <th>Monitor</th>
-                                                <th>Delete</th>
-                                                <%}%>
-
-
 
 
                                         </tr>
@@ -212,33 +199,22 @@
                                 var bags = 0;
                                 var kooli =0;
                                 for (let doc of docs){
-                                    bags = parseInt(bags) + parseInt(doc.work.numberofsack);
-                                    kooli= parseInt(kooli) + parseInt(doc.work.kooli);
+                                    bags = parseInt(bags) + parseInt(doc.numberofsack);
+                                    kooli= parseInt(kooli) + parseInt(doc.kooli);
                                     %>
                                         <tr>
                                             <td>
-                                                <%= moment(doc.work.date).format( 'DD-MMM-YYYY') %>
+                                                <%= moment(doc._id).format( 'DD-MMM-YYYY') %>
+                                            </td>
+
+                                            <td>
+                                                <%=doc.numberofsack%>
                                             </td>
                                             <td>
-                                                <%=doc.work.loadof%>
+                                                <%=parseInt(doc.kooli)%>
                                             </td>
-                                            <td>
-                                                <%=doc.work.numberofsack%>
-                                            </td>
-                                            <td>
-                                                <%=parseInt(doc.work.kooli)%>
-                                            </td>
-                                            <td>
-                                                <%=doc.work.product%>
-                                            </td>
-                                            <%if(currentuser.isadminlogged){%>
-                                                <td>
-                                                    <%=doc.work.monitor%>
-                                                </td>
-                                                <td>
-                                                    <a onclick="return confirm('are you sure?')" href="/employee/deleteindividualkooli/<%=doc.work._id%>/<%=doc.name%>/individual" class="btn btn-danger">Delete</a>
-                                                </td>
-                                                <%}%>
+
+
                                         </tr>
                                         <%}%>
 
@@ -304,8 +280,7 @@
                                     <th>Date</th>
                                     <th>Amount</th>
 
-                                    <th>hint</th>
-                                    <th>Edit</th>
+
 
 
                                 </tr>
@@ -316,8 +291,8 @@
                                         <th>Date</th>
                                         <th>Amount</th>
 
-                                        <th>hint</th>
-                                        <th>Edit</th>
+
+
 
 
                                     </tr>
@@ -326,21 +301,18 @@
 
                                 <% paids = 0;
                                 for (let dic of dics){
-                                    paids = parseInt(paids)+parseInt(dic.payed.amount);
+                                    paids = parseInt(paids)+parseInt(dic.amount);
                                     %>
                                     <tr>
                                         <td>
-                                            <%= moment(dic.payed.date).format( 'DD-MMM-YYYY') %>
+                                            <%= moment(dic._id).format( 'DD-MMM-YYYY') %>
                                         </td>
 
                                         <td>
-                                            <%=dic.payed.amount%>
+                                            <%=dic.amount%>
                                         </td>
-                                        <td>
-                                            <%=dic.payed.message%>
-                                        </td>
-                                        <td>
-                                            <a onclick="return confirm('are you sure?')" href="/employee/deletepayment/<%=dic.payed._id%>/<%=dic.name%>/individual" class="btn btn-danger">Delete</a></td>
+
+
 
                                     </tr>
                                     <%}
@@ -364,17 +336,17 @@
                     </a>
                 </div>
                 <div class="modal-body">
-                    <form id="form1" action="/employee/indidualkoolifilter" method="POST">
+                    <form id="form1" action="/employee/indidualdailykoolifilter" method="POST">
                         <div class="form-group row">
                             <div class="col-sm-12 mb-3 mb-sm-0">
                                 <label for="">From date</label>
-                                <input type="date" value="<%=todaydate%>" class="form-control form-control-user" id="exampleFirstName" name="sdate" placeholder="Date">
+                                <input type="date" value="<%=todaydate%>" class="form-control form-control-user" id="exampleFirstName" name="ndate" placeholder="Date">
                             </div>
                         </div>
                         <div class="form-group row">
                             <div class="col-sm-12 mb-3 mb-sm-0">
                                 <label for="">To date</label>
-                                <input type="date" value="<%=todaydate%>" name="edate" class="form-control form-control-user" id="exampleFirstName" placeholder="Date">
+                                <input type="date" value="<%=todaydate%>" name="mdate" class="form-control form-control-user" id="exampleFirstName" placeholder="Date">
                             </div>
 
 

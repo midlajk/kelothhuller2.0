@@ -8,7 +8,7 @@ const Coffee_bill = mongoose.model('Coffee_bill');
 const Pepper_bill = mongoose.model('Pepper_bill');
 exports.addbill = (req, res) => {
     Sellers.find().distinct('name').then(sellers => {
-        res.render('addbill', {
+        res.render('generatebill', {
             mainpath: '/addbill',
             errorMessage: "",
             loads: '',

@@ -1264,3 +1264,73 @@ exports.printkoolifilter = (req, res) => {
     })
 
 }
+exports.indidualdailykoolifilter = (req, res) => {
+    let payment = req.flash('payment');
+    if (payment.length > 0) {
+        payment = payment[0];
+    } else {
+        payment = false;
+    }
+    start = new Date(req.body.ndate);
+    end = new Date(req.body.mdate);
+    name = req.body.id
+    Loaders.aggregate([{
+            "$match": { "name": name }
+        },
+        {
+            "$match": {
+                "work.date": { $gte: start, $lt: end }
+            }
+        },
+
+        { $unwind: "$work" },
+        {
+            $group: {
+                _id: "$work.date",
+                kooli: { $sum: "$work.kooli" },
+                numberofsack: { $sum: "$work.numberofsack" }
+            }
+        },
+
+
+
+
+    ]).sort({ "work.date": -1, "work._id": -1 }).exec((err, docs) => {
+        Loaders.aggregate([{
+                "$match": { "name": name }
+            },
+            {
+                "$match": {
+                    "payed.date": { $gte: start, $lt: end }
+                }
+            },
+
+            { $unwind: "$payed" },
+            {
+                $group: {
+                    _id: "$payed.date",
+                    amount: { $sum: "$payed.amount" },
+
+                }
+            },
+
+        ]).sort({ "payed.date": -1, "payed._id": -1 }).exec((err, dics) => {
+            Loaders.find().distinct('name').then(loaders => {
+
+
+                res.render('dailykooli', {
+                    docs: docs,
+                    dics: dics,
+                    mainpath: '/viewkooli',
+                    names: req.body.id,
+                    start: start,
+                    end: end,
+                    loaders: loaders,
+                    payment: payment
+                })
+
+            })
+        })
+    })
+
+}
