@@ -232,10 +232,19 @@
 
 
 
-                            <% var kilogram = 0;
+                            <% 
+                            var rem = [];
+                            var remaining = 0
+                             for (var j = data.length; j > 0; j--){
+                                remaining = remaining + data[j-1].deal.total - data[j-1].deal.paid
+                                rem.push(remaining)
+                             }
+                            var kilogram = 0;
                             var paid = 0;
                              var total = 0;
+                             var length = data.length;
                             for (var i =0; i < data.length; i++){
+                                length = length - 1;
                                 kilogram = kilogram + data[i].deal.kilogram
                                 paid = paid + data[i].deal.paid
                                 total = total + data[i].deal.total
@@ -278,7 +287,7 @@
 
                                                 <td>
 
-                                                    <%=data[i].deal.Remaining.toLocaleString()%>
+                                                    <%=rem[length].toLocaleString()%>
                                                 </td>
                                                 <td>
 
