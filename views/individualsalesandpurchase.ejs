@@ -219,8 +219,9 @@
                                         <th>Paid</th>
                                         <%}%>
 
-                                            <th>Remaining</th>
-                                            <th>Through</th>
+                                            <th colspan="3">
+                                                Total Till | Paid Till | Remaining</th>
+
 
                                             <th>Hint</th>
                                             <th>Edit</th>
@@ -234,10 +235,19 @@
 
                             <% 
                             var rem = [];
-                            var remaining = 0
+                            var remaining = 0;
+                            var pay=[]
+                            var tot = []
+                            var payd = 0
+                            var totl = 0
                              for (var j = data.length; j > 0; j--){
                                 remaining = remaining + data[j-1].deal.total - data[j-1].deal.paid
+                                payd = payd + data[j-1].deal.paid
+                                totl = totl + data[j-1].deal.total
                                 rem.push(remaining)
+                                pay.push(payd)
+                                tot.push(totl)
+
                              }
                             var kilogram = 0;
                             var paid = 0;
@@ -263,26 +273,26 @@
                                         <%=data[i].deal.price%>
                                     </td>
                                     <%if(category =='sales'){%>
-                                        <td class="totalpaid">
+                                        <th class="totalpaid">
                                             <%=data[i].deal.paid.toLocaleString()%>
 
-                                        </td>
-                                        <td class="totalamount">
+                                        </th>
+                                        <th class="totalamount">
 
                                             <%=data[i].deal.total.toLocaleString()%>
 
-                                        </td>
+                                        </th>
 
                                         <%}else{%>
-                                            <td class="totalamount">
+                                            <th class="totalamount">
 
                                                 <%=data[i].deal.total.toLocaleString()%>
 
-                                            </td>
-                                            <td class="totalpaid">
+                                            </th>
+                                            <th class="totalpaid">
                                                 <%=data[i].deal.paid.toLocaleString()%>
 
-                                            </td>
+                                            </th>
                                             <%}%>
 
                                                 <td>
@@ -290,9 +300,15 @@
                                                     <%=rem[length].toLocaleString()%>
                                                 </td>
                                                 <td>
-
-                                                    <%=data[i].deal.through%>
+                                                    <%=pay[length].toLocaleString()%>
                                                 </td>
+                                                <th>
+                                                    <%=tot[length].toLocaleString()%>
+
+
+
+                                                </th>
+
                                                 <td>
 
                                                     <%=data[i].deal.hint%>
@@ -317,8 +333,8 @@
                                     <%}%>
 
 
-                                        <th id="totalremaining">Remaining</th>
-                                        <th>Through</th>
+                                        <th colspan="3" id="totalremaining">Remaining</th>
+
 
                                         <th>Hint</th>
                                         <th>Edit</th>
