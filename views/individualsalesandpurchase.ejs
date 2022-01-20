@@ -242,8 +242,14 @@
                             var totl = 0
                              for (var j = data.length; j > 0; j--){
                                 remaining = remaining + data[j-1].deal.total - data[j-1].deal.paid
-                                payd = payd + data[j-1].deal.paid
+                                if(remaining==0){
+                                    payd =   data[j-1].deal.paid
+                                totl =  data[j-1].deal.total
+                                }else{
+                                      payd = payd + data[j-1].deal.paid
                                 totl = totl + data[j-1].deal.total
+                                }
+                              
                                 rem.push(remaining)
                                 pay.push(payd)
                                 tot.push(totl)
