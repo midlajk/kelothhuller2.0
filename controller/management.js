@@ -929,7 +929,7 @@ exports.individualpurchasefilter = (req, res) => {
         name: req.body.id
     }).then(name => {
 
-        Sellers.aggregate(filter).sort({ "deal.date": -1, "deal._id": -1 }).exec((err, data) => {
+        Sellers.aggregate(filter).sort({ "deal._id": -1 }).exec((err, data) => {
 
             Buyers.find().distinct('name').then(buyers => {
                 Sellers.find().distinct('name').then(sellers => {
