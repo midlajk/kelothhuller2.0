@@ -112,15 +112,17 @@
 
                 <form>
                     <div class="col-sm-12 mb-3 mb-sm-0 input-group">
-                        <select tabindex="99" class="form-control form-control-user js-example-basic-single" id="mylistofsellers" onchange="check_user()">
-                            <option value="">Search names</option>
+                        <input type="text" class="form-control form-control-user" id="mylistofsellers" onchange="check_user()" list="mynmes" placeholder="Search names">
+                        <datalist id="mynmes"> 
+            
                               <%for(let docs of names){%>
-                                <option value="<%=docs%>"><%=docs%></option>
-                              <%}%>
-                         </select>
+                                <option value="<%=docs%>">
+                              <%}%></datalist>
+
+
 
                         <div class="input-group-append">
-                            <select tabindex="100" class="form-control form-control-user" name="" onchange="check_user()" id="inputselection">
+                            <select tabindex="100" class="form-control form-control-user list-group-item-success" name="" onchange="check_user()" id="inputselection">
                                 <option value="Purchase">Purchase Account</option>
                                 <option value="Sales">Sales account</option>
                             </select>
@@ -205,9 +207,9 @@
                             var total = 0;
                             var paid = 0;
                             for (var i = 0; i < seller.length; i++){
-                                // bag = bag + seller[i].deal.kilogram;
-                                // total = total + seller[i].deal.total;
-                                // paid = paid + seller[i].deal.paid; %>
+                                bag = bag + seller[i].deal.kilogram;
+                                total = total + seller[i].deal.total;
+                                paid = paid + seller[i].deal.paid; %>
                                 <%if(seller[i].deal.through == 'quatity'){%>
                                     <tr id="purchase" style="color: rgb(201, 119, 119);" class="purchase">
                                         <%}else{%>
