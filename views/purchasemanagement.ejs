@@ -493,14 +493,7 @@
     </script>
     <script>
         $(document).ready(function() {
-            $('#MyTable').DataTable({
-                initComplete: function() {
-                    this.api().columns().every(function() {
-                        var column = this;
 
-                    });
-                }
-            });
             $('#editmodel').on('shown.bs.modal', function() {
                 $('#editdate').focus();
             })
@@ -508,21 +501,21 @@
                 $('#date').focus();
             })
         });
-
-        function isKeyPressed(event) {
-            var x = document.getElementById("price");
-            if (event.shiftKey) {
-
-                var x = document.getElementById("price").value;
-                document.getElementById("price").value = x / 50;
-            } else {
-
-            }
-        }
     </script>
     <script>
-        $(document).ready(function() {
+        function isKeyPressed(event) {
+            var x = document.getElementById("price");
+            var y = 0
+            if (event.shiftKey) {
+                y = x.value / 50;
+                x.value = y;
+            }
 
+        }
+    </script>
+
+    <script>
+        $(document).ready(function() {
 
             var totalpurchaseamount = <%= total%>;
             var totalpurchasekg = <%= bag %>;
