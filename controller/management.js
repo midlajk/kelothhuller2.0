@@ -287,6 +287,8 @@ exports.postdetailedbuyerdata = (req, res) => {
         if (req.body.type == "seperate") {
             req.flash('error', "successfully added")
             res.redirect('/purchasemanagement')
+        } else if (req.body.type == "purchase") {
+            res.redirect('/accountmanagement')
         } else {
             req.flash('error', "Successfully added")
             res.redirect('/individualpurchase/' + name);
@@ -450,6 +452,8 @@ exports.postbuyerform = (req, res) => {
         if (req.body.type == "seperate") {
             req.flash('error', "Successfully added")
             res.redirect('/salesmanagement')
+        } else if (req.body.type == "sales") {
+            res.redirect('/accountmanagement')
         } else {
             req.flash('error', "Successfully added")
             res.redirect('/individualsales/' + name);
