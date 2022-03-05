@@ -1102,6 +1102,7 @@ exports.filterloaderspayment = (req, res) => {
 exports.loaderslistfilter = (req, res) => {
     start = new Date(req.body.sdate);
     end = new Date(req.body.edate);
+    bdate = new Date(req.body.sdate);
     start.setDate(start.getDate() - 1);
     Loaders.aggregate([{
             "$match": {
@@ -1148,12 +1149,18 @@ exports.loaderslistfilter = (req, res) => {
 
 
     ]).sort({ "_id": -1 }).exec((err, data) => {
-
-        res.render('loaderslist', {
-            mainpath: '/loaderslist',
-            docs: data,
-            start: start,
-            end: end,
+        Loaderskooli.aggregate([{
+            "$match": {
+                "order.date": { $gte: bdate, $lt: end }
+            }
+        }, { $unwind: "$order" }, { $group: { _id: "null", gross: { $sum: "$order.numberofsack" } } }]).then((datas, err) => {
+            res.render('loaderslist', {
+                mainpath: '/loaderslist',
+                docs: data,
+                start: bdate,
+                end: end,
+                numberofsac: datas[0].gross,
+            })
         })
     })
 

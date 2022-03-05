@@ -10,6 +10,7 @@ const Payments = mongoose.model('Payments');
 const Borrowed = mongoose.model('Borrowed');
 const Lorirent = mongoose.model('Lorirent');
 const Loaders = mongoose.model('Loaders');
+const Loaderskooli = mongoose.model('Loaderskooli');
 const Transaction = mongoose.model('Transaction');
 
 exports.dealerslist = (req, res) => {
@@ -109,15 +110,16 @@ exports.loaderslist = (req, res) => {
 
         }
     }]).sort({ "_id": -1 }).exec((err, data) => {
+        Loaderskooli.aggregate([{ $unwind: "$order" }, { $group: { _id: "null", gross: { $sum: "$order.numberofsack" } } }]).then((datas, err) => {
+            console.log(datas[0].gross)
+            res.render('loaderslist', {
+                mainpath: '/loaderslist',
+                docs: data,
+                numberofsac: datas[0].gross,
+                start: start,
+                end: end,
 
-
-        res.render('loaderslist', {
-            mainpath: '/loaderslist',
-            docs: data,
-
-            start: start,
-            end: end,
-
+            })
         })
     })
 
