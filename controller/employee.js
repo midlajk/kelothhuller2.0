@@ -1155,6 +1155,7 @@ exports.loaderslistfilter = (req, res) => {
             }
         }, { $unwind: "$order" }, { $group: { _id: "null", gross: { $sum: "$order.numberofsack" } } }]).then((datas, err) => {
             var bags
+            console.log(datas)
             if (datas[0]) {
                 bags = datas[0].gross
             } else {
