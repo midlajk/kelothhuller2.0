@@ -6,10 +6,7 @@
                 <%if(!recieved){%><span id="headertext">Amount Paid</span>
                     <%}else{%><span id="headertext">Amount Recieved</span>
                         <%}%>
-                            <%if(individual){%>
-                                to/from
-                                <%=id%>
-                                    <%}%>
+
             </h1>
 
             <h6>
@@ -87,13 +84,9 @@
         <div class="card shadow mb-4" id="paidlist" style="<%if(recieved){%>display: none;<%}%>">
             <div class="card-header py-3">
 
-                <%if(individual){%>
-                    <a id="" href="/getpayments" class="btn btn-primary">Payments record</a>
-                    <%}else{%>
-                        <a id="" href="/payeelist" class="btn btn-primary">Payee list</a>
-                        <%}%>
-                            <a href="" data-toggle="modal" data-target="#filtermodel" style="float:right" class="btn btn-danger">Filter table</a>
-                            <button id="paidbutton" href="#" class="btn btn-success float-right mr-2">Recivied</button>
+
+                <a href="" data-toggle="modal" data-target="#filtermodel" style="float:right" class="btn btn-danger">Filter table</a>
+                <button id="paidbutton" href="#" class="btn btn-success float-right mr-2">Recivied</button>
 
             </div>
 
@@ -103,13 +96,12 @@
                         <thead>
                             <tr>
                                 <th>Date</th>
-                                <%if(!individual){%>
-                                    <th>Name</th>
-                                    <%}%>
-                                        <th>Amount</th>
+                                <th>Name</th>
+                                <th>Relation</th>
+                                <th>Amount</th>
 
-                                        <th>Hint</th>
-                                        <th>Submit</th>
+                                <th>Hint</th>
+                                <th>Submit</th>
 
                             </tr>
                         </thead>
@@ -118,31 +110,47 @@
                             <form id="buyerform" autocomplete="off" action="/getpayments" method="POST">
                                 <tr>
                                     <td><input autofocus required tabindex="3" style="width: 175px;" name="date" class="form-control" id="date" type="date" value="<%=todaydate%>" id="date"></td>
-                                    <%if(!individual){%>
-                                        <td>
+                                    <td>
 
 
-                                            <input required class="p-1 form-control" style="width: 175px;" tabIndex="4" autocomplete="off" list="sellernames" type="text" name="name">
-                                        </td>
-                                        <datalist id="sellernames">
-                                            <%for(let docs of names){%>
-                                                <option value="<%=docs%>">
+                                        <input required class="p-1 form-control" style="width: 225px;" tabIndex="4" autocomplete="off" list="names-a" type="text" id="name" name="name">
+                                    </td>
+                                    <datalist id="names-a">
+                                            <%for(let docs of Buyers){%>
+                                                <option value="<%=docs%>-B">
                                                 <%}%>
+                                                <%for(let docs of Seller){%>
+                                                    <option value="<%=docs%>-S">
+                                                    <%}%>
+                                                    <%for(let docs of Loader){%>
+                                                        <option value="<%=docs%>-L">
+                                                        <%}%>
+                                                        <%for(let docs of Employee){%>
+                                                            <option value="<%=docs%>-E">
+                                                            <%}%>
                                         </datalist>
-                                        <%}else{%> <input type="hidden" name="type" value="individual">
-                                            <input type="hidden" name="name" value="<%=id%>">
-                                            <%}%>
+                                    <td>
+
+                                        <select required class="p-1 form-control" style="width: 175px;" tabIndex="5" name="relation" id="inputselection">
+                                            <option value="Other Payments">Other Payments</option>
+                                            <option value="Sales">Sales</option>
+                                            <option value="Purchase">Purchase</option>
+                                            <option value="Employee">Employee</option>
+                                            <option value="Loader">Loader</option>
+
+                                        </select>
+
+                                    </td>
 
 
 
-                                                <td><input required class="form-control price-control" tabIndex="5" type="number" name="amount" style="width: 175px;"></td>
+                                    <td><input required class="form-control price-control" tabIndex="6" type="number" name="amount" style="width: 175px;"></td>
 
-                                                <td><input tabIndex="6" type="text" step=".01" style="width: 200px;" class="p-1 form-control" name="hint"></td>
+                                    <td><input tabIndex="7" type="text" step=".01" style="width: 200px;" class="p-1 form-control" name="hint"></td>
 
-                                                <input type="hidden" name="paymenttype" value="all">
-                                                <td> <button form="buyerform" tabIndex="7" class="btn btn-primary" id="submit" type="submit">Submit</button>
-                                                    <div id="button-spinner" style="margin-left: 10px; width: 25px; height: 25px; display: none" class="spinner-border"></div>
-                                                </td>
+                                    <td> <button form="buyerform" tabIndex="8" class="btn btn-primary" id="submit" type="submit">Submit</button>
+                                        <div id="button-spinner" style="margin-left: 10px; width: 25px; height: 25px; display: none" class="spinner-border"></div>
+                                    </td>
 
                                 </tr>
                             </form>
@@ -156,27 +164,25 @@
                         <thead>
                             <tr>
                                 <th>Date</th>
-                                <%if(!individual){%>
-                                    <th>Name</th>
-                                    <%}%>
-                                        <th>Amount</th>
+                                <th>Name</th>
+                                <th>Relation</th>
+                                <th>Amount</th>
 
-                                        <th>Hint</th>
+                                <th>Hint</th>
 
-                                        <th>submit</th>
+                                <th>submit</th>
                             </tr>
                         </thead>
                         <tfoot>
                             <tr>
                                 <th>Date</th>
-                                <%if(!individual){%>
-                                    <th>Total</th>
-                                    <%}%>
-                                        <th id="paidamount"></th>
+                                <th>Name</th>
+                                <th>Total</th>
+                                <th id="paidamount"></th>
 
-                                        <th>Hint</th>
+                                <th>Hint</th>
 
-                                        <th>submit</th>
+                                <th>submit</th>
 
                             </tr>
                         </tfoot>
@@ -186,42 +192,41 @@
                             var total = 0;
                     
                             for (var i = 0; i < dics.length; i++){
+                                if(dics[i].category =='recieved') continue
                        
-                                total = parseInt(total) + parseInt(dics[i].paid.amount);
+                                total = parseInt(total) + parseInt(dics[i].amount);
                              %>
 
 
                                 <tr id="purchase" class="purchase">
 
                                     <td>
-                                        <%= moment(dics[i].paid.date).format( 'DD-MMM-YYYY') %>
+                                        <%= moment(dics[i].date).format( 'DD-MMM-YYYY') %>
 
                                     </td>
-                                    <%if(!individual){%>
-                                        <td>
-                                            <a href="/individualpayments/<%=dics[i].name%>">
-                                                <%=dics[i].name%>
-                                            </a>
-                                        </td>
-                                        <%}%>
-                                            <td>
-                                                <%=dics[i].paid.amount%>
-                                            </td>
+                                    <td>
+                                        <a href="/individualpayments/<%=dics[i].name%>">
+                                            <%=dics[i].name%>
+                                        </a>
+                                    </td>
+                                    <td>
+                                        <%=dics[i].relation%>
+                                    </td>
+                                    <td>
+                                        <%=dics[i].amount%>
+                                    </td>
 
-                                            <td class="totalpurchaseamount">
+                                    <td class="totalpurchaseamount">
 
-                                                <%=dics[i].paid.hint%>
-
-
-                                            </td>
+                                        <%=dics[i].hint%>
 
 
-                                            <%if(!individual){%>
+                                    </td>
 
-                                                <td><a href="/deletepaid/<%=dics[i].name%>/<%=dics[i].paid._id%>/all" class="btn btn-danger" onclick="return confirm('are you sure')">Delete</a></td>
-                                                <%}else{%>
-                                                    <td><a href="/deletepaid/<%=dics[i].name%>/<%=dics[i].paid._id%>/individual" class="btn btn-danger" onclick="return confirm('are you sure')">Delete</a></td>
-                                                    <%}%>
+
+
+                                    <td><a href="/deletepaid/<%=dics[i].relation%>/<%=dics[i]._id%>" class="btn btn-danger" onclick="return confirm('are you sure')">Delete</a></td>
+
 
                                 </tr>
                                 <%}%>
@@ -234,15 +239,10 @@
         <div class="card shadow mb-4" style="<%if(!recieved){%>display: none;<%}%>" id="paymentslist">
             <div class="card-header py-3">
 
-                <%if(individual){%>
-                    <a id="" href="/getpayments" class="btn btn-success">Payments record</a>
-                    <%}else{%>
-                        <a id="" href="#" class="btn btn-success">Payee list</a>
-                        <%}%>
 
-                            <a href="" data-toggle="modal" data-target="#filtermodel" style="float:right" class="btn btn-danger">Filter table</a>
+                <a href="" data-toggle="modal" data-target="#filtermodel" style="float:right" class="btn btn-danger">Filter table</a>
 
-                            <a href="#" id="paymentbutton" class="btn btn-success float-right mr-2">Paid</a>
+                <a href="#" id="paymentbutton" class="btn btn-success float-right mr-2">Paid</a>
             </div>
             <div class="card-header py-3">
 
@@ -269,44 +269,47 @@
                         <thead>
                             <tr>
                                 <th>Date</th>
-                                <%if(!individual){%>
-                                    <th>Name</th>
-                                    <%}%>
-                                        <th>Amount</th>
+                                <th>Name</th>
+                                <th>Relation</th>
+                                <th>Amount</th>
 
-                                        <th>Hint</th>
+                                <th>Hint</th>
 
-                                        <td>Submit</td>
+                                <td>Submit</td>
                             </tr>
                         </thead>
                         <tbody>
-                            <form autocomplete="off" id="buyerforms" action="/paidamountform" method="POST">
+                            <form autocomplete="off" id="buyerforms" action="/postrecieved" method="POST">
                                 <tr>
                                     <td><input required tabindex="" name="date" class="form-control" style="width: 175px;" id="date" type="date" value="<%=todaydate%>" id="date"></td>
-                                    <%if(!individual){%>
-                                        <td>
+                                    <td>
 
 
-                                            <input required class="p-1 form-control" style="width: 175px;" tabIndex="4" autocomplete="off" list="sellernames" type="text" name="name">
-                                        </td>
-                                        <datalist id="sellernames">
-                                            <%for(let docs of names){%>
-                                                <option value="<%=docs%>">
-                                                <%}%>
-                                        </datalist>
-                                        <%}else{%> <input type="hidden" name="type" value="individual">
-                                            <input type="hidden" name="name" value="<%=id%>">
-                                            <%}%>
-
-
-                                                <td><input required class="form-control price-control" tabIndex="5" type="number" name="amount" style="width: 200px;"></td>
-                                                <td><input class="p-1 form-control price-control" tabIndex="6" type="text" step=".01" style="width: 200px;" name="hint"></td>
+                                        <input required class="p-1 form-control" style="width: 175px;" tabIndex="4" autocomplete="off" list="names-a" type="text" id="nameb" name="name">
+                                    </td>
 
 
 
-                                                <td> <button form="buyerforms" tabIndex="7" class="btn btn-primary" id="submits" type="submit">Submit</button>
-                                                    <div id="button-spinner" style="margin-left: 10px; width: 25px; height: 25px; display: none" class="spinner-border"></div>
-                                                </td>
+                                    <td>
+
+                                        <select required class="p-1 form-control" style="width: 175px;" tabIndex="5" name="relation" id="inputselectionb">
+    <option value="Other Payments">Other Payments</option>
+    <option value="Sales">Sales</option>
+    <option value="Purchase">Purchase</option>
+    <option value="Employee">Employee</option>
+    <option value="Loader">Loader</option>
+
+</select>
+
+                                    </td>
+                                    <td><input required class="form-control price-control" tabIndex="6" type="number" name="amount" style="width: 200px;"></td>
+                                    <td><input class="p-1 form-control price-control" tabIndex="7" type="text" step=".01" style="width: 200px;" name="hint"></td>
+
+
+
+                                    <td> <button form="buyerforms" tabIndex="8" class="btn btn-primary" id="submits" type="submit">Submit</button>
+                                        <div id="button-spinner" style="margin-left: 10px; width: 25px; height: 25px; display: none" class="spinner-border"></div>
+                                    </td>
 
                                 </tr>
                             </form>
@@ -320,27 +323,26 @@
                         <thead>
                             <tr>
                                 <th>Date</th>
-                                <%if(!individual){%>
-                                    <th>Name</th>
-                                    <%}%>
-                                        <th>Amount</th>
+                                <th>Name</th>
+                                <th>Relation</th>
 
-                                        <th>Hint</th>
+                                <th>Amount</th>
 
-                                        <th>submit</th>
+                                <th>Hint</th>
+
+                                <th>submit</th>
                             </tr>
                         </thead>
                         <tfoot>
                             <tr>
                                 <th>Date</th>
-                                <%if(!individual){%>
-                                    <th>Total</th>
-                                    <%}%>
-                                        <th colspan="" id="totalpayment"></th>
+                                <th>Name</th>
+                                <th>Total</th>
+                                <th colspan="" id="totalpayment"></th>
 
-                                        <th>Hint</th>
+                                <th>Hint</th>
 
-                                        <th>submit</th>
+                                <th>submit</th>
 
                             </tr>
                         </tfoot>
@@ -350,42 +352,40 @@
                             var totalpayment = 0;
                     
                             for (var i = 0; i < docs.length; i++){
-                       
-                                totalpayment = parseInt(totalpayment) + parseInt(docs[i].payment.amount);
+                                if(dics[i].category =='payment') continue
+
+                                totalpayment = parseInt(totalpayment) + parseInt(docs[i].amount);
                              %>
 
 
                                 <tr>
 
                                     <td>
-                                        <%= moment(docs[i].payment.date).format( 'DD-MMM-YYYY') %>
+                                        <%= moment(docs[i].date).format( 'DD-MMM-YYYY') %>
 
                                     </td>
-                                    <%if(!individual){%>
-                                        <td>
-                                            <a href="/individualpayments/<%=docs[i].name%>">
-                                                <%=docs[i].name%>
-                                            </a>
-                                        </td>
-                                        <%}%>
+                                    <td>
+                                        <a href="/individualpayments/<%=docs[i].name%>">
+                                            <%=docs[i].name%>
+                                        </a>
+                                    </td>
+                                    <td>
+                                        <%=docs[i].relation%>
+                                    </td>
+                                    <td>
+                                        <%=docs[i].amount.toLocaleString()%>
+                                    </td>
 
-                                            <td>
-                                                <%=docs[i].payment.amount.toLocaleString()%>
-                                            </td>
+                                    <td>
 
-                                            <td>
-
-                                                <%=docs[i].payment.hint%>
-
-
-                                            </td>
+                                        <%=docs[i].hint%>
 
 
-                                            <%if(!individual){%>
-                                                <td><a href="/deletepayment/<%=docs[i].name%>/<%=docs[i].payment._id%>/all" class="btn btn-danger" onclick="return confirm('are you sure')">Delete</a></td>
-                                                <%}else{%>
-                                                    <td><a href="/deletepayment/<%=docs[i].name%>/<%=docs[i].payment._id%>/individual" class="btn btn-danger" onclick="return confirm('are you sure')">Delete</a></td>
-                                                    <%}%>
+                                    </td>
+
+
+                                    <td><a href="/deleterecieced/<%=dics[i].relation%>/<%=dics[i]._id%>" class="btn btn-danger" onclick="return confirm('are you sure')">Delete</a></td>
+
                                 </tr>
                                 <%}%>
 
@@ -405,7 +405,7 @@
                     </a>
                 </div>
                 <div class="modal-body">
-                    <form id="form1" action="<%if(individual){%>/filterindividualpayments<%}else{%>/filterpayments<%}%>" method="POST">
+                    <form id="form1" action="/filterpayments" method="POST">
                         <div class="form-group row">
                             <div class="col-sm-12 mb-3 mb-sm-0">
                                 <label for="">From date</label>
@@ -438,35 +438,7 @@
 
 
 
-    <div class="floatingButtonWrap">
-        <div class="floatingButtonInner">
-            <a href="#" class="floatingButton">
-                <i class="fa fa-plus icon-default"></i>
-            </a>
-            <ul class="floatingMenu">
 
-                <li>
-                    <a href="/paymentcontroller/salary" class="btn btn-primary">Salary Manage</a>
-
-                </li>
-
-                <li> <a href="/addlorirent" class="btn btn-primary">Loari rent </a>
-
-                </li>
-                <li> <a href="/utility" class="btn btn-primary">Utility bills </a>
-
-                </li>
-                <li> <a href="/paymentcontroller/borrows" class="btn btn-primary">Borrows & Returns  </a>
-
-                </li>
-                <li> <a href="/employee/viewkooli" class="btn btn-primary">Loaders payment  </a>
-
-                </li>
-
-
-            </ul>
-        </div>
-    </div>
 
     <script type="text/javascript">
         function check_user() {
@@ -496,6 +468,49 @@
             $('#editmodel').on('hide.bs.modal', function() {
                 $('#date').focus();
             })
+            $("#name").on("change", function() {
+                var name = document.getElementById('name').value;
+                var simp = name.split('-')[1]
+
+                if (simp == 'S') {
+                    $("#inputselection").val('Purchase');
+
+                } else if (simp == 'B') {
+                    $("#inputselection").val('Sales');
+
+                } else if (simp == 'E') {
+                    $("#inputselection").val('Employee');
+
+                } else if (simp == 'L') {
+                    $("#inputselection").val('Loader');
+
+                } else {
+                    $("#inputselection").val('Other Payments');
+
+                }
+            });
+            $("#nameb").on("change", function() {
+                var name = document.getElementById('nameb').value;
+                var simp = name.split('-')[1]
+
+                if (simp == 'S') {
+                    $("#inputselectionb").val('Purchase');
+
+                } else if (simp == 'B') {
+                    $("#inputselectionb").val('Sales');
+
+                } else if (simp == 'E') {
+                    $("#inputselectionb").val('Employee');
+
+                } else if (simp == 'L') {
+                    $("#inputselectionb").val('Loader');
+
+                } else {
+                    $("#inputselectionb").val('Other Payments');
+
+                }
+            });
+
         });
     </script>
     <script>

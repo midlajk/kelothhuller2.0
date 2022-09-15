@@ -35,7 +35,7 @@ var loaders = new Schema({
     payed: [{
         amount: Number,
         date: Date,
-        message: String
+        hint: String
     }],
 
 });
@@ -51,28 +51,21 @@ var employees = new Schema({
     careoff: String,
     duty: String,
     salary: String,
-    borrowal: [{
-        date: Date,
-        id: String,
-        borrowed: Number,
-        returned: Number,
-    }],
+
 
     leave: [{
         date: Date
     }],
     detail: [{
-        date: Date,
-        payment: String,
-        amount: Number,
 
-
-    }],
-    payment: [{
         date: Date,
         hint: String,
-        amount: Number,
+        paid: Number,
+        salary: Number,
+
+
     }],
+
 
 
 });

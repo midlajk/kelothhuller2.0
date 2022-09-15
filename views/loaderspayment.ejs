@@ -282,7 +282,7 @@
                             <form id="buyerform" action="/employee/addloaderpayment" method="POST">
                                 <tr>
                                     <td><input required tabindex="1" name="date" class="form-control" value="<%=todaydate%>" type="date" id="date"></td>
-                                    <td><input autofocus autocomplete="off" required tabindex="1" name="id" class="form-control" value="" type="text" list="namess" id="id"></td>
+                                    <td><input autofocus autocomplete="off" required tabindex="1" name="name" class="form-control" value="" type="text" list="namess" id="id"></td>
                                     <datalist id="namess">  <%for(let docs of loaders){%>
                                         <option value="<%=docs%>">
                                       <%}%></datalist>
@@ -350,7 +350,7 @@
                                         <%=dic.payed.amount%>
                                     </td>
                                     <td>
-                                        <%=dic.payed.message%>
+                                        <%=dic.payed.hint%>
                                     </td>
                                     <td>
                                         <a onclick="return confirm('are you sure?')" href="/employee/deletepayment/<%=dic.payed._id%>/<%=dic.name%>/all" class="btn btn-danger">Delete</a></td>

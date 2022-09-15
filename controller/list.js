@@ -1,5 +1,4 @@
 require('../model/accountsmodal')
-require('../model/borrow_salary')
 require('../model/employeemodel')
 const mongoose = require('mongoose');
 var fs = require('fs');
@@ -7,11 +6,8 @@ const bcrypt = require('bcryptjs');
 const Sellers = mongoose.model('Sellers');
 const Buyers = mongoose.model('Buyers');
 const Payments = mongoose.model('Payments');
-const Borrowed = mongoose.model('Borrowed');
-const Lorirent = mongoose.model('Lorirent');
 const Loaders = mongoose.model('Loaders');
 const Loaderskooli = mongoose.model('Loaderskooli');
-const Transaction = mongoose.model('Transaction');
 
 exports.dealerslist = (req, res) => {
     Buyers.aggregate([{
@@ -30,71 +26,99 @@ exports.dealerslist = (req, res) => {
         }]).sort({ "_id": -1 }).exec((err, dics) => {
 
             res.render('dealerslist', {
-                mainpath: '/stockmanagement',
+                mainpath: '/dealers',
                 docs: data,
-                dics: dics
-
+                dics: dics,
+                start: 'start',
+                end: 'end'
             })
         })
     })
 
 }
-exports.payeelist = (req, res) => {
-    Payments.aggregate([{
-        $addFields: {
-            totalrecieved: { $sum: "$payment.amount" },
-            totalpaid: { $sum: "$paid.amount" },
+exports.filterdelerslist = (req, res) => {
 
+    start = new Date(req.body.sdate);
+    bdate = new Date(req.body.sdate);
+    end = new Date(req.body.edate);
+    start.setDate(start.getDate() - 1);
+    Buyers.aggregate([{
+            "$match": {
+                "deal.date": { $gte: start, $lt: end }
+            }
+        },
+        {
+            "$project": {
+                "name": 1,
+                "values": {
+                    "$filter": {
+                        "input": "$deal",
+                        "as": "value",
+                        "cond": {
+                            "$and": [
+                                { "$gt": ["$$value.date", start] },
+                                { "$lt": ["$$value.date", end] }
+                            ]
+                        }
+                    }
+                },
+
+            }
+        },
+        {
+            $addFields: {
+                totalsales: { $sum: "$deal.total" },
+                totalkg: { $sum: "$deal.kilogram" },
+                totalpaid: { $sum: "$deal.paid" }
+
+            }
         }
-    }]).sort({ "_id": -1 }).exec((err, data) => {
 
 
-        res.render('payeelist', {
-            mainpath: '/paymentsmanage',
-            docs: data,
+    ]).sort({ "_id": -1 }).exec((err, data) => {
+        Sellers.aggregate([{
+                "$match": {
+                    "deal.date": { $gte: start, $lt: end }
+                }
+            },
+            {
+                "$project": {
+                    "name": 1,
+                    "values": {
+                        "$filter": {
+                            "input": "$deal",
+                            "as": "value",
+                            "cond": {
+                                "$and": [
+                                    { "$gt": ["$$value.date", start] },
+                                    { "$lt": ["$$value.date", end] }
+                                ]
+                            }
+                        }
+                    },
+
+                }
+            },
+            {
+                $addFields: {
+                    totalsales: { $sum: "$deal.total" },
+                    totalkg: { $sum: "$deal.kilogram" },
+                    totalpaid: { $sum: "$deal.paid" }
+
+                }
+            }
 
 
-
-        })
-    })
-
-}
-exports.borrowlist = (req, res) => {
-    Borrowed.aggregate([{
-        $addFields: {
-            totalborrow: { $sum: "$detail.amount" },
+        ]).sort({ "_id": -1 }).exec((err, dics) => {
+            res.render('dealerslist', {
+                mainpath: '/dealers',
+                docs: data,
+                dics: dics,
+                start: bdate.toLocaleDateString(),
+                end: end.toLocaleDateString()
 
 
-        }
-    }]).sort({ "_id": -1 }).exec((err, data) => {
-
-
-        res.render('borrowerslist', {
-            mainpath: '/borrow',
-            docs: data,
-
-
-
-        })
-    })
-
-}
-exports.rentlist = (req, res) => {
-    Lorirent.aggregate([{
-        $addFields: {
-            totalrent: { $sum: "$trips.rent" },
-            totalpaid: { $sum: "$paid.amount" },
-
-        }
-    }]).sort({ "_id": -1 }).exec((err, data) => {
-
-
-        res.render('loarilist', {
-            mainpath: '/addlorirent',
-            docs: data,
-
-
-
+            })
         })
     })
 
@@ -133,8 +157,7 @@ exports.deletedealersales = (req, res) => {
 
                         docs.deal.forEach(one => {
 
-
-                            Transaction.findOneAndDelete({ id: one.id }).then((err, docs) => {
+                            Payments.findOneAndDelete({ _id: one.id }).then((err, docs) => {
 
                             })
                         });
@@ -161,8 +184,7 @@ exports.deletedealerpurchase = (req, res) => {
 
                         docs.deal.forEach(one => {
 
-
-                            Transaction.findOneAndDelete({ id: one.id }).then((err, docs) => {
+                            Payments.findOneAndDelete({ _id: one.id }).then((err, docs) => {
 
                             })
                         });

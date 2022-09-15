@@ -285,7 +285,7 @@
                                         <td>
                                             <button form="buyerform" tabindex="4" class="btn btn-primary" id="submit" type="submit">Submit</button>
                                             <div id="button-spinner" style="margin-left: 10px; width: 25px; height: 25px; display: none" class="spinner-border"></div>
-                                            <input required type="hidden" name="id" value="<%=names%>">
+                                            <input required type="hidden" name="name" value="<%=names%>">
                                             <input required type="hidden" name="category" value="individual">
                                         </td>
 
@@ -337,7 +337,7 @@
                                             <%=dic.payed.amount%>
                                         </td>
                                         <td>
-                                            <%=dic.payed.message%>
+                                            <%=dic.payed.hint%>
                                         </td>
                                         <td>
                                             <a onclick="return confirm('are you sure?')" href="/employee/deletepayment/<%=dic.payed._id%>/<%=dic.name%>/individual" class="btn btn-danger">Delete</a></td>

@@ -61,7 +61,6 @@ const accounts = require('./routes/account');
 const employeeroute = require('./routes/employee');
 const managementroutes = require('./routes/management');
 const mainroutes = require('./routes/main');
-const borrows = require('./routes/borrows_salary');
 const list = require('./routes/list');
 const manager = require('./routes/manager');
 app.use(managementroutes);
@@ -69,8 +68,8 @@ app.use(mainroutes);
 app.use('/employee',employeeroute);
 app.use(accounts);
 app.use(list);
-app.use('/paymentcontroller',borrows);
+const salary = require('./routes/salary');
+app.use('/paymentcontroller',salary);
+
 app.use('/manager',manager);
-const bill = require('./routes/bill');
-app.use(bill);
 app.listen(PORT)

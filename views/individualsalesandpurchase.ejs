@@ -107,10 +107,9 @@
                     <% } %>
                         <%if(category =='sales'){%>
                             <a href="/salesmanagement" class="btn btn-primary"> Sales Report</a>
-                            <a href="/accountmanagement" class="btn btn-primary">Purchase and Sales</a>
+
 
                             <%}else{%> <a href="/purchasemanagement" class="btn btn-primary"> Purchase Report</a>
-                                <a href="/accountmanagement" class="btn btn-primary">Purchase and Sales</a>
 
 
                                 <% } %>
@@ -155,8 +154,9 @@
                                 <th>Kilogram</th>
                                 <th>Price</th>
                                 <%if(category =='sales'){%>
-                                    <th>Amount paid</th>
+                                    <th>Amount Recieved</th>
                                     <th>Total amount</th>
+                                    <th>After TDS 1%</th>
 
                                     <%}else{%>
                                         <th>Total amount</th>
@@ -176,12 +176,12 @@
                                     <td><input required class="form-control price-control" tabIndex="2" type="number" step=".01" name="kilogram" style="width: 125px;" id="kilogram"></td>
                                     <td><input required class="p-1 form-control price-control" tabIndex="3" onkeydown="isKeyPressed(event)" type="number" step=".01" style="width: 125px;" name="price" id="price"></td>
                                     <%if(category =='sales'){%>
-                                        <td><input required class="p-1 form-control" style="width: 150px;" tabIndex="4" type="number" step=".01" name="paid" id="paid"></td>
+                                        <td><input required class="p-1 form-control" style="width: 150px;" tabIndex="4" type="number" step=".01" name="amount" id="paid"></td>
                                         <td><input required class="p-1" tabIndex="5" type="number" step=".01" style="width: 150px;" name="total" id="total"></td>
-
+                                        <td><input required class="p-1" tabIndex="5" type="number" step=".01" style="width: 120px;" name="tds" id="tds"></td>
                                         <%}else{%>
                                             <td><input required class="p-1" tabIndex="4" type="number" step=".01" style="width: 150px;" name="total" id="total"></td>
-                                            <td><input required class="p-1 form-control" style="width: 150px;" tabIndex="5" type="number" step=".01" name="paid" id="paid"></td>
+                                            <td><input required class="p-1 form-control" style="width: 150px;" tabIndex="5" type="number" step=".01" name="amount" id="paid"></td>
                                             <%}%>
 
                                                 <td><select id="through" required class="p-1 form-control" style="width: 100px;" name="through">
@@ -192,7 +192,7 @@
                                                 <td>
                                                     <button form="buyerform" tabIndex="7" class="btn btn-primary" id="submit" type="submit">Submit</button>
                                                     <div id="button-spinner" style="margin-left: 10px; width: 25px; height: 25px; display: none" class="spinner-border"></div>
-                                                    <input required type="hidden" name="buyer" value="<%=name%>">
+                                                    <input required type="hidden" name="name" value="<%=name%>">
                                                 </td>
 
                                 </tr>
@@ -209,17 +209,24 @@
                             <tr>
                                 <th>Date</th>
 
-                                <th>kilogram</th>
-                                <th>Price</th>
+
+
                                 <%if(category =='sales'){%>
-                                    <th>Paid</th>
+                                    <th>Loari</th>
+                                    <th>kilogram</th>
+                                    <th>Price</th>
+                                    <th>Recieved</th>
                                     <th>Total</th>
+                                    <th>After TDS</th>
+
                                     <%}else{%>
+                                        <th>kilogram</th>
+                                        <th>Bag price</th>
+                                        <th>Price</th>
                                         <th>Total</th>
                                         <th>Paid</th>
                                         <%}%>
-                                            <th class="no-print">Total till</th>
-                                            <th class="no-print">Paid till</th>
+
                                             <th>
                                                 Remaining</th>
 
@@ -236,23 +243,23 @@
                             <% 
                             var rem = [];
                             var remaining = 0;
-                            var pay=[]
-                            var tot = []
-                            var payd = 0
-                            var totl = 0
+                            // var pay=[]
+                            // var tot = []
+                            // var payd = 0
+                            // var totl = 0
                              for (var j = data.length; j > 0; j--){
                                
-                                if(remaining==0){
-                                    payd =   data[j-1].deal.paid
-                                totl =  data[j-1].deal.total
-                                }else{
-                                      payd = payd + data[j-1].deal.paid
-                                totl = totl + data[j-1].deal.total
-                                }
+                                // if(remaining==0){
+                                //     payd =   data[j-1].deal.paid
+                                // totl =  data[j-1].deal.total
+                                // }else{
+                                //       payd = payd + data[j-1].deal.paid
+                                // totl = totl + data[j-1].deal.total
+                                // }
                                 remaining = remaining + data[j-1].deal.total - data[j-1].deal.paid
                                 rem.push(remaining)
-                                pay.push(payd)
-                                tot.push(totl)
+                                // pay.push(payd)
+                                // tot.push(totl)
 
                              }
                             var kilogram = 0;
@@ -271,25 +278,40 @@
 
                                     </td>
 
-
-                                    <td class="totalkilogram">
-                                        <%=data[i].deal.kilogram.toLocaleString()%>
-                                    </td>
-                                    <td class="">
-                                        <%=data[i].deal.price%>
-                                    </td>
                                     <%if(category =='sales'){%>
-                                        <th class="totalpaid">
-                                            <%=data[i].deal.paid.toLocaleString()%>
 
+                                        <td class="totalkilogram">
+                                            <%=data[i].deal.loari%>
+                                        </td>
+                                        <td class="totalkilogram">
+                                            <%=data[i].deal.kilogram.toLocaleString()%>
+                                        </td>
+                                        <td class="">
+                                            <%=data[i].deal.price%>
+                                        </td>
+                                        <th class="totalpaid">
+                                            <%=data[i].deal.paid%>
                                         </th>
                                         <th class="totalamount">
 
                                             <%=data[i].deal.total.toLocaleString()%>
 
                                         </th>
+                                        <th>
+                                            <%=data[i].deal.tds%>
+                                        </th>
+
 
                                         <%}else{%>
+                                            <td class="totalkilogram">
+                                                <%=data[i].deal.kilogram.toLocaleString()%>
+                                            </td>
+                                            <td class="">
+                                                <%=data[i].deal.bagprice%>
+                                            </td>
+                                            <td class="">
+                                                <%=data[i].deal.price%>
+                                            </td>
                                             <th class="totalamount">
 
                                                 <%=data[i].deal.total.toLocaleString()%>
@@ -300,12 +322,7 @@
 
                                             </th>
                                             <%}%>
-                                                <td class="no-print">
-                                                    <%=tot[length].toLocaleString()%>
-                                                </td>
-                                                <td class="no-print">
-                                                    <%=pay[length].toLocaleString()%>
-                                                </td>
+
                                                 <th>
 
                                                     <%=rem[length].toLocaleString()%>
@@ -325,18 +342,23 @@
                         <tr>
                             <th>Date</th>
 
-                            <th id="totalbag"></th>
-                            <th>Price</th>
                             <%if(category =='sales'){%>
+                                <th></th>
+                                <th id="totalbag"></th>
+                                <th>Price</th>
                                 <th id="totalpai">Paid</th>
                                 <th id="totalamount">Total</th>
+                                <th>Price</th>
+
 
                                 <%}else{%>
+                                    <th id="totalbag"></th>
+                                    <th></th>
+                                    <th></th>
                                     <th id="totalamount">Total</th>
                                     <th id="totalpai">Paid</th>
                                     <%}%>
-                                        <th class="no-print"></th>
-                                        <th class="no-print"></th>
+
                                         <th id="totalremaining">Remaining</th>
 
 
@@ -429,54 +451,49 @@
 
 
                                         <input type="hidden" class="form-control form-control-user" value="indivdual" name="types">
+                                        <%if(category =='sales'){%>
+
+                                            <div class="col-sm-6 mb-3 mb-sm-0">
+                                                <label for="">Loari</label>
+                                                <input required type="text" tabindex="50" class="form-control form-control-user" id="editloari" name="editloari">
+                                            </div>
+                                            <%}%>
+                                                <div class="col-sm-6 mb-3 mb-sm-0">
+                                                    <label for="">Hint / careoff</label>
+                                                    <input type="text" tabindex="45" class="form-control form-control-user" id="editcareoff" name="hint">
+                                                </div>
+
+                                                <div class="col-sm-6 mb-3 mb-sm-0">
+                                                    <label for="">Kilogram</label>
+                                                    <input type="number" tabindex="47" class="form-control form-control-user price-control" id="editkilogram" step=".01" name="editkilogram">
+                                                </div>
+                                                <div class="col-sm-6 mb-3 mb-sm-0">
+                                                    <label for="">Price</label>
+                                                    <input type="number" tabindex="48" class="form-control form-control-user price-control" id="editprize" step=".01" name="editprize">
+                                                </div>
+                                                <div class="col-sm-6 mb-3 mb-sm-0">
+                                                    <label for="">Total</label>
+                                                    <input required type="number" tabindex="49" class="p-1" id="edittotal" step=".01" name="edittotal">
+                                                </div>
+                                                <div class="col-sm-6 mb-3 mb-sm-0">
+                                                    <label for="">Paid</label>
+                                                    <input required type="number" tabindex="50" class="form-control form-control-user" id="editpaid" name="paid">
+                                                </div>
+
+                                                <%if(category =='sales'){%>
+
+                                                    <div class="col-sm-6 mb-3 mb-sm-0">
+                                                        <label for="">After TDS</label>
+                                                        <input required type="number" tabindex="50" class="form-control form-control-user" id="tdstotal" name="tdstotal">
+                                                    </div>
+                                                    <%}%>
+                                                        <input type="hidden" name="through" id="thre">
 
 
-                                        <div class="col-sm-6 mb-3 mb-sm-0">
-                                            <label for="">Outumn</label>
-                                            <input type="number" tabindex="43" class="form-control form-control-user" id="editoutumn" step=".01" name="autumn">
-                                        </div>
-                                        <div class="col-sm-6 mb-3 mb-sm-0">
-                                            <label for="">Moisture</label>
-                                            <input type="number" tabindex="44" class="form-control form-control-user" id="editmoisture" step=".01" name="moisture">
-                                        </div>
-                                        <div class="col-sm-6 mb-3 mb-sm-0">
-                                            <label for="">Hint / careoff</label>
-                                            <input type="text" tabindex="45" class="form-control form-control-user" id="editcareoff" name="hint">
-                                        </div>
-                                        <div class="col-sm-6 mb-3 mb-sm-0">
-                                            <label for="">Bags</label>
-                                            <input type="number" tabindex="46" class="form-control form-control-user" id="editbags" name="editbags">
-                                        </div>
-
-                                        <div class="col-sm-6 mb-3 mb-sm-0">
-                                            <label for="">Kilogram</label>
-                                            <input type="number" tabindex="47" class="form-control form-control-user price-control" id="editkilogram" step=".01" name="editkilogram">
-                                        </div>
-                                        <div class="col-sm-6 mb-3 mb-sm-0">
-                                            <label for="">Prize</label>
-                                            <input type="number" tabindex="48" class="form-control form-control-user price-control" id="editprize" step=".01" name="editprize">
-                                        </div>
-                                        <div class="col-sm-6 mb-3 mb-sm-0">
-                                            <label for="">Total</label>
-                                            <input required type="number" tabindex="49" class="p-1" id="edittotal" step=".01" name="edittotal">
-                                        </div>
-                                        <div class="col-sm-6 mb-3 mb-sm-0">
-                                            <label for="">Paid</label>
-                                            <input required type="number" tabindex="50" class="form-control form-control-user" id="editpaid" name="editpaid">
-                                        </div>
-                                        <div class="col-sm-6 mb-3 mb-sm-0">
-                                            <label for="">Remaining</label>
-                                            <h5 id="editremaining"> </h5>
-                                        </div>
-
-
-                                        <input type="hidden" name="through" id="thre">
-
-
-                                        <input type="hidden" name="previoustotal" id="previoustotal">
-                                        <input type="hidden" name="previouspaid" id="previouspaid">
-                                        <input type="hidden" value="" name="arrayid" id="arrayid">
-                                        <input type="hidden" value="" name="objectid" id="objectid">
+                                                        <input type="hidden" name="previoustotal" id="previoustotal">
+                                                        <input type="hidden" name="previouspaid" id="previouspaid">
+                                                        <input type="hidden" value="" name="arrayid" id="arrayid">
+                                                        <input type="hidden" value="" name="objectid" id="objectid">
                         </div>
                     </form>
 
@@ -491,40 +508,6 @@
         </div>
     </div>
 
-    <div class="floatingButtonWrap">
-        <div class="floatingButtonInner">
-            <a href="#" class="floatingButton">
-                <i class="fa fa-plus icon-default"></i>
-            </a>
-            <ul class="floatingMenu">
-                <li>
-                    <%if(category =='sales'){%>
-                        <a href="/individualpurchase/<%=name%>" class="btn btn-primary">
-                            <%=name%>'s Purchase account </a>
-
-
-                        <%}else{%>
-                            <a href="/individualsales/<%=name%>" class="btn btn-primary ">
-                                <%=name%>'s Sales account </a>
-                            <% } %>
-                </li>
-
-                <li>
-
-                    <a href="/salesmanagement" class="btn btn-primary">Sales Report</a>
-
-
-                </li>
-                <li>
-                    <a href="/purchasemanagement" class="btn btn-primary">Purchase Report</a></li>
-
-
-                <li> <a href="/accountmanagement" class="btn btn-primary"> Sales and Purchase</a>
-                </li>
-
-            </ul>
-        </div>
-    </div>
 
     <script type="text/javascript">
         $(document).ready(function() {
@@ -568,20 +551,18 @@
 
 
             '<%if(category =="sales"){%>'
-            document.getElementById("deletebutton").href = "/deletesales/" + obj[i].id + "/" + obj[i].deal.id + "/indivdual/" + obj[i].deal.total + "/" + obj[i].deal.paid;
+            document.getElementById("deletebutton").href = "/deletesales/" + obj[i].name + "/" + obj[i].deal.id + "/indivdual/" + obj[i].deal.total + "/" + obj[i].deal.paid;
             '<%}else{%>'
-            document.getElementById("deletebutton").href = "/deletepurchase/" + obj[i].id + "/" + obj[i].deal.id + "/indivdual/" + obj[i].deal.total + "/" + obj[i].deal.paid;
+            document.getElementById("deletebutton").href = "/deletepurchase/" + obj[i].name + "/" + obj[i].deal.id + "/indivdual/" + obj[i].deal.total + "/" + obj[i].deal.paid;
             '<%}%>'
             // document.getElementById("deletebutton").href = "/deletesales/ " + obj.id + "/ " + obj[i].deal.id + "/indivdual ";
 
             var today = moment(obj[i].deal.date).format('YYYY-MM-DD');
             document.getElementById("editdate").value = today;
             // document.getElementById('editcustomers').innerText = obj.name;
-            document.getElementById('editbags').value = obj[i].deal.bags;
             document.getElementById('editkilogram').value = obj[i].deal.kilogram
             document.getElementById('edittotal').value = obj[i].deal.total
-            document.getElementById('editoutumn').value = obj[i].deal.outumn;
-            document.getElementById('editmoisture').value = obj[i].deal.moisture;
+
             document.getElementById('editcareoff').value = obj[i].deal.hint;
             document.getElementById('editprize').value = obj[i].deal.price;
             document.getElementById('objectid').value = obj[i].id;
@@ -589,8 +570,8 @@
             document.getElementById('previoustotal').value = obj[i].deal.total;
             document.getElementById('previouspaid').value = obj[i].deal.paid;
             document.getElementById('editpaid').value = obj[i].deal.paid
-            document.getElementById('editremaining').innerText = obj[i].deal.Remaining.toLocaleString();
-            document.getElementById('thre').value = obj[i].deal.through;
+            document.getElementById('tdstotal').value = obj[i].deal.tds;
+            document.getElementById('editloari').value = obj[i].deal.loari;
 
             $('#editmodel').modal('show')
 
@@ -614,10 +595,8 @@
             var kilogram = document.getElementById('kilogram').value;
             var price = document.getElementById('price').value;
             var total = parseInt(kilogram * price);
-
-            // var remaining = parseInt(total - paid);
             document.getElementById('total').value = total;
-            // document.getElementById('remaining').innerText = remaining;
+            document.getElementById('tds').value = parseInt(total - (total * 1 / 100));
         });
         $(".price-control").on("change", function() {
             var kilogram = document.getElementById('editkilogram').value;
@@ -625,8 +604,8 @@
             var paid = document.getElementById('editpaid').value;
             var total = parseInt(kilogram * price);
             document.getElementById('edittotal').value = total;
-            console.log(parseInt(kilogram * price - paid))
-            document.getElementById('editremaining').innerText = parseInt(kilogram * price - paid).toLocaleString();
+            document.getElementById('tdstotal').value = parseInt(total - (total * 1 / 100));
+
         });
     </script>
     <script>

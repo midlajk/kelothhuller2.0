@@ -9,7 +9,7 @@
                         <%}%>
 
                             <%if(individual){%>
-                                to/from
+                                To
                                 <%=id%>
                                     <%}%>
             </h1>
@@ -27,12 +27,27 @@
 
             <!-- Earnings (Monthly) Card Example -->
             <!-- Earnings (Monthly) Card Example -->
-            <div class="col-xl-3 col-md-6 mb-4">
+            <div class="col-xl-4 col-md-6 mb-4">
                 <div class="card border-left-success shadow h-100 py-2">
                     <div class="card-body">
                         <div class="row no-gutters align-items-center">
                             <div class="col mr-2">
-                                <div class="text-xs font-weight-bold text-success text-uppercase mb-1">Total Payment </div>
+                                <div class="text-xs font-weight-bold text-success text-uppercase mb-1">Total Salary </div>
+                                <div class="h5 mb-0 font-weight-bold text-gray-800"><span id="totalsalary"></span></div>
+                            </div>
+                            <div class="col-auto">
+                                <i class="fas fa-rupee-sign fa-2x text-gray-300"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-xl-4 col-md-6 mb-4">
+                <div class="card border-left-primary shadow h-100 py-2">
+                    <div class="card-body">
+                        <div class="row no-gutters align-items-center">
+                            <div class="col mr-2">
+                                <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">Amount Paid</div>
                                 <div class="h5 mb-0 font-weight-bold text-gray-800"><span id="totalpaid"></span></div>
                             </div>
                             <div class="col-auto">
@@ -42,29 +57,14 @@
                     </div>
                 </div>
             </div>
-            <div class="col-xl-3 col-md-6 mb-4">
-                <div class="card border-left-primary shadow h-100 py-2">
-                    <div class="card-body">
-                        <div class="row no-gutters align-items-center">
-                            <div class="col mr-2">
-                                <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">Total Paid</div>
-                                <div class="h5 mb-0 font-weight-bold text-gray-800"><span id="totalsum"></span></div>
-                            </div>
-                            <div class="col-auto">
-                                <i class="fas fa-rupee-sign fa-2x text-gray-300"></i>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
 
 
-            <div class="col-xl-3 col-md-6 mb-4">
+            <div class="col-xl-4 col-md-6 mb-4">
                 <div class="card border-left-success shadow h-100 py-2">
                     <div class="card-body">
                         <div class="row no-gutters align-items-center">
                             <div class="col mr-2">
-                                <div class="text-xs font-weight-bold text-success text-uppercase mb-1">Remaining amount </div>
+                                <div class="text-xs font-weight-bold text-success text-uppercase mb-1">Remaining Settlement </div>
                                 <div class="h5 mb-0 font-weight-bold text-gray-800"><span id="remainingamount"></span></div>
                             </div>
                             <div class="col-auto">
@@ -74,23 +74,7 @@
                     </div>
                 </div>
             </div>
-            <%if(individual){%>
-                <div class="col-xl-3 col-md-6 mb-4">
-                    <div class="card border-left-success shadow h-100 py-2">
-                        <div class="card-body">
-                            <div class="row no-gutters align-items-center">
-                                <div class="col mr-2">
-                                    <div class="text-xs font-weight-bold text-success text-uppercase mb-1">Active credit </div>
-                                    <div class="h5 mb-0 font-weight-bold text-gray-800"><span id="totalpurchaseamount"></span></div>
-                                </div>
-                                <div class="col-auto">
-                                    <i class="fas fa-rupee-sign fa-2x text-gray-300"></i>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <%}%>
+
         </div>
 
         <!-- DataTales Example -->
@@ -99,34 +83,34 @@
             <div class="card-header py-3">
 
                 <a class="float-right btn btn-danger ml-2" href="" href="" data-toggle="modal" data-target="#filtermodel">Filter</a>
-                <button class="btn btn-success float-right" id="paymentbutton">View payments</button>
+
                 <%if(!individual){%> <a class="btn btn-primary " href="/employee/Editemployee">Employee List</a>
-                    <%}else{%>
-                        <a class="btn btn-primary float-right mr-2" href="/paymentcontroller/salary">Complete Salary </a>
-                        <%}%>
+                    <%}%>
 
-                            <br>
-                            <br>
-                            <form action="" method="GET" id="checkword">
-                                <div id="inputFormRow" class="form-group row">
+                        <br>
+                        <br>
+                        <form action="" method="GET" id="checkword">
+                            <div id="inputFormRow" class="form-group row">
 
 
-                                    <div class="col-sm-12 mb-3 mb-sm-0 input-group" id="seller_buyer">
+                                <div class="col-sm-12 mb-3 mb-sm-0 input-group" id="seller_buyer">
 
-                                        <select class="form-control form-control-user js-example-basic-single" id="list_sellers" onchange="check_user()">
+                                    <select class="form-control form-control-user js-example-basic-single" id="list_sellers" onchange="check_user()">
                                             <option value="">Search names</option>
                                               <%for(let docs of borrevers){%>
-                                                <option value="<%=docs%>"><%=docs%></option>
-                                              <%}%>
-                                         </select>
+                        <option value="<%=docs%>">
+                            <%=docs%>
+                        </option>
+                        <%}%>
+                            </select>
 
-                                        <div class="input-group-append">
-                                            <input type="submit" class="btn btn-primary" value="Search name"></input>
-                                        </div>
+                                    <div class="input-group-append">
+                                        <input type="submit" class="btn btn-primary" value="Search name"></input>
                                     </div>
-
                                 </div>
-                            </form>
+
+                            </div>
+                        </form>
             </div>
             <div class="card-body">
                 <div class="table-responsive">
@@ -137,8 +121,8 @@
                                 <%if(!individual){%>
                                     <th>Name</th>
                                     <%}%>
-                                        <th>Amount</tf>
-
+                                        <th>Salary</tf>
+                                            <th>Paid</th>
                                             <th>Hint</th>
                                             <th>Submit</th>
 
@@ -151,7 +135,7 @@
                                     <td><input required tabindex="1" name="date" class="form-control" style="max-width: 175px;" type="date" value="<%=todaydate%>" id=""></td>
                                     <%if(!individual){%>
                                         <td>
-                                            <input required autofocus autocomplete="off" class="p-1 form-control" style="max-width: 200px;" tabIndex="2" list="names" type="text" name="billto" id="paidname">
+                                            <input required autofocus autocomplete="off" class="p-1 form-control" style="max-width: 200px;" tabIndex="2" list="names" type="text" name="name" id="paidname">
                                             <datalist id="names">
                                                 <%for(let docs of borrevers){%>
                                                     <option value="<%=docs%>">
@@ -161,15 +145,15 @@
 
 
                                         <%}else{%> <input type="hidden" name="type" value="individual">
-                                            <input type="hidden" name="billto" value="<%=id%>">
+                                            <input type="hidden" name="name" value="<%=id%>">
                                             <%}%>
-                                                <td><input required class="form-control" tabIndex="3" type="number" step=".01" name="amount" style="max-width: 175px;"></td>
-
+                                                <td><input required class="form-control" tabIndex="3" type="number" step=".01" name="salary" style="max-width: 175px;"></td>
+                                                <td><input required class="form-control" tabIndex="4" type="number" step=".01" name="amount" style="max-width: 175px;"></td>
                                                 <td>
-                                                    <input class="p-1 form-control" style="max-width: 200px;" tabIndex="4" type="text" name="payment" id=""></td>
+                                                    <input class="p-1 form-control" style="max-width: 200px;" tabIndex="5" type="text" name="hint" id=""></td>
 
 
-                                                <td><button form="utility" tabIndex="5" class="btn btn-primary" id="submit" type="submit">Submit</button>
+                                                <td><button form="utility" tabIndex="6" class="btn btn-primary" id="submit" type="submit">Submit</button>
                                                     <div id="button-spinner" style="margin-left: 10px; width: 25px; height: 25px; display: none" class="spinner-border"></div>
                                                 </td>
 
@@ -190,10 +174,12 @@
                                 <%if(!individual){%>
                                     <th>Name</th>
                                     <%}%>
-                                        <th>Amount</th>
+                                        <th>Salary</th>
+
+                                        <th>Paid</th>
 
                                         <th>Hint</th>
-                                        <th>Edit</th>
+                                        <th>Delete</th>
 
                             </tr>
                         </thead>
@@ -202,20 +188,20 @@
 
                                 <%if(!individual){%>
                                     <th>Date</th>
-                                    <th>Total amount paid</th>
-                                    <th colspan="2" id="total" class="badge-info">
-
-
+                                    <th>name</th>
+                                    <th id="total">
                                     </th>
-
+                                    <th id="paid"></th>
+                                    <th>Hint</th>
                                     <%}else{%>
-                                        <th>Total amount paid</th>
-                                        <th colspan="2" id="total" class="badge-info">
-
+                                        <th>Date</th>
+                                        <th id="total">
                                         </th>
+                                        <th id="paid"></th>
+                                        <th>Hint</th>
                                         <%}%>
 
-                                            <th>Edit</th>
+                                            <th>Delete</th>
 
                             </tr>
                         </tfoot>
@@ -223,8 +209,10 @@
 
                             <%
                             var total = 0;
+                            var paid = 0;
                             for(var i=0; i < docs.length; i++){
-                                total = parseInt(total)+parseInt(docs[i].detail.amount)
+                                total = parseInt(total)+parseInt(docs[i].detail.salary)
+                                paid = parseInt(paid)+parseInt(docs[i].detail.paid)
                                 %>
                                 <tr>
                                     <td>
@@ -240,16 +228,18 @@
                                         <%}%>
 
                                             <td>
-                                                <%=docs[i].detail.amount%>
+                                                <%=docs[i].detail.salary%>
                                             </td>
-
                                             <td>
-                                                <%=docs[i].detail.payment%>
+                                                <%=docs[i].detail.paid%>
+                                            </td>
+                                            <td>
+                                                <%=docs[i].detail.hint%>
                                             </td>
                                             <%if(!individual){%>
-                                                <td><a href="/paymentcontroller/deletesalary/<%=docs[i]._id%>/<%=docs[i].detail._id%>/salarymanage" onclick="return confirm('Are you sure')" class="btn btn-danger">Delete</a></td>
+                                                <td><a href="/paymentcontroller/deletesalary/<%=docs[i].name%>/<%=docs[i].detail._id%>/salarymanage" onclick="return confirm('Are you sure')" class="btn btn-danger">Delete</a></td>
                                                 <%}else{%>
-                                                    <td><a href="/paymentcontroller/deletesalary/<%=docs[i]._id%>/<%=docs[i].detail._id%>/salary_<%=id%>" onclick="return confirm('Are you sure')" class="btn btn-danger">Delete</a></td>
+                                                    <td><a href="/paymentcontroller/deletesalary/<%=docs[i].name%>/<%=docs[i].detail._id%>/salary_<%=id%>" onclick="return confirm('Are you sure')" class="btn btn-danger">Delete</a></td>
                                                     <%}%>
                                 </tr>
                                 <%}%>
@@ -262,146 +252,7 @@
 
 
         </div>
-        <div class="card shadow mb-4" style="<%if(!payment){%>display: none;<%}%>" id="paymentdetails">
-            <div class="card-header py-3">
-                <a class="float-right btn btn-danger ml-2" href="" href="" data-toggle="modal" data-target="#filtermodel">Filter</a>
-                <button class="btn btn-success float-right" id="loadingbutton">View Paid</button>
 
-                <h5 class="">Salary Payments
-                    <%if(individual){%>
-                        of
-                        <%=id%>
-                            <%}%>
-                                <%if(filter){%>
-                                    from
-                                    <%=moment(start).format( 'DD-MM-YYYY')%> to
-                                        <%=moment(end).format( 'DD-MM-YYYY')%>
-                                            <%}%>
-                                                </h6>
-                                                <br>
-
-            </div>
-            <div class="card-body">
-                <div class="table-responsive">
-                    <table class="table" width="100%" cellspacing="0">
-                        <thead>
-                            <tr>
-                                <th>Date</th>
-                                <%if(!individual){%>
-                                    <th>Name</th>
-                                    <%}%>
-                                        <th>Amount</th>
-                                        <th>hint</th>
-                                        <th>Submit</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-
-                            <form id="buyerform" action="/paymentcontroller/addsalary" method="POST">
-                                <tr>
-                                    <td><input required tabindex="1" name="date" class="form-control" style="max-width: 175px;" value="<%=todaydate%>" type="date" id="date"></td>
-                                    <%if(!individual){%>
-                                        <td><input required autofocus autocomplete="off" class="p-1 form-control" style="max-width: 200px;" tabIndex="2" type="text" name="id" list="names" id="paymentname"></td>
-
-                                        <%}else{%> <input type="hidden" name="type" value="individual">
-                                            <input type="hidden" name="id" value="<%=id%>">
-                                            <%}%>
-                                                <td><input autofocus required class="form-control" tabIndex="3" type="number" step=".01" name="amount" style="max-width: 175px;" id="kilogram"></td>
-                                                <td><input class="form-control" tabIndex="4" type="text" step=".01" style="max-width: 200px;" name="hint" id="hint"></td>
-
-
-                                                <td>
-                                                    <button form="buyerform" tabindex="5" class="btn btn-primary" id="submits" type="submit">Submit</button>
-                                                    <div id="button-spinners" style="margin-left: 10px; width: 25px; height: 25px; display: none" class="spinner-border"></div>
-
-                                                </td>
-
-                                </tr>
-                            </form>
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-
-            <div class="card-body">
-                <div class="table-responsive">
-                    <table class="table table-bordered" id="MyTable" width="100%" cellspacing="0">
-                        <thead>
-                            <tr>
-                                <th>Date</th>
-                                <%if(!individual){%>
-                                    <th>Name</th>
-                                    <%}%>
-                                        <th>Amount</th>
-
-                                        <th>hint</th>
-                                        <th>Edit</th>
-
-
-                            </tr>
-                        </thead>
-                        <tfoot>
-                            <tr>
-                                <tr>
-                                    <%if(!individual){%>
-                                        <th>Date</th>
-                                        <th>Total Payment </th>
-                                        <th colspan="2" id="totalpaidamount" class="badge-info">
-
-
-                                        </th>
-
-                                        <%}else{%>
-                                            <th>Total Payment </th>
-                                            <th colspan="2" id="totalpaidamount" class="badge-info">
-
-                                            </th>
-                                            <%}%>
-
-
-                                                <th>Edit</th>
-
-
-                                </tr>
-                        </tfoot>
-                        <tbody>
-
-                            <% payment = 0;
-                            for (let dic of dics){
-                                payment =parseInt(payment)+parseInt(dic.payment.amount);
-                                %>
-                                <tr>
-                                    <td>
-                                        <%= moment(dic.payment.date).format( 'DD-MMM-YYYY') %>
-                                    </td>
-                                    <%if(!individual){%>
-                                        <td>
-                                            <a href="/paymentcontroller/indivdualsalary/<%=dic.name%>">
-                                                <%=dic.name%>
-                                            </a>
-                                        </td>
-
-                                        <%}%>
-                                            <td>
-                                                <%=dic.payment.amount%>
-                                            </td>
-                                            <td>
-                                                <%=dic.payment.hint%>
-                                            </td>
-                                            <%if(!individual){%>
-                                                <td><a href="/paymentcontroller/deletesalarypayment/<%=dic._id%>/<%=dic.payment._id%>/salarymanage" onclick="return confirm('Are you sure')" class="btn btn-danger">Delete</a></td>
-                                                <%}else{%>
-                                                    <td><a href="/paymentcontroller/deletesalarypayment/<%=dic._id%>/<%=dic.payment._id%>/salary_<%=id%>" onclick="return confirm('Are you sure')" class="btn btn-danger">Delete</a></td>
-                                                    <%}%>
-
-                                </tr>
-                                <%}%>
-
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-        </div>
         <div class="modal fade" id="filtermodel" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
             <div class="modal-dialog" role="document">
                 <div class="modal-content">
@@ -443,34 +294,17 @@
             </div>
         </div>
         <script>
-            $("#paymentbutton").click(function() {
-
-                $('#paymentname').focus();
-
-                $('#paymentdetails').show();
-                $('#loadingdeatils').hide();
-                $('#headertext').text("Salary Payments");
-
-            })
-            $("#loadingbutton").click(function() {
-                $('#headertext').text("Salary Paid");
-                $('#paidname').focus();
-                $('#paymentdetails').hide();
-                $('#loadingdeatils').show();
-            })
         </script>
         <script>
             $(document).ready(function() {
                 var total = <%= total%>;
-                var payment = <%= payment %>;
+                var paid = <%= paid %>;
 
-                remaining = parseInt(payment - total);
+                remaining = parseInt(total - paid);
 
-                document.getElementById('totalsum').innerText = total.toLocaleString();
-                document.getElementById('totalpaid').innerText = payment.toLocaleString();
+                document.getElementById('totalsalary').innerText = total.toLocaleString();
+                document.getElementById('totalpaid').innerText = paid.toLocaleString();
                 document.getElementById('remainingamount').innerText = remaining.toLocaleString();
-
-                // document.getElementById('totalpurchasekg').innerText = totalpurchasekg.toLocaleString();
                 $('#dataTable').DataTable({
 
                     "ordering": false,
@@ -478,7 +312,7 @@
                 });
 
                 document.getElementById('total').innerHTML = total.toLocaleString();
-                document.getElementById('totalpaidamount').innerHTML = payment.toLocaleString();
+                document.getElementById('paid').innerHTML = paid.toLocaleString();
             });
 
             function check_user() {

@@ -17,6 +17,7 @@ exports.postloginpage = (req, res) => {
     var name = req.body.name.toUpperCase()
     var password = req.body.password
     Users.findOne({ name: name }).then(docs => {
+        console.log(docs, name)
         if (!docs) {
 
             req.flash('error', 'No user registered.');
@@ -36,7 +37,7 @@ exports.postloginpage = (req, res) => {
                             req.session.ismanager = false;
                             return req.session.save(err => {
                                 console.log(err)
-                                res.redirect('/transaction')
+                                res.redirect('/dealerslist')
                             });
                         } else {
 

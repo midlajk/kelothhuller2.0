@@ -1,191 +1,48 @@
 require('../model/accountsmodal')
+
 const bcrypt = require('bcryptjs');
 const mongoose = require('mongoose');
 var fs = require('fs');
 const Sellers = mongoose.model('Sellers');
 const Users = mongoose.model('Users');
 const Buyers = mongoose.model('Buyers');
+const Payments = mongoose.model('Payments');
 
-const Transaction = mongoose.model('Transaction');
 
 const Names = mongoose.model('Names');
-const Utility = mongoose.model('Utility');
 const generateUniqueId = require('generate-unique-id');
 
 
-
-
-exports.accountmanagement = (req, res) => {
-    let message = req.flash('error');
-    if (message.length > 0) {
-        message = message[0];
-    } else {
-        message = null;
-    }
-    var start = new Date(08 / 03 / 2000)
-    var end = new Date()
-
-
-    Buyers.aggregate([{ $unwind: "$deal" }, {
-            $match: {
-
-                "deal.date": {
-                    $lt: end,
-                    $gte: start
-                }
-            }
-        },
-
-
-    ]).sort({ "deal.date": -1, "deal._id": -1 }).exec((err, data) => {
-        Sellers.aggregate([{ $unwind: "$deal" }, {
-            $match: {
-
-                "deal.date": {
-                    $lt: end,
-                    $gte: start
-                }
-            },
-
-        }]).sort({ "deal.date": -1, "deal._id": -1 }).exec((err, datas) => {
-            Buyers.find().distinct('name').then(buyers => {
-                Sellers.find().distinct('name').then(sellers => {
-                    namesnew = buyers.concat(sellers);
-                    var uniqueSet = new Set(namesnew);
-                    var uniqueArr = Array.from(uniqueSet);
-
-                    res.render('accountmanagement', {
-                        mainpath: '/stockmanagement',
-                        subpath: '',
-                        buyer: data,
-                        seller: datas,
-                        start: start,
-                        end: end,
-                        names: uniqueArr,
-                        errorMessage: message
-                    })
-                }).catch(err => console.log(err));
-            })
-        })
-    })
-
-}
-
-exports.filtrsales = (req, res) => {
-
-    let message = req.flash('error');
-    if (message.length > 0) {
-        message = message[0];
-    } else {
-        message = null;
-    }
-    var end = new Date()
-    var start = new Date()
-
-    var filter = [{ $unwind: "$deal" }]
-    if (req.body.type == 'filter') {
-
-        start = new Date(req.body.sdate);
-        end = new Date(req.body.edate);
-
-        filter = [{ $unwind: "$deal" }, {
-            $match: {
-
-                "deal.date": {
-                    $lt: end,
-                    $gte: start
-                }
-            }
-        }]
-
-    } else if (req.body.type == '2months') {
-        start.setMonth(start.getMonth() - 2);
-
-
-        filter = [{ $unwind: "$deal" }, {
-            $match: {
-
-                "deal.date": {
-                    $lt: end,
-                    $gte: start
-                }
-            }
-        }]
-    } else if (req.body.type == '5months') {
-        start.setMonth(start.getMonth() - 5);
-
-        filter = [{ $unwind: "$deal" }, {
-            $match: {
-
-                "deal.date": {
-                    $lt: end,
-                    $gte: start
-                }
-            }
-        }]
-
-    } else if (req.body.type == 'year') {
-        start.setFullYear(start.getFullYear() - 1);
-        (start)
-
-        filter = [{ $unwind: "$deal" }, {
-            $match: {
-
-                "deal.date": {
-                    $lt: end,
-                    $gte: start
-                }
-            }
-        }]
-    } else {
-        start = new Date(08 / 03 / 2000)
-
-        filter = [{ $unwind: "$deal" }]
-
-    }
-
-    Buyers.aggregate(filter).sort({ "deal.date": -1, "deal._id": -1 }).exec((err, data) => {
-        Sellers.aggregate(filter).sort({ "deal.date": -1, "deal._id": -1 }).exec((err, datas) => {
-            Buyers.find().distinct('name').then(buyers => {
-                Sellers.find().distinct('name').then(sellers => {
-                    namesnew = buyers.concat(sellers);
-                    var uniqueSet = new Set(namesnew);
-                    var names = Array.from(uniqueSet);
-
-                    res.render('accountmanagement', {
-                        mainpath: '/stockmanagement',
-                        subpath: '',
-                        buyer: data,
-                        seller: datas,
-                        start: start,
-                        end: end,
-                        names: names,
-                        errorMessage: message
-                    })
-                }).catch(err => console.log(err));
-
-            })
-        })
-    })
-
-}
 exports.postdetailedbuyerdata = (req, res) => {
-
-    var totalpayment
-    var price;
-    if (req.body.through == 'quatity') {
-        totalpayment = 0
+    var totalpayment = parseInt(req.body.total) || 0;
+    const objectid = new mongoose.Types.ObjectId()
+    date = new Date(req.body.date)
+    var arrayid
+    if (req.body.id) {
+        arrayid = req.body.id
+    } else {
+        arrayid = new mongoose.Types.ObjectId()
+    }
+    var amount
+    var category
+    var paymentamount
+    if (req.body.amount < 0) {
+        amount = req.body.amount;
+        paymentamount = -req.body.amount;
+        category = 'recieved'
+    } else if (req.body.category == 'recieved') {
+        amount = -req.body.amount;
+        paymentamount = req.body.amount;
+        category = 'recieved'
 
     } else {
-
-        totalpayment = parseInt(req.body.total);
+        amount = req.body.amount || 0;
+        paymentamount = req.body.amount || 0;
+        category = 'payment'
 
     }
 
-    const objectid = new mongoose.Types.ObjectId()
-    const arrayid = new mongoose.Types.ObjectId()
-    var name = req.body.buyer.toUpperCase().trim();
-
+    var name = req.body.name.toUpperCase().trim().split('-')[0];
     Sellers.findOne({ name: name }).then((docs, err) => {
 
 
@@ -193,7 +50,7 @@ exports.postdetailedbuyerdata = (req, res) => {
             console.log(err)
         }
         if (docs) {
-            var maintotal = docs.total - parseInt(req.body.paid) + totalpayment;
+            var maintotal = docs.total + totalpayment - req.body.amount || 0;
             docs.updateOne({
                     total: maintotal
 
@@ -209,14 +66,14 @@ exports.postdetailedbuyerdata = (req, res) => {
                         "deal": {
 
                             id: arrayid,
-                            date: req.body.date,
-                            kilogram: req.body.kilogram,
-                            price: req.body.price,
+                            date: date,
+                            dateadded: new Date(),
+                            kilogram: req.body.kilogram || 0,
+                            price: parseInt(req.body.price / 50) || 0,
+                            bagprice: req.body.price || 0,
                             total: totalpayment,
-                            paid: req.body.paid,
-                            Remaining: maintotal,
-                            through: req.body.through,
-                            hint: req.body.hint
+                            hint: req.body.hint,
+                            paid: amount
 
                         }
                     }
@@ -232,17 +89,17 @@ exports.postdetailedbuyerdata = (req, res) => {
 
                 id: objectid,
                 name: name,
-                total: totalpayment - parseInt(req.body.paid),
+                total: totalpayment,
                 deal: [{
                     id: arrayid,
-                    date: req.body.date,
-                    kilogram: req.body.kilogram,
-                    price: req.body.price,
+                    date: date,
+                    dateadded: new Date(),
+                    kilogram: req.body.kilogram || 0,
+                    price: parseInt(req.body.price / 50) || 0,
+                    bagprice: req.body.price || 0,
                     total: totalpayment,
-                    paid: req.body.paid,
-                    Remaining: totalpayment - parseInt(req.body.paid),
-                    through: req.body.through,
-                    hint: req.body.hint
+                    hint: req.body.hint,
+                    paid: amount
 
                 }]
 
@@ -254,109 +111,130 @@ exports.postdetailedbuyerdata = (req, res) => {
 
 
         }
-    }).then((err, docs) => {
-        if (err) console.log(err)
-        var paymentmode
-        if (req.body.through) {
-            paymentmode = req.body.through
-        } else {
-            paymentmode = "bank";
-        }
-
-        if (parseInt(req.body.paid) > 0) {
-
-            var transaction = new Transaction({
-                id: arrayid,
-                Date: req.body.date,
-                amount: req.body.paid,
-                types: "debit",
-                comment: "Amount paid to " + name,
-                paymentmode: paymentmode,
-                debit: req.body.paid
-
-            })
-            transaction.save((err, doc) => {
-
-
-            })
-        }
-
-
-
     }).then(doc => {
+        if (req.body.amount != 0) {
+            var paymentmanagent = new Payments({
+
+                name: name,
+                _id: arrayid,
+                hint: req.body.hint,
+                amount: paymentamount,
+                relation: 'Purchase',
+                date: date,
+                dateadded: new Date(),
+                category: category,
+
+
+            })
+            paymentmanagent.save((err, docs) => {
+                returnpage()
+            })
+        } else {
+            returnpage()
+        }
+
+
+
+
+    })
+
+    function returnpage() {
         if (req.body.type == "seperate") {
             req.flash('error', "successfully added")
             res.redirect('/purchasemanagement')
-        } else if (req.body.type == "purchase") {
-            res.redirect('/accountmanagement')
+        } else if (req.body.type == "paymentpage") {
+            req.flash("recieved", false)
+            res.redirect('/getpayments')
+        } else if (req.body.type == "recievedpage") {
+            req.flash("recieved", true)
+            res.redirect('/getpayments')
         } else {
+            console.log(req.body.type)
             req.flash('error', "Successfully added")
             res.redirect('/individualpurchase/' + name);
-
         }
-    })
-
-
-
+    }
 }
 exports.deletepurchase = (req, res) => {
+    Sellers.findOne({ name: req.params.name }).then((docs, err) => {
+        if (docs) {
+            var maintotal = docs.total - parseInt(req.params.total) + parseInt(req.params.paid)
+            docs.updateOne({
+                    total: maintotal
+                }, { safe: true, upsert: true },
+                function(err, model) {
 
-    Sellers.findOne({ id: req.params.objectid }).then((docs, err) => {
-
-        name = docs.name
-        var maintotal = docs.total - parseInt(req.params.total) + parseInt(req.params.paid)
-        docs.updateOne({
-                total: maintotal
-
-            }, { safe: true, upsert: true },
-            function(err, model) {
-
-            }
-        )
-        docs.updateOne({
-                $pull: {
-                    "deal": {
-                        id: req.params.arrayid
-                    }
                 }
-            }, { safe: true, upsert: true },
-            function(err, model) {
-                console.log(err);
+            )
+            docs.updateOne({
+                    $pull: {
+                        "deal": {
+                            id: req.params.arrayid
+                        }
+                    }
+                }, { safe: true, upsert: true },
+                function(err, model) {
+                    console.log(err);
 
 
-            }
-        )
-
+                }
+            )
+        }
 
     }).then((docs, err) => {
-        if (err) console.log("error")
-        Transaction.findOneAndRemove({ id: req.params.arrayid }).then(docs => {
-            if (req.params.type == "seperate") {
-                res.redirect('/purchasemanagement')
-            } else if (req.params.type == "nonseperate") {
-                res.redirect('/accountmanagement')
+        Payments.findByIdAndDelete(req.params.arrayid).then((err, docs) => {
+            if (err) console.log(err)
 
-            } else {
-                res.redirect('/individualpurchase/' + name)
-            }
         })
+        if (req.params.type == "seperate") {
+            res.redirect('/purchasemanagement')
+        } else if (req.params.type == "payments") {
+            req.flash("recieved", false)
+            res.redirect('/getpayments')
+        } else if (req.params.type == "recieved") {
+            req.flash("recieved", true)
+            res.redirect('/getpayments')
+        } else {
+            res.redirect('/individualpurchase/' + req.params.name)
+        }
+
 
     })
 };
 exports.postbuyerform = (req, res) => {
-    var totalpayment
-    if (req.body.through == 'quatity') {
-        totalpayment = 0
-    } else {
-        totalpayment = parseInt(req.body.total);
-    }
+    var totalpayment = parseInt(req.body.total) || 0;
     const objectid = new mongoose.Types.ObjectId()
-    const arrayid = new mongoose.Types.ObjectId()
-    var name = req.body.buyer.toUpperCase().trim();
+    date = new Date(req.body.date)
+    var arrayid
+    if (req.body.id) {
+        arrayid = req.body.id
+    } else {
+        arrayid = new mongoose.Types.ObjectId()
+    }
+    var amount
+    var category
+    var paymentamount
+    if (req.body.amount < 0) {
+        amount = req.body.amount;
+        paymentamount = -req.body.amount;
+        category = 'payment'
 
+    } else if (req.body.category == 'payment') {
+        amount = -req.body.amount;
+        paymentamount = req.body.amount;
+        category = 'payment'
+
+    } else {
+        amount = req.body.amount || 0;
+        paymentamount = req.body.amount || 0;
+        category = 'recieved'
+
+    }
+    var name = req.body.name.toUpperCase().trim().split('-')[0];
+    var loari = req.body.loari ? req.body.loari.toUpperCase().trim() : '';
     Buyers.findOne({ name: name }).then(docs => {
         if (docs) {
-            var maintotal = docs.total - parseInt(req.body.paid) + totalpayment;
+            var maintotal = docs.total + totalpayment - amount;
             docs.updateOne({
                     total: maintotal
 
@@ -370,25 +248,21 @@ exports.postbuyerform = (req, res) => {
             docs.updateOne({
                     $push: {
                         "deal": {
-
+                            dateadded: new Date(),
                             id: arrayid,
                             date: req.body.date,
-                            bags: req.body.bags,
-                            kilogram: req.body.kilogram,
-                            price: req.body.price,
-                            total: totalpayment,
-                            paid: req.body.paid,
-                            Remaining: maintotal,
-                            through: req.body.through,
-                            hint: req.body.hint
+                            kilogram: req.body.kilogram || 0,
+                            price: req.body.price || 0,
+                            tds: parseInt(totalpayment - (totalpayment * (req.body.tds / 100))) || 0,
+                            total: totalpayment || 0,
+                            hint: req.body.hint,
+                            loari: loari,
+                            paid: amount || 0
 
                         }
                     }
                 }, { safe: true, upsert: true },
-                function(err, model) {
-                    console.log(err);
-
-                }
+                function(err, model) {}
             )
 
         } else {
@@ -396,19 +270,18 @@ exports.postbuyerform = (req, res) => {
 
                 id: objectid,
                 name: name,
-                total: totalpayment - parseInt(req.body.paid),
+                total: totalpayment,
                 deal: [{
-
+                    dateadded: new Date(),
                     id: arrayid,
                     date: req.body.date,
-                    bags: req.body.bags,
-                    kilogram: req.body.kilogram,
-                    price: req.body.price,
+                    kilogram: req.body.kilogram || 0,
+                    price: req.body.price || 0,
                     total: totalpayment,
-                    paid: req.body.paid,
-                    Remaining: totalpayment - parseInt(req.body.paid),
-                    through: req.body.through,
-                    hint: req.body.hint
+                    tds: parseInt(totalpayment - (totalpayment * (req.body.tds / 100))) || 0,
+                    loari: loari,
+                    hint: req.body.hint,
+                    paid: amount || 0
 
                 }]
 
@@ -418,47 +291,54 @@ exports.postbuyerform = (req, res) => {
             buyers.save(function(err, doc) {
 
 
-
             })
 
 
         }
     }).then(docs => {
-        var paymentmode
-        if (req.body.through) {
-            paymentmode = req.body.through;
+        if (req.body.amount != 0) {
+            var paymentmanagent = new Payments({
+
+
+                name: name,
+                _id: arrayid,
+                hint: req.body.hint,
+                amount: paymentamount,
+                relation: 'Sales',
+                date: date,
+                dateadded: new Date(),
+                category: category,
+
+
+            })
+            paymentmanagent.save((err, docs) => {
+                returnpage()
+            })
         } else {
-            paymentmode = "bank";
+            returnpage()
         }
 
-        if (parseInt(req.body.paid) > 0) {
-            var transaction = new Transaction({
-                id: arrayid,
-                Date: req.body.date,
-                amount: req.body.paid,
-                types: "credit",
-                comment: "Amount recieved from " + name,
-                paymentmode: paymentmode,
-                credit: req.body.paid
-
-            })
-            transaction.save((err, doc) => {
 
 
-            })
-        }
 
-    }).then(doc => {
+    })
+
+    function returnpage() {
         if (req.body.type == "seperate") {
             req.flash('error', "Successfully added")
             res.redirect('/salesmanagement')
-        } else if (req.body.type == "sales") {
-            res.redirect('/accountmanagement')
+        } else if (req.body.type == "paymentpage") {
+            req.flash("recieved", false)
+            res.redirect('/getpayments')
+        } else if (req.body.type == "recievedpage") {
+            req.flash("recieved", true)
+            res.redirect('/getpayments')
         } else {
             req.flash('error', "Successfully added")
             res.redirect('/individualsales/' + name);
         }
-    })
+    }
+
 
 
 
@@ -468,7 +348,7 @@ exports.postbuyerform = (req, res) => {
 }
 exports.deletesales = (req, res) => {
     var name
-    Buyers.findOne({ id: req.params.objectid }).then((docs, err) => {
+    Buyers.findOne({ name: req.params.name }).then((docs, err) => {
         name = docs.name
 
         docs.updateOne({
@@ -498,18 +378,23 @@ exports.deletesales = (req, res) => {
 
     }).then((err, docs) => {
         if (err) console.log(err)
-
-        Transaction.findOneAndDelete({ id: req.params.arrayid }).then(docs => {
+        Payments.findByIdAndDelete(req.params.arrayid).then((err, docs) => {
             if (err) console.log(err)
-            if (req.params.type == "seperate") {
-                res.redirect('/salesmanagement')
-            } else if (req.params.type == "nonseperate") {
-                res.redirect('/accountmanagement')
 
-            } else {
-                res.redirect('/individualsales/' + name)
-            }
         })
+
+        if (req.params.type == "seperate") {
+            res.redirect('/salesmanagement')
+        } else if (req.params.type == "payments") {
+            req.flash("recieved", false)
+            res.redirect('/getpayments')
+        } else if (req.params.type == "recieved") {
+            req.flash("recieved", true)
+            res.redirect('/getpayments')
+        } else {
+            res.redirect('/individualsales/' + name)
+        }
+
 
     })
 };
@@ -529,9 +414,12 @@ exports.salesmanagement = (req, res) => {
                 "deal.date": {
                     $lt: end,
                     $gte: start
+                },
+                "deal.total": {
+                    $gt: 0,
                 }
             }
-        },
+        }
 
 
     ]).sort({ "deal.date": -1, "deal._id": -1 }).exec((err, datas) => {
@@ -541,13 +429,13 @@ exports.salesmanagement = (req, res) => {
                 var uniqueSet = new Set(namesnew);
                 var names = Array.from(uniqueSet);
                 res.render('salesmanagement', {
-                    mainpath: '/stockmanagement',
+                    mainpath: '/sales',
                     subpath: '',
                     buyer: datas,
                     names: names,
                     errorMessage: message,
-                    start: start,
-                    end: end,
+                    start: 'TODAY',
+                    end: '! Filter to see more data',
                 })
             }).catch(err => console.log(err));
         })
@@ -578,6 +466,9 @@ exports.salesfilter = (req, res) => {
                 "deal.date": {
                     $lt: end,
                     $gte: start
+                },
+                "deal.total": {
+                    $gt: 0,
                 }
             }
         }]
@@ -592,6 +483,9 @@ exports.salesfilter = (req, res) => {
                 "deal.date": {
                     $lt: end,
                     $gte: start
+                },
+                "deal.total": {
+                    $gt: 0,
                 }
             }
         }]
@@ -604,6 +498,9 @@ exports.salesfilter = (req, res) => {
                 "deal.date": {
                     $lt: end,
                     $gte: start
+                },
+                "deal.total": {
+                    $gt: 0,
                 }
             }
         }]
@@ -618,6 +515,9 @@ exports.salesfilter = (req, res) => {
                 "deal.date": {
                     $lt: end,
                     $gte: start
+                },
+                "deal.total": {
+                    $gt: 0,
                 }
             }
         }]
@@ -635,13 +535,13 @@ exports.salesfilter = (req, res) => {
                 var uniqueSet = new Set(namesnew);
                 var names = Array.from(uniqueSet);
                 res.render('salesmanagement', {
-                    mainpath: '/stockmanagement',
+                    mainpath: '/sales',
                     subpath: '',
                     buyer: data,
                     names: names,
                     errorMessage: message,
-                    start: start,
-                    end: end,
+                    start: ' FROM ' + start.toLocaleDateString(),
+                    end: ' TO ' + end.toLocaleDateString(),
 
                 })
             }).catch(err => console.log(err));
@@ -664,26 +564,29 @@ exports.purchasemanagement = (req, res) => {
 
             "deal.date": {
                 $lt: end,
-                $gte: start
-            }
-        },
+                $gte: start,
 
-    }]).sort({ "deal.date": -1, "deal._id": -1 }).exec((err, datas) => {
-        Buyers.find().distinct('name').then(buyers => {
-            Sellers.find().distinct('name').then(sellers => {
-                namesnew = buyers.concat(sellers);
-                var uniqueSet = new Set(namesnew);
-                var names = Array.from(uniqueSet);
-                res.render('purchasemanagement', {
-                    mainpath: '/stockmanagement',
-                    subpath: '',
-                    seller: datas,
-                    names: names,
-                    errorMessage: message,
-                    start: start,
-                    end: end,
-                })
-            }).catch(err => console.log(err));
+            },
+            "deal.total": {
+                $gt: 0,
+            }
+        }
+
+
+    }]).sort({ "deal.date": -1, "deal._id": -1 }).exec(async(err, datas) => {
+        const buyers = await Buyers.find().distinct('name').lean();
+        const sellers = await Sellers.find().distinct('name').lean();
+        namesnew = buyers.concat(sellers);
+        var uniqueSet = new Set(namesnew);
+        var names = Array.from(uniqueSet);
+        res.render('purchasemanagement', {
+            mainpath: '/stockmanagement',
+            subpath: '',
+            seller: datas,
+            names: names,
+            errorMessage: message,
+            start: 'TODAY',
+            end: '! Filter to see more data',
         })
     })
 
@@ -712,6 +615,9 @@ exports.purchasefilter = (req, res) => {
                 "deal.date": {
                     $lt: end,
                     $gte: start
+                },
+                "deal.total": {
+                    $gt: 0,
                 }
             }
         }]
@@ -726,6 +632,9 @@ exports.purchasefilter = (req, res) => {
                 "deal.date": {
                     $lt: end,
                     $gte: start
+                },
+                "deal.total": {
+                    $gt: 0,
                 }
             }
         }]
@@ -738,6 +647,9 @@ exports.purchasefilter = (req, res) => {
                 "deal.date": {
                     $lt: end,
                     $gte: start
+                },
+                "deal.total": {
+                    $gt: 0,
                 }
             }
         }]
@@ -752,6 +664,9 @@ exports.purchasefilter = (req, res) => {
                 "deal.date": {
                     $lt: end,
                     $gte: start
+                },
+                "deal.total": {
+                    $gt: 0,
                 }
             }
         }]
@@ -775,8 +690,8 @@ exports.purchasefilter = (req, res) => {
                     seller: data,
                     names: names,
                     errorMessage: message,
-                    start: start,
-                    end: end,
+                    start: 'FROM ' + start.toLocaleDateString(),
+                    end: ' TO ' + end.toLocaleDateString(),
                 })
             }).catch(err => console.log(err));
 
@@ -967,44 +882,41 @@ exports.individualsales = (req, res) => {
     }
     var start = new Date(08 / 03 / 2000)
     var end = new Date()
-    Buyers.findOne({
-        name: req.params.id
-    }).then(name => {
 
-        Buyers.aggregate([{
-            $match: {
-                "name": req.params.id
+    Buyers.aggregate([{
+        $match: {
+            "name": req.params.id
+        }
+    }, { $unwind: "$deal" }, {
+        $match: {
+
+            "deal.date": {
+                $lt: end,
+                $gte: start
             }
-        }, { $unwind: "$deal" }, {
-            $match: {
-
-                "deal.date": {
-                    $lt: end,
-                    $gte: start
-                }
-            }
-        }]).sort({ "deal.date": -1, "deal._id": -1 }).exec((err, docs) => {
-            Buyers.find().distinct('name').then(buyers => {
-                Sellers.find().distinct('name').then(sellers => {
-                    namesnew = buyers.concat(sellers);
-                    var uniqueSet = new Set(namesnew);
-                    var names = Array.from(uniqueSet);
-                    res.render('individualsalesandpurchase', {
-                        mainpath: '/stockmanagement',
-                        category: 'sales',
-                        subpath: '',
-                        data: docs,
-                        errorMessage: message,
-                        start: start,
-                        end: end,
-                        name: req.params.id.toUpperCase(),
-                        names: names
-                    })
-
+        }
+    }]).sort({ "deal.date": -1, "deal._id": -1 }).exec((err, docs) => {
+        Buyers.find().distinct('name').then(buyers => {
+            Sellers.find().distinct('name').then(sellers => {
+                namesnew = buyers.concat(sellers);
+                var uniqueSet = new Set(namesnew);
+                var names = Array.from(uniqueSet);
+                res.render('individualsalesandpurchase', {
+                    mainpath: '/sales',
+                    category: 'sales',
+                    subpath: '',
+                    data: docs,
+                    errorMessage: message,
+                    start: start,
+                    end: end,
+                    name: req.params.id.toUpperCase(),
+                    names: names
                 })
-            }).catch(err => console.log(err));
-        })
+
+            })
+        }).catch(err => console.log(err));
     })
+
 
 
 }
@@ -1115,7 +1027,7 @@ exports.individualsalesfilter = (req, res) => {
                     var uniqueSet = new Set(namesnew);
                     var names = Array.from(uniqueSet);
                     res.render('individualsalesandpurchase', {
-                        mainpath: '/stockmanagement',
+                        mainpath: '/sales',
                         category: 'sales',
                         data: data,
                         names: names,
@@ -1219,117 +1131,41 @@ exports.deleteuser = (req, res) => {
 
 }
 
-exports.utility = (req, res) => {
-    var start = new Date(08 / 03 / 2000)
-    var end = new Date()
-    Utility.aggregate([{ $unwind: "$detail" }, {
-        $match: {
-
-            "detail.date": {
-                $lt: end,
-                $gte: start
-            }
-        }
-    }]).sort({ "detail.date": -1, "detail._id": -1 }).exec((err, data) => {
-        Utility.find().distinct('name').then(utitlity => {
-            res.render('utilitybill', {
-                mainpath: '/utility',
-                docs: data,
-                start: start,
-                end: end,
-                individual: false,
-                utitlity: utitlity,
-
-            })
-        })
-
-    })
-
-}
-exports.utilityform = (req, res) => {
-    const arrayid = new mongoose.Types.ObjectId()
-    var name = req.body.billto.toUpperCase().trim()
-    date = new Date(req.body.date)
-    Utility.findOne({ name: name }).then(docs => {
-        if (docs) {
-            docs.updateOne({
-                    $push: {
-                        "detail": {
-                            _id: arrayid,
-                            date: date,
-                            payment: req.body.payment,
-                            amount: req.body.amount
-
-                        }
-                    }
-                }, { safe: true, upsert: true },
-                function(err, model) {
-                    if (err) console.log(err)
-
-
-                }
-            )
-        } else {
-            var utility = new Utility({
-                name: name,
-                detail: [{
-                    _id: arrayid,
-                    date: date,
-                    payment: req.body.payment,
-                    amount: req.body.amount
-                }]
-
-            })
-            utility.save((err, docs) => {
-
-            })
-
-        }
-
-    }).then(docs => {
-
-        var transaction = new Transaction({
-            _id: arrayid,
-            Date: req.body.date,
-            amount: req.body.amount,
-            types: "debit",
-            comment: "utility " + name,
-            paymentmode: req.body.payment,
-            debit: req.body.amount
-
-        })
-        transaction.save((err, doc) => {
-            if (req.body.type == 'individual') {
-                res.redirect('/indivual_utility/' + name)
-            } else {
-                res.redirect('/utility')
-            }
-        })
-    })
-
-
-
-}
-
 exports.editorder = (req, res) => {
-    console.log(req.body.objectid)
-    console.log(req.body.arrayid)
-    var totalpayment
-    if (req.body.through == 'quatity') {
-        totalpayment = 0
 
+    var totalpayment = parseInt(req.body.edittotal)
+    var paymentamount
+    var category
+    let amount = 0
+    if (req.body.section == "sales" && req.body.paid < 0) {
+        paymentamount = -req.body.paid
+        category = 'payment'
+    } else if (req.body.section == "purchase" && req.body.paid < 0) {
+        paymentamount = -req.body.paid
+        category = 'recieved'
     } else {
-        totalpayment = parseInt(req.body.edittotal)
-
+        paymentamount = req.body.paid
+        category = req.body.section == "sales" ? 'recieved' : 'payment'
     }
 
-    if (req.body.section == "sales") {
+    Payments.findByIdAndUpdate(req.body.arrayid).then(docs => {
+        if (docs) {
+            docs.hint = req.body.hint
+            docs.amount = paymentamount || 0
+            docs.date = new Date(req.body.editdate)
+            docs.dateadded = new Date()
+            docs.category = category
+            docs.save()
+        }
 
+    })
+    if (req.body.section == "sales") {
+        var loari = req.body.editloari ? req.body.editloari.toUpperCase().trim() : '';
         var name
         Buyers.findOne({ id: req.body.objectid }).then(docs => {
             name = docs.name
 
-            var maintotal = docs.total - (parseInt(req.body.previoustotal) + parseInt(req.body.editpaid)) + totalpayment + parseInt(req.body.previouspaid)
+            var maintotal = docs.total - parseInt(req.body.previoustotal) + totalpayment
 
             docs.updateOne({
                     total: maintotal,
@@ -1344,54 +1180,37 @@ exports.editorder = (req, res) => {
                         $set: {
 
                             'deal.$.date': req.body.editdate,
-                            'deal.$.bags': req.body.editbags,
+                            'deal.$.loari': loari,
                             'deal.$.kilogram': req.body.editkilogram,
                             'deal.$.price': req.body.editprize,
+                            'deal.$.tds': req.body.tdstotal,
                             'deal.$.total': totalpayment,
-                            'deal.$.outumn': req.body.autumn,
-                            'deal.$.moisture': req.body.moisture,
-                            'deal.$.paid': req.body.editpaid,
-                            'deal.$.Remaining': maintotal,
-                            'deal.$.hint': req.body.hint
+                            'deal.$.hint': req.body.hint,
+                            'deal.$.paid': req.body.paid
+
                         }
                     }, // list fields you like to change
                     { 'new': true, 'safe': true, 'upsert': true })
                 .then(docs => {
-                    Transaction.findOne({ id: req.body.arrayid }).then(docs => {
-                        if (docs) {
-                            docs.Date = req.body.editdate;
-                            docs.amount = req.body.editpaid;
-                            docs.comment = req.body.hint;
-                            docs.credit = req.body.editpaid;
-                            docs.paymentmod = req.body.hint;
 
-                            docs.save()
-                        }
-                    }).then(docs => {
-                        if (req.body.types == "seperate") {
-                            req.flash('error', "Successfully Editted")
-                            res.redirect('/salesmanagement')
+                    if (req.body.types == "seperate") {
+                        req.flash('error', "Successfully Editted")
+                        res.redirect('/salesmanagement')
 
-                        } else if (req.body.types == "detailedsalesandpurchase") {
-                            req.flash('error', "Successfully Ediited")
-                            res.redirect('/accountmanagement')
+                    } else {
+                        req.flash('error', "Successfully Editted")
+                        res.redirect('/individualsales/' + name)
+                    }
 
-                        } else {
-                            req.flash('error', "Successfully Editted")
-                            res.redirect('/individualsales/' + name)
-                                // res.redirect('/individualsales/' + name)
-                        }
-                    })
                 })
         })
 
     } else {
 
-
         var name
         Sellers.findOne({ id: req.body.objectid }).then(docs => {
             name = docs.name;
-            var maintotal = docs.total - (parseInt(req.body.previoustotal) + parseInt(req.body.editpaid)) + totalpayment + parseInt(req.body.previouspaid)
+            var maintotal = docs.total - parseInt(req.body.previoustotal) + totalpayment
 
             docs.updateOne({
                     total: maintotal,
@@ -1406,200 +1225,31 @@ exports.editorder = (req, res) => {
                         $set: {
 
                             'deal.$.date': req.body.editdate,
-                            'deal.$.bags': req.body.editbags,
                             'deal.$.kilogram': req.body.editkilogram,
                             'deal.$.price': req.body.editprize,
+                            'deal.$.bagprice': req.body.editprize * 50,
                             'deal.$.total': totalpayment,
-                            'deal.$.outumn': req.body.autumn,
-                            'deal.$.moisture': req.body.moisture,
-                            'deal.$.paid': req.body.editpaid,
                             'deal.$.Remaining': maintotal,
-                            'deal.$.hint': req.body.hint
+                            'deal.$.hint': req.body.hint,
+                            'deal.$.paid': req.body.paid
                         }
                     }, // list fields you like to change
                     { 'new': true, 'safe': true, 'upsert': true })
                 .then(docs => {
-                    Transaction.findOne({ id: req.body.arrayid }).then(docs => {
-                        if (docs) {
-                            docs.Date = req.body.editdate;
-                            docs.amount = req.body.editpaid;
-                            docs.comment = req.body.hint;
-                            docs.debit = req.body.editpaid;
-                            docs.paymentmod = req.body.hint;
 
-                            docs.save()
-                        }
-                    }).then(docs => {
-                        if (req.body.types == "seperate") {
-                            req.flash('error', "Successfully added")
-                            res.redirect('/purchasemanagement')
-                        } else if (req.body.types == "detailedsalesandpurchase") {
-                            req.flash('error', "Successfully added")
-                            res.redirect('/accountmanagement')
 
-                        } else {
-                            req.flash('error', "Successfully added")
-                            res.redirect('/individualpurchase/' + name)
-                                // res.redirect('/individualsales/' + name)
-                        }
-                    })
+                    if (req.body.types == "seperate") {
+                        req.flash('error', "Successfully added")
+                        res.redirect('/purchasemanagement')
+                    } else {
+                        req.flash('error', "Successfully added")
+                        res.redirect('/individualpurchase/' + name)
+                    }
+
                 })
 
         })
 
 
     }
-}
-exports.getTransaction = (req, res) => {
-    var start = new Date(08 / 03 / 2000)
-    var end = new Date()
-    Transaction.find({ //query today up to tonight
-            Date: {
-                $lt: end,
-                $gte: start
-            }
-        })
-        .sort({ Date: -1, _id: -1 }).exec((err, docs) => {
-
-            res.render('transactions', {
-                mainpath: '/transaction',
-                data: docs,
-                start: start,
-                end: end
-
-            })
-        })
-
-
-}
-
-
-
-
-
-exports.credittransaction = (req, res) => {
-
-    var transaction = new Transaction({
-
-        Date: req.body.date,
-        amount: req.body.amount,
-        types: "credit",
-        comment: req.body.hint,
-        paymentmode: req.body.through,
-        credit: req.body.amount,
-        mode: "added"
-
-    })
-    transaction.save((err, doc) => {
-        res.redirect('/transaction')
-
-    })
-}
-exports.debittransaction = (req, res) => {
-    var transaction = new Transaction({
-        Date: req.body.date,
-        amount: req.body.amount,
-        types: "debit",
-        comment: req.body.hint,
-        paymentmode: req.body.through,
-        debit: req.body.amount,
-        mode: "added"
-
-    })
-    transaction.save((err, doc) => {
-
-        res.redirect('/transaction')
-    })
-
-}
-exports.editcredittransaction = (req, res) => {
-    Transaction.findByIdAndUpdate(req.body.objectid).then(doc => {
-        if (!doc) {
-            res.send(err)
-        } else {
-            doc.date = req.body.editdate;
-            doc.amount = req.body.amount;
-            doc.credit = req.body.amount;
-            doc.comment = req.body.hint;
-            doc.paymentmode = req.body.through;
-            doc.save()
-        }
-    }).then(doc => {
-
-        res.redirect('/transaction')
-
-    })
-}
-exports.editdebittransaction = (req, res) => {
-    Transaction.findByIdAndUpdate(req.body.objectid).then(doc => {
-        if (!doc) {
-            res.send(err)
-        } else {
-            doc.date = req.body.editdate;
-            doc.amount = req.body.amount;
-            doc.debit = req.body.amount;
-            doc.comment = req.body.hint;
-            doc.paymentmode = req.body.through;
-            doc.save()
-        }
-    }).then(doc => {
-
-        res.redirect('/transaction')
-
-    })
-
-}
-exports.deletetransaction = (req, res) => {
-    Transaction.findByIdAndDelete(req.params.id).then((err, docs) => {
-
-        res.redirect('/transaction')
-
-    })
-
-}
-exports.filterTransaction = (req, res) => {
-
-
-    var end = new Date()
-    var start = new Date()
-
-
-    if (req.body.type == 'filter') {
-
-        start = new Date(req.body.sdate);
-        end = new Date(req.body.edate);
-
-    } else if (req.body.type == '2months') {
-        start.setMonth(start.getMonth() - 2);
-
-    } else if (req.body.type == '5months') {
-        start.setMonth(start.getMonth() - 5);
-
-
-    } else if (req.body.type == 'year') {
-        start.setFullYear(start.getFullYear() - 1);
-
-    } else {
-        start = new Date(08 / 03 / 2000)
-
-
-    }
-
-    Transaction.find({ //query today up to tonight
-        Date: {
-            $lt: end,
-            $gte: start
-        }
-    }).sort({ Date: -1, _id: -1 }).exec((err, docs) => {
-
-
-        res.render('transactions', {
-            mainpath: '/transaction',
-            data: docs,
-            start: start,
-            end: end
-
-        })
-    })
-
 }

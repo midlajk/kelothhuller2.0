@@ -29,6 +29,7 @@
                                 <th>Date</th>
                                 <th>Total absence</th>
                                 <th>Absents</th>
+                                <th>Delete</th>
 
 
 
@@ -40,9 +41,7 @@
                                     <th>Date</th>
                                     <th>Total absence</th>
                                     <th>Absents</th>
-
-
-
+                                    <th>Delete</th>
 
                                 </tr>
                         </tfoot>
@@ -64,7 +63,7 @@
                                             </a>,
                                             <%}%>
                                     </td>
-
+                                    <td><a href="/employee/deleteattendance/<%=doc._id%>/<%=doc.date%>" class="btn btn-danger" onclick="return confirm('are you sure')">Delete</a></td>
                                 </tr>
                                 <%}%>
                         </tbody>

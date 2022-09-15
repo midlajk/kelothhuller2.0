@@ -30,9 +30,6 @@
                         <thead>
                             <tr>
                                 <th>Name</th>
-                                <th>Phone</th>
-                                <th>Place</th>
-                                <th>careoff</th>
                                 <th>Duty</th>
                                 <th>Minimum salary</th>
                                 <th>Submit
@@ -45,21 +42,18 @@
                             <form id="ademployee" action="/employee/postaddemployee" method="POST">
                                 <tr>
 
-                                    <td><input autofocus required class="p-1 form-control" style="width: 150px;" tabIndex="2" type="text" name="name"></td>
+                                    <td><input autofocus required class="p-1 form-control" tabIndex="2" type="text" name="name"></td>
 
-                                    <td><input class="p-1 form-control" style="width: 200px;" tabIndex="3" type="text" name="number"></td>
-                                    <td><input class="form-control" tabIndex="4" type="text" name="place" style="width: 150px;"></td>
-                                    <td><input class="p-1 form-control" tabIndex="5" type="text" style="width: 125px;" name="careof"></td>
-                                    <td><select required class="p-1 form-control" tabIndex="6" style="width: 125px;" name="duty"> <option value="loader">loader</option> 
+
+                                    <td><select required class="p-1 form-control" tabIndex="3" name="duty"> <option value="loader">Loader</option> 
                                         <option value="operator">Operator</option> <option value="manager">Manager</option>
-                                    <option value="tester">Tester</option>
                                     <option value="driver">Driver</option>
                                     <option value="assistant">Assistant</option></select></td>
 
-                                    <td><input class="p-1 form-control" tabIndex="7" type="number" style="width: 125px;" name="salary"></td>
+                                    <td><input class="p-1 form-control" tabIndex="4" type="number" name="salary"></td>
 
                                     <td>
-                                        <button form="ademployee" tabIndex="8" type="submit" class="btn btn-success" id="submit">Submit</button>
+                                        <button form="ademployee" tabIndex="5" type="submit" class="btn btn-success" id="submit">Submit</button>
                                         <div id="button-spinner" style="margin-left: 10px; width: 25px; height: 25px; display: none" class="spinner-border"></div>
                                     </td>
                                 </tr>
@@ -77,10 +71,6 @@
                                 <th>Name</th>
                                 <th>Total Salary</th>
                                 <th>Amount paid</th>
-                                <th>Remaining Salary</th>
-                                <th>Total Borrowal</th>
-                                <th>Amount returned</th>
-                                <th>Remaining Borrowal</th>
                                 <th>Remaining settlemet</th>
                                 <th>Edit</th>
 
@@ -91,10 +81,6 @@
                                 <th>Name</th>
                                 <th>Total Salary</th>
                                 <th>Amount paid</th>
-                                <th>Remaining Salary</th>
-                                <th>Total Borrowal</th>
-                                <th>Amount returned</th>
-                                <th>Remaining Borrowal</th>
                                 <th>Remaining settlemet</th>
                                 <th>Edit</th>
 
@@ -118,18 +104,7 @@
                                     <td>
                                         <%= (parseInt(docs[i].totalsalary) - parseInt(docs[i].totalpaid)).toLocaleString()  %>
                                     </td>
-                                    <td>
-                                        <%=docs[i].borrowed.toLocaleString()%>
-                                    </td>
-                                    <td>
-                                        <%=docs[i].returned.toLocaleString()%>
-                                    </td>
-                                    <td>
-                                        <%= (parseInt(docs[i].borrowed) - parseInt(docs[i].returned)).toLocaleString()  %>
-                                    </td>
-                                    <td>
-                                        <%= ((parseInt(docs[i].totalsalary) - parseInt(docs[i].totalpaid))- (parseInt(docs[i].borrowed) - parseInt(docs[i].returned))).toLocaleString()%>
-                                    </td>
+
 
                                     <td>
                                         <a href="#" onclick="edit('<%=i%>')" class=" btn btn-primary ">edit</a></td>
@@ -159,23 +134,7 @@
                                 <label for="">Name</label>
                                 <input type="text" tabindex="43" class="form-control form-control-user" id="editname" name="names">
                             </div>
-                            <div class="col-sm-6 mb-3 mb-sm-0">
-                                <label for="">Phone</label>
-                                <input tabindex="44" class="form-control form-control-user" id="editphone" name="number">
-                            </div>
-                            <div class="col-sm-6 mb-3 mb-sm-0">
-                                <label for="">Place</label>
-                                <input type="text" tabindex="45" class="form-control form-control-user" id="editplace" name="place">
-                            </div>
-                            <div class="col-sm-6 mb-3 mb-sm-0">
-                                <label for="">careoff</label>
-                                <input type="text" tabindex="46" class="form-control form-control-user" id="editcareoff" name="careof">
-                            </div>
 
-                            <div class="col-sm-6 mb-3 mb-sm-0">
-                                <label for="">Duty</label>
-                                <input type="text" tabindex="47" class="form-control form-control-user price-control" id="editduty" name="duty">
-                            </div>
                             <div class="col-sm-6 mb-3 mb-sm-0">
                                 <label for="">Salary</label>
                                 <input type="number" tabindex="48" class="form-control form-control-user price-control" id="editsalary" name="salary">
@@ -207,10 +166,6 @@
 
             // document.getElementById('editcustomers').innerText = obj.name;
             document.getElementById('editname').value = obj[i].name
-            document.getElementById('editphone').value = obj[i].phone
-            document.getElementById('editplace').value = obj[i].place
-            document.getElementById('editcareoff').value = obj[i].careoff
-            document.getElementById('editduty').value = obj[i].duty
             document.getElementById('editsalary').value = obj[i].salary
 
             document.getElementById('objectid').value = obj[i]._id;

@@ -32,7 +32,6 @@
 
     <!-- Custom fonts for this template -->
     <link href="/vendor/fontawesome-free/css/all.min.css" rel="stylesheet" type="text/css">
-    <link href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i" rel="stylesheet">
 
     <!-- Custom styles for this template -->
     <link href="/css/sb-admin-2.min.css" rel="stylesheet">
@@ -40,9 +39,8 @@
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
     <!-- Custom styles for this page -->
     <link href="/vendor/datatables/dataTables.bootstrap4.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
-
-    <script type="text/javascript" src="https://cdn.datatables.net/1.10.12/js/jquery.dataTables.min.js"></script>
+    <link rel="stylesheet" href="/vendor/bootstrap/css/bootstrap.min.css">
+    <script type="text/javascript" src="/vendor/datatables/jquery.dataTables.min.js"></script>
 
     <style>
         .contunt {
@@ -56,7 +54,7 @@
             color: #000000;
             background-color: rgb(255, 255, 255);
             margin: 10px;
-            max-width: 200px;
+            max-width: 80%;
             border-radius: 10px;
         }
         
@@ -165,8 +163,9 @@
             <ul class="navbar-nav bg-gradient-primary sidebar sidebar-dark accordion" id="accordionSidebar">
 
                 <!-- Sidebar - Brand -->
-                <a class="sidebar-brand d-flex align-items-center justify-content-center" href="/transaction">
+                <a class="sidebar-brand d-flex align-items-center justify-content-center" href="/dealerslist">
                     <div class="sidebar-brand-icon rotate-n-15">
+                        <Text style="font-size: 30px;">K</Text>
 
                     </div>
                     <div class="sidebar-brand-text mx-3">KelothHuller <sup></sup></div>
@@ -177,33 +176,30 @@
 
                 <!-- Nav Item - Dashboard -->
 
-
                 <li class="nav-item">
-                    <a class="nav-link <%= mainpath === '/transaction' ? 'active' : '' %>" href="/transaction">
-                        <i class="fas fa-fw fa-table"></i>
-                        <span>Transactions</span></a>
+                    <a class="nav-link <%= mainpath === '/dealers' ? 'active' : '' %>" href="/dealerslist">
+                        <i class="fas fa-fw fa-handshake"></i>
+                        <span>Dealers Account</span></a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link <%= mainpath === '/stockmanagement' ? 'active' : '' %>" href="/accountmanagement">
-                        <i class="fas fa-fw fa-table"></i>
-                        <span>Purchase and sales</span></a>
+                    <a class="nav-link <%= mainpath === '/stockmanagement' ? 'active' : '' %>" href="/purchasemanagement">
+                        <i class="fas fa-fw fa-cart-plus"></i>
+                        <span>Purchase</span></a>
+                </li>
+
+                <li class="nav-item">
+                    <a class="nav-link <%= mainpath === '/sales' ? 'active' : '' %>" href="/salesmanagement">
+                        <i class="fas fa-fw fa-truck"></i>
+                        <span>Sales</span></a>
                 </li>
 
                 <li class="nav-item">
                     <a class="nav-link <%= mainpath === '/paymentsmanage' ? 'active' : '' %>" href="/getpayments">
-                        <i class="fas fa-fw fa-table"></i>
+                        <i class="fas fa-fw fa-money-bill"></i>
                         <span>Payments </span></a>
                 </li>
-                <li class="nav-item">
-                    <a class="nav-link <%= mainpath === '/addbill' ? 'active' : '' %>" href="/addbill">
-                        <i class="fas fa-fw fa-money-bill"></i>
-                        <span>Add Bill</span></a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link <%= mainpath === '/viewbill' ? 'active' : '' %>" href="/coffeebill">
-                        <i class="fas fa-fw fa-money-check"></i>
-                        <span>Daily Bills</span></a>
-                </li>
+
+
                 <hr class="sidebar-divider">
                 <!-- Heading -->
                 <div class="sidebar-heading">
@@ -212,7 +208,7 @@
 
                 <!-- Nav Item - Pages Collapse Menu -->
                 <li class="nav-item ">
-                    <a class="nav-link collapsed <%if(mainpath === '/viewattedance' | mainpath === '/markattendance' | mainpath === '/salary'| mainpath === '/borrow'| mainpath === '/adduser'| mainpath === '/editemployee'){%>active<%}%>" href="#" data-toggle="collapse" data-target="#collapseTwo"
+                    <a class="nav-link collapsed <%if(mainpath === '/viewattedance' | mainpath === '/markattendance' | mainpath === '/salary'| mainpath === '/adduser'| mainpath === '/editemployee'){%>active<%}%>" href="#" data-toggle="collapse" data-target="#collapseTwo"
                         aria-expanded="true" aria-controls="collapseTwo">
                         <i class="fas fa-fw fa-cog"></i>
                         <span>Manage Employee </span>
@@ -221,9 +217,9 @@
                         <div class="bg-white py-2 collapse-inner rounded">
                             <h6 class="collapse-header">Manage employees</h6><a class="collapse-item <%= mainpath === '/markattendance' ? 'active' : '' %>" href="/employee/markattendance">Mark attendance</a>
                             <a class="collapse-item <%= mainpath === '/viewattedance' ? 'active' : '' %>" href="/employee/viewattendance">View attendance </a>
-                            <a class="collapse-item <%= mainpath === '/salary' ? 'active' : '' %>" href="/paymentcontroller/salary">Salaries and wages</a>
-                            <a class="collapse-item <%= mainpath === '/borrow' ? 'active' : '' %>" href="/paymentcontroller/borrows">Borrows</a>
-                            <a class="collapse-item <%= mainpath === '/adduser' ? 'active' : '' %>" href="/adduser">Ad users</a>
+                            <a class="collapse-item <%= mainpath === '/salary' ? 'active' : '' %>" href="/paymentcontroller/salary">Salaries</a>
+
+                            <a class="collapse-item <%= mainpath === '/adduser' ? 'active' : '' %>" href="/adduser">Add users</a>
                             <a class="collapse-item  <%= mainpath === '/editemployee' ? 'active' : '' %>" href="/employee/Editemployee">Add/edit employees</a>
                         </div>
                     </div>
@@ -243,28 +239,12 @@
                             <a class="collapse-item <%= mainpath === '/viewkooli' ? 'active' : '' %>" href="/employee/viewkooli">View Load</a>
                             <a class="collapse-item <%= mainpath === '/loaderspayment' ? 'active' : '' %>" href="/employee/loaderspayment">Loaders Payments</a>
                             <a class="collapse-item <%= mainpath === '/loaderslist' ? 'active' : '' %>" href="/loaderslist">Loaders List</a>
-                            <a class="collapse-item <%= mainpath === '/printkooli' ? 'active' : '' %>" href="/employee/printkooli">Printable format</a>
+                            <a class="collapse-item <%= mainpath === '/printkooli' ? 'active' : '' %>" href="/employee/printkooli">Detailed Kooli</a>
                         </div>
                     </div>
                 </li>
 
-                <li class="nav-item">
-                    <a class="nav-link collapsed <%if(mainpath === '/addlorirent' | mainpath === '/utility'){%>active<%}%>" href="#" data-toggle="collapse" data-target="#collapseUtilitiess" aria-expanded="true" aria-controls="collapseUtilities">
-                        <i class="fas fa-fw fa-wrench"></i>
-                        <span>Utilities & lori</span>
-                    </a>
-                    <div id="collapseUtilitiess" class="collapse" aria-labelledby="headingUtilities" data-parent="#accordionSidebar">
-                        <div class="bg-white py-2 collapse-inner rounded">
-                            <h6 class="collapse-header">Management:</h6>
-                            <a class="collapse-item <%= mainpath === '/addlorirent' ? 'active' : '' %>" href="/addlorirent"> Lori rent</a>
 
-                            <a class="collapse-item <%= mainpath === '/utility' ? 'active' : '' %>" href="/utility">Utility bills</a>
-
-
-
-                        </div>
-                    </div>
-                </li>
 
                 <!-- Divider -->
 
@@ -327,16 +307,7 @@
                             <i class="fas fa-fw fa-eye"></i>
                             <span>View attendance</span></a>
                     </li>
-                    <li class="nav-item">
-                        <a class="nav-link <%= mainpath === '/maddlorirent' ? 'active' : '' %>" href="/manager/addlorirent">
-                            <i class="fas fa-fw fa-tractor"></i>
-                            <span> Add loari rent</span></a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link <%= mainpath === '/addlorirent' ? 'active' : '' %>" href="/addlorirent">
-                            <i class="fas fa-fw fa-money-bill-wave"></i>
-                            <span> View lori rent</span></a>
-                    </li>
+
 
                     <hr class="sidebar-divider">
                     <!-- Heading -->

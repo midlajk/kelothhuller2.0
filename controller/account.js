@@ -1,540 +1,16 @@
 require('../model/accountsmodal')
 require('../model/employeemodel')
 const mongoose = require('mongoose');
-const Utility = mongoose.model('Utility');
 var fs = require('fs');
-const Transaction = mongoose.model('Transaction');
-const Loaders = mongoose.model('Loaders');
-const Lorirent = mongoose.model('Lorirent');
+const Employees = mongoose.model('Employees');
 const Payments = mongoose.model('Payments');
-exports.addlorirent = (req, res) => {
-    let payment = req.flash('payment');
-    if (payment.length > 0) {
-        payment = payment[0];
-    } else {
-        payment = false;
-    }
-    var start = new Date(08 / 03 / 2000)
-    var end = new Date()
-    Lorirent.aggregate([{ $unwind: "$trips" }, {
-        $match: {
-
-            "trips.date": {
-                $lt: end,
-                $gte: start
-            }
-        }
-    }]).sort({ "trips.date": -1, "trips._id": -1 }).exec((err, docs) => {
-        Lorirent.aggregate([{ $unwind: "$paid" }, {
-            $match: {
-
-                "paid.date": {
-                    $lt: end,
-                    $gte: start
-                }
-            }
-        }]).sort({ "paid.date": -1, "paid._id": -1 }).exec((err, dics) => {
-            Lorirent.find().distinct('registration').then(loari => {
-
-                res.render('addlorirent', {
-                    mainpath: '/addlorirent',
-                    docs: docs,
-                    loari: loari,
-                    start: start,
-                    end: end,
-                    individual: false,
-                    dics: dics,
-                    payment: payment
-
-                })
-            })
-        })
-    })
-
-
-
-}
-exports.postaddlorirent = (req, res) => {
-
-    var number = req.body.loari.toUpperCase().trim();
-    Lorirent.findOne({ registration: number }).then(docs => {
-        if (docs) {
-            docs.updateOne({
-                    $push: {
-                        "trips": {
-                            date: req.body.date,
-                            loadto: req.body.loadto,
-                            product: req.body.content,
-                            driver: req.body.driver,
-                            rent: req.body.rent,
-                            monitor: req.session.user.name
-
-                        }
-                    }
-                }, { safe: true, upsert: true },
-                function(err, model) {
-                    if (req.body.type == 'individual') {
-                        req.flash('payment', false)
-                        res.redirect('/addindividuallorirent/' + number)
-                    } else {
-                        req.flash('payment', false)
-                        res.redirect('/addlorirent')
-                    }
-
-                })
-        } else {
-            var lorirent = new Lorirent({
-                registration: number,
-                trips: [{
-                    date: req.body.date,
-                    loadto: req.body.loadto,
-                    product: req.body.content,
-                    driver: req.body.driver,
-                    rent: req.body.rent,
-                    monitor: req.session.user.name
-                }],
-            })
-            lorirent.save((err, docs) => {
-                if (err) console.log(err)
-                if (req.body.type == 'individual') {
-                    req.flash('payment', false)
-                    res.redirect('/addindividuallorirent/' + number)
-                } else {
-                    req.flash('payment', false)
-                    res.redirect('/addlorirent')
-                }
-            })
-        }
-    }).catch(err => {
-
-        console.log(err)
-    })
-
-
-
-}
-exports.addloripayment = (req, res) => {
-    const arrayid = new mongoose.Types.ObjectId()
-    var number = req.body.loari.toUpperCase().trim()
-    Lorirent.findOne({ registration: number }).then(docs => {
-        if (docs) {
-            docs.updateOne({
-                    $push: {
-                        "paid": {
-                            _id: arrayid,
-                            date: req.body.date,
-                            amount: req.body.amount,
-                            hint: req.body.hint,
-
-
-                        }
-                    }
-                }, { safe: true, upsert: true },
-                function(err, model) {
-
-
-                })
-        } else {
-            var lorirent = new Lorirent({
-
-                registration: number,
-                paid: [{
-                    _id: arrayid,
-                    date: req.body.date,
-                    amount: req.body.amount,
-                    hint: req.body.hint,
-                }],
-            })
-            lorirent.save((err, docs) => {})
-        }
-    }).then(doc => {
-        var transaction = new Transaction({
-            _id: arrayid,
-            Date: req.body.date,
-            amount: req.body.amount,
-            types: "debit",
-            comment: "Rent To. " + number,
-            paymentmode: req.body.hint,
-            debit: req.body.paid,
-            section: "lori rent"
-
-        })
-        transaction.save((err, doc) => {
-            if (req.body.type == 'individual') {
-                req.flash('payment', true)
-                res.redirect('/addindividuallorirent/' + number)
-            } else {
-                req.flash('payment', true)
-                res.redirect('/addlorirent')
-            }
-        })
-
-    })
-
-
-
-}
-exports.fliteraddlorirent = (req, res) => {
-    let payment = req.flash('payment');
-    if (payment.length > 0) {
-        payment = payment[0];
-    } else {
-        payment = false;
-    }
-    start = new Date(req.body.sdate);
-    end = new Date(req.body.edate);
-
-    Lorirent.aggregate([{ $unwind: "$trips" }, {
-        $match: {
-
-            "trips.date": {
-                $lt: end,
-                $gte: start
-            }
-        }
-    }]).sort({ "trips.date": -1, "trips._id": -1 }).exec((err, docs) => {
-        Lorirent.aggregate([{ $unwind: "$paid" }, {
-            $match: {
-
-                "paid.date": {
-                    $lt: end,
-                    $gte: start
-                }
-            }
-        }]).sort({ "paid.date": -1, "paid._id": -1 }).exec((err, dics) => {
-            Lorirent.find().distinct('registration').then(loari => {
-
-                res.render('addlorirent', {
-                    mainpath: '/addlorirent',
-                    docs: docs,
-                    loari: loari,
-                    start: start,
-                    end: end,
-                    individual: false,
-                    dics: dics,
-                    payment: payment
-
-                })
-            })
-        })
-    })
-
-
-
-}
-
-exports.addindividuallorirent = (req, res) => {
-    let payment = req.flash('payment');
-    if (payment.length > 0) {
-        payment = payment[0];
-    } else {
-        payment = false;
-    }
-    name = req.params.id.toUpperCase();
-    var start = new Date(08 / 03 / 2000)
-    var end = new Date()
-    Lorirent.aggregate([{
-        $match: {
-            "registration": req.params.id.toUpperCase()
-        }
-    }, { $unwind: "$trips" }, {
-        $match: {
-
-            "trips.date": {
-                $lt: end,
-                $gte: start
-            }
-        }
-    }]).sort({ "trips.date": -1, "trips._id": -1 }).exec((err, docs) => {
-        Lorirent.aggregate([{
-            $match: {
-                "registration": req.params.id.toUpperCase()
-            }
-        }, { $unwind: "$paid" }, {
-            $match: {
-
-                "paid.date": {
-                    $lt: end,
-                    $gte: start
-                }
-            }
-        }]).sort({ "paid.date": -1, "paid._id": -1 }).exec((err, dics) => {
-            Lorirent.find().distinct('registration').then(loari => {
-
-                res.render('addlorirent', {
-                    mainpath: '/addlorirent',
-                    docs: docs,
-                    loari: loari,
-                    start: start,
-                    end: end,
-                    id: name,
-                    individual: true,
-                    dics: dics,
-                    payment: payment
-                })
-            })
-        })
-    })
-
-
-
-}
-exports.fliterindividualaddlorirent = (req, res) => {
-    let payment = req.flash('payment');
-    if (payment.length > 0) {
-        payment = payment[0];
-    } else {
-        payment = false;
-    }
-    name = req.body.id.toUpperCase(),
-
-        start = new Date(req.body.sdate);
-    end = new Date(req.body.edate);
-
-    Lorirent.aggregate([{
-        $match: {
-            "registration": req.body.id.toUpperCase()
-        }
-    }, { $unwind: "$trips" }, {
-        $match: {
-
-            "trips.date": {
-                $lt: end,
-                $gte: start
-            }
-        }
-    }]).sort({ "trips.date": -1, "trips._id": -1 }).exec((err, docs) => {
-        Lorirent.aggregate([{
-            $match: {
-                "registration": req.body.id.toUpperCase()
-            }
-        }, { $unwind: "$paid" }, {
-            $match: {
-
-                "paid.date": {
-                    $lt: end,
-                    $gte: start
-                }
-            }
-        }]).sort({ "paid.date": -1, "paid._id": -1 }).exec((err, dics) => {
-            Lorirent.find().distinct('registration').then(loari => {
-
-                res.render('addlorirent', {
-                    mainpath: '/addlorirent',
-                    docs: docs,
-                    loari: loari,
-                    start: start,
-                    end: end,
-                    id: name,
-                    individual: true,
-                    dics: dics,
-                    payment: payment
-
-                })
-            })
-        })
-    })
-
-
-
-}
-
-exports.deleteloarirent = (req, res) => {
-
-    Lorirent.findOne({ registration: req.params.objectid }).then((docs, err) => {
-        docs.updateOne({
-                $pull: {
-                    "trips": {
-                        _id: req.params.id
-                    }
-                }
-            }, { safe: true, upsert: true },
-            function(err, model) {
-                console.log(err);
-
-                if (req.params.section == 'individual') {
-                    req.flash("payment", false)
-                    res.redirect('/addindividuallorirent/' + number)
-                } else {
-                    req.flash("payment", false)
-                    res.redirect('/addlorirent')
-                }
-            }
-        )
-
-    }).catch(err => {
-        console.log(err)
-
-    })
-
-
-
-}
-exports.deleteloaripayment = (req, res) => {
-
-    Lorirent.findOne({ registration: req.params.objectid }).then((docs, err) => {
-        docs.updateOne({
-                $pull: {
-                    "paid": {
-                        _id: req.params.id
-                    }
-                }
-            }, { safe: true, upsert: true },
-            function(err, model) {
-                console.log(err);
-
-
-            }
-        )
-
-    }).then(docs => {
-        Transaction.findByIdAndRemove(req.params.id).then((err, docs) => {
-            if (err) console.log(err)
-            if (req.params.section == 'individual') {
-                req.flash("payment", true)
-                res.redirect('/addindividuallorirent/' + number)
-            } else {
-                req.flash("payment", true)
-                res.redirect('/addlorirent')
-            }
-        })
-    })
-
-
-}
-exports.filterutility = (req, res) => {
-    start = new Date(req.body.sdate);
-    end = new Date(req.body.edate);
-
-
-    Utility.aggregate([{ $unwind: "$detail" }, {
-        $match: {
-
-            "detail.date": {
-                $lt: end,
-                $gte: start
-            }
-        }
-    }]).sort({ "detail.date": -1, "detail._id": -1 }).exec((err, docs) => {
-        Utility.find().distinct('name').then(utitlity => {
-
-            res.render('utilitybill', {
-                mainpath: '/utility',
-                docs: docs,
-                start: start,
-                end: end,
-                individual: false,
-                utitlity: utitlity,
-
-            })
-        })
-    })
-
-}
-
-exports.indivual_utility = (req, res) => {
-    name = req.params.id.toUpperCase()
-    var start = new Date(08 / 03 / 2000)
-    var end = new Date()
-    Utility.aggregate([{
-        $match: {
-            "name": req.params.id.toUpperCase()
-        }
-    }, { $unwind: "$detail" }, {
-        $match: {
-
-            "detail.date": {
-                $lt: end,
-                $gte: start
-            }
-        }
-    }]).sort({ "detail.date": -1, "detail._id": -1 }).exec((err, docs) => {
-        Utility.find().distinct('name').then(utitlity => {
-
-            res.render('utilitybill', {
-                mainpath: '/utility',
-                docs: docs,
-                start: start,
-                end: end,
-                individual: true,
-                id: name,
-                utitlity: utitlity,
-
-            })
-        })
-    })
-
-}
-exports.filterindividualutility = (req, res) => {
-    name = req.body.id.toUpperCase(),
-
-        start = new Date(req.body.sdate);
-    end = new Date(req.body.edate);
-
-    Utility.aggregate([{
-        $match: {
-            "name": req.body.id.toUpperCase()
-        }
-    }, { $unwind: "$detail" }, {
-        $match: {
-
-            "detail.date": {
-                $lt: end,
-                $gte: start
-            }
-        }
-    }]).sort({ "detail.date": -1, "detail._id": -1 }).exec((err, docs) => {
-        Utility.find().distinct('name').then(utitlity => {
-
-            res.render('utilitybill', {
-                mainpath: '/utility',
-                docs: docs,
-                start: start,
-                end: end,
-                individual: true,
-                id: name,
-                utitlity: utitlity,
-
-            })
-        })
-    })
-
-
-
-}
-
-exports.deleteutility = (req, res) => {
-
-    Utility.findOne({ name: req.params.objectid }).then((docs, err) => {
-        docs.updateOne({
-                $pull: {
-                    "detail": {
-                        _id: req.params.id
-                    }
-                }
-            }, { safe: true, upsert: true },
-            function(err, model) {
-                console.log(err);
-
-
-            }
-        )
-
-    }).then(docs => {
-        Transaction.findByIdAndRemove(req.params.id).then((err, docs) => {
-            if (err) console.log(err)
-            if (req.params.section == 'individual') {
-                res.redirect('/indivual_utility/' + name)
-            } else {
-                res.redirect('/utility')
-            }
-
-        })
-    })
-
-
-}
-
+const Sellers = mongoose.model('Sellers');
+const Buyers = mongoose.model('Buyers');
+const managementController = require('./management');
+const employeecontroller = require('./employee');
+const salarycontroller = require('./salary');
+
+const Loaders = mongoose.model('Loaders');
 /* ------------------------ */
 
 
@@ -545,24 +21,31 @@ exports.getpayments = (req, res) => {
     } else {
         recieved = false;
     }
-    Payments.aggregate([{ $unwind: "$payment" }]).sort({ "payment.date": -1, "payment._id": -1 }).exec((err, data) => {
-        Payments.aggregate([{ $unwind: "$paid" }]).sort({ "paid.date": -1, "paid._id": -1 }).exec((err, dics) => {
-            Payments.find().distinct('name').then(names => {
+    Payments.find().sort({ "date": -1, "_id": -1 }).exec(async(err, data) => {
+        const Buyer = await Buyers.find().distinct('name').lean();
+        const Seller = await Sellers.find().distinct('name').lean();
+        const Loader = await Loaders.find().distinct('name').lean();
+        const Employee = await Employees.find().distinct('name').lean();
 
-                res.render('paymentmanage', {
-                    mainpath: '/paymentsmanage',
-                    docs: data,
-                    individual: false,
-                    names: names,
-                    filter: false,
-                    dics: dics,
-                    recieved: recieved
 
-                })
-            })
+        res.render('paymentmanage', {
+            mainpath: '/paymentsmanage',
+            docs: data,
+            individual: false,
+            names: [],
+            filter: false,
+            dics: data,
+            recieved: recieved,
+            Buyers: Buyer,
+            Seller: Seller,
+            Loader: Loader,
+            Employee: Employee
 
         })
     })
+
+
+
 
 }
 exports.filterpayments = (req, res) => {
@@ -592,20 +75,28 @@ exports.filterpayments = (req, res) => {
                     $gte: start
                 }
             }
-        }]).sort({ "payment.date": -1, "payment._id": -1 }).exec((err, data) => {
-            Payments.find().distinct('name').then(names => {
-                res.render('paymentmanage', {
-                    mainpath: '/paymentsmanage',
-                    docs: data,
-                    start: start,
-                    end: end,
-                    individual: false,
-                    names: names,
-                    filter: true,
-                    dics: dics,
-                    recieved: recieved
+        }]).sort({ "payment.date": -1, "payment._id": -1 }).exec(async(err, data) => {
+            const Buyer = await Buyers.find().distinct('name').lean();
+            const Seller = await Sellers.find().distinct('name').lean();
+            const Loader = await Payments.find().distinct('name').lean();
+            const Employee = await Payments.find().distinct('name').lean();
 
-                })
+            res.render('paymentmanage', {
+                mainpath: '/paymentsmanage',
+                docs: data,
+                start: start,
+                end: end,
+                individual: false,
+                names: [],
+                filter: true,
+                dics: dics,
+                recieved: recieved,
+                Buyers: Buyer,
+                Seller: Seller,
+                Loader: Loader,
+                Employee: Employee
+
+
             })
 
         })
@@ -613,332 +104,183 @@ exports.filterpayments = (req, res) => {
     })
 
 }
-exports.individualpayments = (req, res) => {
-    let recieved = req.flash('recieved');
-    if (recieved.length > 0) {
-        recieved = recieved[0];
-    } else {
-        recieved = false;
-    }
 
-    var name = req.params.id
-    Payments.aggregate([{
-        $match: {
-            "name": req.params.id
-        }
-    }, { $unwind: "$paid" }]).sort({ "paid.date": -1, "paid._id": -1 }).exec((err, dics) => {
-        Payments.aggregate([{
-            $match: {
-                "name": req.params.id
-            }
-        }, { $unwind: "$payment" }]).sort({ "payment.date": -1, "payment._id": -1 }).exec((err, data) => {
-            Payments.find().distinct('name').then(names => {
-                res.render('paymentmanage', {
-                    mainpath: '/paymentsmanage',
-                    docs: data,
+exports.postrecieved = (req, res) => {
 
-                    individual: true,
-                    names: names,
-                    filter: false,
-                    dics: dics,
-                    id: name,
-                    recieved: recieved
-                })
-            })
-
-        })
-
-    })
-
-}
-exports.filterindividualpayments = (req, res) => {
-    let recieved = req.flash('recieved');
-    if (recieved.length > 0) {
-        recieved = recieved[0];
-    } else {
-        recieved = false;
-    }
-
-
-    var start = new Date(req.body.sdate)
-    var end = new Date(req.body.edate)
-    name = req.body.id
-    Payments.aggregate([{
-        $match: {
-            "name": name
-        }
-    }, { $unwind: "$paid" }, {
-        $match: {
-
-            "paid.date": {
-                $lt: end,
-                $gte: start
-            }
-        }
-    }]).sort({ "paid.date": -1, "paid._id": -1 }).exec((err, dics) => {
-        Payments.aggregate([{
-            $match: {
-                "name": name
-            }
-        }, { $unwind: "$payment" }, {
-            $match: {
-
-                "payment.date": {
-                    $lt: end,
-                    $gte: start
-                }
-            }
-        }]).sort({ "payment.date": -1, "payment._id": -1 }).exec((err, data) => {
-            Payments.find().distinct('name').then(names => {
-                res.render('paymentmanage', {
-                    mainpath: '/paymentsmanage',
-                    docs: data,
-                    start: start,
-                    end: end,
-                    individual: true,
-                    names: names,
-                    filter: true,
-                    dics: dics,
-                    id: name,
-                    recieved: recieved
-                })
-            })
-        })
-
-    })
-
-}
-exports.paidamountform = (req, res) => {
-
-    var name = req.body.name.toUpperCase().trim();
+    var name = req.body.name.toUpperCase().trim().split('-')[0]
     date = new Date(req.body.date)
     var amount = req.body.amount;
     const arrayid = new mongoose.Types.ObjectId()
 
-    Payments.findOne({ name: name }).then(docs => {
+    if (req.body.relation == 'Sales') {
+        req.body.id = arrayid
+        req.body.category = 'recieved'
+        req.body.type = "recievedpage"
+        managementController.postbuyerform(req, res)
+    } else if (req.body.relation == 'Purchase') {
+        req.body.id = arrayid
+        req.body.category = 'recieved'
+        req.body.type = "recievedpage"
+        managementController.postdetailedbuyerdata(req, res)
 
-        if (docs) {
-            docs.updateOne({
-                    $push: {
-                        "payment": {
-                            _id: arrayid,
-                            date: date,
-                            hint: req.body.hint,
-                            amount: amount,
+    } else if (req.body.relation == 'Employee') {
+        req.body.id = arrayid
+        req.body.category = 'recieved'
+        req.body.type = "recievedpage"
+        salarycontroller.salaryform(req, res)
+    } else if (req.body.relation == 'Loader') {
+        req.body.id = arrayid
+        req.body.category = 'recieved'
+        req.body.type = "recievedpage"
+        employeecontroller.addloaderpayment(req, res)
 
-
-                        }
-                    }
-                }, { safe: true, upsert: true },
-                function(err, model) {
-                    if (err) console.log(err)
-
-
-                }
-            )
-        } else {
-
-            var paymentmanagent = new Payments({
-                name: name,
-                payment: [{
-                    _id: arrayid,
-                    date: date,
-                    hint: req.body.hint,
-                    amount: amount,
-
-                }],
-            })
-            paymentmanagent.save((err, docs) => {
-                if (err) console.log(err)
-
-            })
-
-
-
-
-        }
-
-    }).then(docs => {
-
-        var transaction = new Transaction({
+    } else {
+        var paymentmanagent = new Payments({
+            name: name,
             _id: arrayid,
-            Date: date,
+            hint: req.body.hint,
             amount: amount,
-            types: "credit",
-            comment: "Payment R. " + name,
-            paymentmode: "bank / cash",
-            credit: req.body.paid,
-            section: "payment"
-
+            relation: req.body.relation,
+            date: date,
+            dateadded: new Date(),
+            category: 'recieved'
         })
-        transaction.save((err, doc) => {
-            if (req.body.type == 'individual') {
-                req.flash("recieved", true)
-                res.redirect('/individualpayments/' + name)
-            } else {
-                req.flash("recieved", true)
-                res.redirect('/getpayments')
-            }
-
+        paymentmanagent.save((err, docs) => {
+            req.flash("recieved", true)
+            res.redirect('/getpayments')
         })
-    })
+    }
+
 
 
 
 }
 
 exports.postpaid = (req, res) => {
-
-    var name = req.body.name.toUpperCase().trim()
+    var name = req.body.name.toUpperCase().trim().split('-')[0]
     date = new Date(req.body.date)
     var amount = req.body.amount;
     const arrayid = new mongoose.Types.ObjectId()
 
-    Payments.findOne({ name: name }).then(docs => {
+    if (req.body.relation == 'Sales') {
+        req.body.id = arrayid
+        req.body.category = 'payment'
+        req.body.type = "paymentpage"
+        managementController.postbuyerform(req, res)
+    } else if (req.body.relation == 'Purchase') {
+        req.body.id = arrayid
+        req.body.category = 'payment'
+        req.body.type = "paymentpage"
+        managementController.postdetailedbuyerdata(req, res)
 
-        if (docs) {
-            docs.updateOne({
-                    $push: {
-                        "paid": {
-                            _id: arrayid,
-                            date: date,
-                            hint: req.body.hint,
-                            amount: amount,
+    } else if (req.body.relation == 'Employee') {
+        req.body.id = arrayid
+        req.body.category = 'payment'
+        req.body.type = "paymentpage"
+        salarycontroller.salaryform(req, res)
+    } else if (req.body.relation == 'Loader') {
+        req.body.id = arrayid
+        req.body.category = 'payment'
+        req.body.type = "paymentpage"
+        employeecontroller.addloaderpayment(req, res)
 
-
-                        }
-                    }
-                }, { safe: true, upsert: true },
-                function(err, model) {
-                    if (err) console.log(err)
-
-
-
-                }
-            )
-        } else {
-
-            var paymentmanagent = new Payments({
-                name: name,
-                paid: [{
-                    _id: arrayid,
-                    date: date,
-                    hint: req.body.hint,
-                    amount: amount,
-
-                }],
-            })
-            paymentmanagent.save((err, docs) => {
-                if (err) console.log(err)
-
-            })
-
-
-
-
-        }
-
-    }).then(docs => {
-
-        var transaction = new Transaction({
+    } else {
+        var paymentmanagent = new Payments({
+            name: name,
             _id: arrayid,
-            Date: date,
+            hint: req.body.hint,
             amount: amount,
-            types: "debit",
-            comment: "Payment To. " + name,
-            paymentmode: "bank / cash",
-            debit: req.body.paid,
-            section: "payment"
-
+            relation: req.body.relation,
+            date: date,
+            dateadded: new Date(),
+            category: 'payment'
         })
-        transaction.save((err, doc) => {
-            if (req.body.type == 'individual') {
-                req.flash("recieved", false)
-                res.redirect('/individualpayments/' + name)
-            } else {
-                req.flash("recieved", false)
-                res.redirect('/getpayments')
-            }
-
+        paymentmanagent.save((err, docs) => {
+            req.flash("recieved", false)
+            res.redirect('/getpayments')
         })
-    })
-
+    }
 
 
 }
 exports.deletepaid = (req, res) => {
+    Payments.findById(req.params.id).then((docs, err) => {
 
-    Payments.findOne({ name: req.params.objectid }).then((docs, err) => {
-        docs.updateOne({
-                $pull: {
-                    "paid": {
-                        _id: req.params.id
-                    }
-                }
-            }, { safe: true, upsert: true },
-            function(err, model) {
-                console.log(err);
+        if (req.params.relation == 'Purchase') {
+            req.params.paid = docs.amount;
+            req.params.total = 0;
+            req.params.arrayid = req.params.id;
+            req.params.type = "payments"
+            req.params.name = docs.name
+            managementController.deletepurchase(req, res)
 
-
-            }
-        )
-
-    }).then(docs => {
-        Transaction.findByIdAndDelete(req.params.id).then((err, docs) => {
-            if (err) console.log(err)
-            if (req.params.section == 'individual') {
-                req.flash("recieved", false)
-                res.redirect('/individualpayments/' + req.params.objectid)
-            } else {
+        } else if (req.params.relation == 'Employee') {
+            req.params.arrayid = req.params.id;
+            req.params.type = "payments"
+            req.params.name = docs.name
+            salarycontroller.deletesalary(req, res)
+        } else if (req.params.relation == 'Loader') {
+            req.params.arrayid = req.params.id;
+            req.params.type = "payments"
+            req.params.name = docs.name
+            employeecontroller.deletepayment(req, res)
+        } else if (req.params.relation == 'Sales') {
+            req.params.paid = docs.amount;
+            req.params.total = 0;
+            req.params.arrayid = req.params.id;
+            req.params.type = "payments"
+            req.params.name = docs.name
+            managementController.deletesales(req, res)
+        } else {
+            Payments.findByIdAndDelete(req.params.arrayid).then((err, docs) => {
+                if (err) console.log(err)
                 req.flash("recieved", false)
                 res.redirect('/getpayments')
-            }
-        })
+            })
+
+        }
 
     })
-
-
 
 }
 exports.deletepayment = (req, res) => {
 
-    Payments.findOne({ name: req.params.objectid }).then((docs, err) => {
-        docs.updateOne({
-                $pull: {
-                    "payment": {
-                        _id: req.params.id
-                    }
-                }
-            }, { safe: true, upsert: true },
-            function(err, model) {
-                console.log(err);
+    Payments.findById(req.params.id).then((docs, err) => {
 
+        if (req.params.relation == 'Purchase') {
+            req.params.paid = docs.amount;
+            req.params.total = 0;
+            req.params.arrayid = req.params.id;
+            req.params.type = "recieved"
+            req.params.name = docs.name
+            managementController.deletepurchase(req, res)
 
-            }
-        )
-
-    }).then(docs => {
-        Transaction.findByIdAndRemove(req.params.id).then((err, docs) => {
-            if (err) console.log(err)
-            if (req.params.section == 'individual') {
-                req.flash("recieved", true)
-                res.redirect('/individualpayments/' + req.params.objectid)
-            } else {
+        } else if (req.params.relation == 'Employee') {
+            req.params.arrayid = req.params.id;
+            req.params.type = "recieved"
+            req.params.name = docs.name
+            salarycontroller.deletesalary(req, res)
+        } else if (req.params.relation == 'Loader') {
+            req.params.arrayid = req.params.id;
+            req.params.type = "recieved"
+            req.params.name = docs.name
+            employeecontroller.deletepayment(req, res)
+        } else if (req.params.relation == 'Sales') {
+            req.params.paid = docs.amount;
+            req.params.total = 0;
+            req.params.arrayid = req.params.id;
+            req.params.type = "recieved"
+            req.params.name = docs.name
+            managementController.deletesales(req, res)
+        } else {
+            Payments.findByIdAndDelete(req.params.id).then((err, docs) => {
+                if (err) console.log(err)
                 req.flash("recieved", true)
                 res.redirect('/getpayments')
-            }
-        })
+            })
+
+        }
+
     })
-
-
-}
-exports.deleteutilitycomplete = (req, res) => {
-
-    Utility.findOneAndDelete({ name: req.params.name }).then((err, docs) => {
-        if (err) console.log(err)
-        res.redirect('/utility')
-    })
-
-
 
 }

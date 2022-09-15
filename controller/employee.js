@@ -2,7 +2,7 @@ require('../model/employeemodel')
 require('../model/accountsmodal')
 const mongoose = require('mongoose');
 var fs = require('fs');
-const Transaction = mongoose.model('Transaction');
+const Payments = mongoose.model('Payments');
 const Loaderskooli = mongoose.model('Loaderskooli');
 const Loaders = mongoose.model('Loaders');
 const Employees = mongoose.model('Employees');
@@ -120,10 +120,8 @@ exports.Editemployee = (req, res) => {
     }
     Employees.aggregate([{
         $addFields: {
-            totalsalary: { $sum: "$payment.amount" },
-            totalpaid: { $sum: "$detail.amount" },
-            borrowed: { $sum: "$borrowal.borrowed" },
-            returned: { $sum: "$borrowal.returned" },
+            totalsalary: { $sum: "$detail.salary" },
+            totalpaid: { $sum: "$detail.paid" },
         }
     }]).sort({ "_id": -1 }).exec((err, docs) => {
 
@@ -188,8 +186,7 @@ exports.postaddemployee = (req, res) => {
                 careoff: req.body.careof,
                 duty: req.body.duty,
                 salary: req.body.salary,
-                borrowed: 0,
-                returned: 0
+
             })
             employee.save((ree, doc) => {
                 req.flash('error', "successfully added")
@@ -399,7 +396,7 @@ exports.postaddkooli = (req, res) => {
                                         _id: arrayid,
                                         product: req.body.type,
                                         kooli: kooli,
-                                        numberofsack: req.body.bags,
+                                        numberofsack: parseInt(req.body.bags / workers),
                                         workers: workers,
                                         loadof: seller,
                                         date: req.body.date,
@@ -417,7 +414,7 @@ exports.postaddkooli = (req, res) => {
                                 _id: arrayid,
                                 product: req.body.type,
                                 kooli: kooli,
-                                numberofsack: req.body.bags,
+                                numberofsack: parseInt(req.body.bags / workers),
                                 workers: workers,
                                 loadof: seller,
                                 date: req.body.date,
@@ -448,7 +445,7 @@ exports.postaddkooli = (req, res) => {
                                     _id: arrayid,
                                     product: req.body.type,
                                     kooli: kooli,
-                                    numberofsack: req.body.bags,
+                                    numberofsack: parseInt(req.body.bags / workers),
                                     workers: workers,
                                     loadof: seller,
                                     date: req.body.date,
@@ -466,7 +463,7 @@ exports.postaddkooli = (req, res) => {
                             _id: arrayid,
                             product: req.body.type,
                             kooli: kooli,
-                            numberofsack: req.body.bags,
+                            numberofsack: parseInt(req.body.bags / workers),
                             workers: workers,
                             loadof: seller,
                             date: req.body.date,
@@ -713,9 +710,33 @@ exports.indidualkoolifilter = (req, res) => {
 
 }
 exports.addloaderpayment = (req, res) => {
-    const arrayid = new mongoose.Types.ObjectId()
-    name = req.body.id.toUpperCase().trim()
+    name = req.body.name.toUpperCase().trim().split('-')[0];
     date = new Date(req.body.date)
+    var arrayid
+    if (req.body.id) {
+        arrayid = req.body.id
+    } else {
+        arrayid = new mongoose.Types.ObjectId()
+    }
+    var amount
+    var category
+    var paymentamount
+    if (req.body.amount < 0) {
+        amount = req.body.amount;
+        paymentamount = -req.body.amount;
+        category = 'recieved'
+
+    } else if (req.body.category == 'recieved') {
+        amount = -req.body.amount;
+        paymentamount = req.body.amount;
+        category = 'recieved'
+
+    } else {
+        amount = req.body.amount || 0;
+        paymentamount = req.body.amount || 0;
+        category = 'payment'
+
+    }
     Loaders.findOne({ name: name }).then(docs => {
 
         if (docs) {
@@ -725,40 +746,60 @@ exports.addloaderpayment = (req, res) => {
                         "payed": {
                             _id: arrayid,
                             date: date,
-                            amount: req.body.amount,
+                            amount: amount,
                             hint: req.body.hint,
 
                         }
                     }
                 }, { safe: true, upsert: true },
                 function(err, model) {
-                    var transaction = new Transaction({
-                        _id: arrayid,
-                        Date: date,
-                        amount: req.body.amount,
-                        types: "debit",
-                        comment: "payment to loader " + req.body.id,
-                        paymentmode: req.body.hint,
-                        debit: req.body.amount,
+                    if (req.body.amount != 0) {
+                        var paymentmanagent = new Payments({
 
-                    })
-                    transaction.save((err, docs) => {
-                        if (err) console.log(err)
-                    })
+
+                            name: name,
+                            _id: arrayid,
+                            hint: req.body.hint,
+                            amount: paymentamount,
+                            relation: 'Loader',
+                            date: date,
+                            dateadded: new Date(),
+                            category: category,
+
+
+                        })
+                        paymentmanagent.save((err, docs) => {
+                            returnpage()
+                        })
+                    } else {
+                        returnpage()
+                    }
                 })
         } else {
+            returnpage()
+
 
         }
 
-    }).then(docs => {
+    })
+
+    function returnpage() {
         if (req.body.category == 'individual') {
             req.flash('payment', true)
             res.redirect('/employee/indidualkooli/' + name)
+        } else if (req.body.type == "paymentpage") {
+            req.flash("recieved", false)
+            res.redirect('/getpayments')
+        } else if (req.body.type == "recievedpage") {
+            req.flash("recieved", true)
+            res.redirect('/getpayments')
         } else {
             req.flash('payment', true)
             res.redirect('/employee/loaderspayment')
         }
-    })
+
+    }
+
 }
 exports.addloaderkooli = (req, res) => {
     name = req.body.id.toUpperCase().trim()
@@ -939,22 +980,31 @@ exports.deletepayment = (req, res) => {
                 }
             }, { safe: true, upsert: true },
             function(err, model) {
-                Transaction.findByIdAndDelete(req.params.arrayid).then((err, docs) => {
+                Payments.findByIdAndDelete(req.params.arrayid).then((err, docs) => {
 
-                    if (req.params.type == 'individual') {
-                        req.flash('payment', true)
-                        res.redirect('/employee/indidualkooli/' + name)
-                    } else {
-                        req.flash('payment', true)
-                        res.redirect('/employee/loaderspayment')
-                    }
                 })
+
 
             })
 
-    }).catch(err => {
-        console.log(err)
+    }).then(docs => {
+
+        if (req.params.type == 'individual') {
+            req.flash('payment', true)
+            res.redirect('/employee/indidualkooli/' + name)
+        } else if (req.params.type == "payments") {
+            req.flash("recieved", false)
+            res.redirect('/getpayments')
+        } else if (req.params.type == "recieved") {
+            req.flash("recieved", true)
+            res.redirect('/getpayments')
+        } else {
+            req.flash('payment', true)
+            res.redirect('/employee/loaderspayment')
+        }
+
     })
+
 
 }
 exports.deleteindividualkooli = (req, res) => {
@@ -1104,6 +1154,7 @@ exports.loaderslistfilter = (req, res) => {
     bdate = new Date(req.body.sdate);
     end = new Date(req.body.edate);
     start.setDate(start.getDate() - 1);
+
     Loaders.aggregate([{
             "$match": {
                 "work.date": { $gte: start, $lt: end }
@@ -1155,7 +1206,6 @@ exports.loaderslistfilter = (req, res) => {
             }
         }, { $unwind: "$order" }, { $group: { _id: "null", gross: { $sum: "$order.numberofsack" } } }]).then((datas, err) => {
             var bags
-            console.log(datas)
             if (datas[0]) {
                 bags = datas[0].gross
             } else {
@@ -1346,5 +1396,42 @@ exports.indidualdailykoolifilter = (req, res) => {
             })
         })
     })
+
+}
+
+exports.deleteattendance = (req, res) => {
+    var date = new Date(req.params.date)
+    Attendance.findOne({ _id: req.params.id }).then(docs => {
+        if (docs) {
+            docs.name.forEach(one => {
+                Employees.findOne({ name: one }).then((docs, err) => {
+                    docs.updateOne({
+                            $pull: {
+                                "leave": {
+                                    date: date
+                                }
+                            }
+                        }, { safe: true, upsert: true },
+                        function(err, model) {
+                            console.log(err);
+
+
+                        }
+                    )
+
+
+                })
+
+
+
+            });
+        }
+    }).then(docs => {
+        Attendance.findOneAndDelete({ id: req.body.objectid }).then((err, docs) => {
+            res.redirect('/employee/viewattendance')
+        })
+
+    })
+
 
 }

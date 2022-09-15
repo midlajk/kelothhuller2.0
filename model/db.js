@@ -3,7 +3,7 @@ const mongoose = require("mongoose");
 // Connect to the db
 // const url = "mongodb+srv://midlaj:zain9747@cluster0.nuuwi.mongodb.net/myFirstDatabase?retryWrites=true&w=majority";
 
-const url = 'mongodb://127.0.0.1:27017'
+const url = 'mongodb://127.0.0.1:27017/test'
 // const url = "mongodb+srv://Fazil2000:Fazil2000@cluster0.6qacz.mongodb.net/myFirstDatabase?retryWrites=true&w=majority";
 
 
@@ -21,4 +21,3 @@ db.on('error', console.error.bind(console, 'MongoDB connection error:'));
 require('./accountsmodal');
 
 require('./employeemodel');
-require('./borrow_salary');
