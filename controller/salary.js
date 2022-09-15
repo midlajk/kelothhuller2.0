@@ -246,6 +246,7 @@ exports.salaryform = (req, res) => {
 exports.deletesalary = (req, res) => {
     var name
     Employees.findOne({name:req.params.name}).then((docs, err) => {
+        if(docs){
         name = docs.name
         docs.updateOne({
                 $pull: {
@@ -255,13 +256,15 @@ exports.deletesalary = (req, res) => {
                 }
             }, { safe: true, upsert: true },
             function(err, model) {
-                Payments.findByIdAndDelete(req.params.arrayid).then((err, docs) => {
-
-                })
+               
 
 
             }
         )
+        } 
+        Payments.findByIdAndDelete(req.params.arrayid).then((err, docs) => {
+
+                })
 
     }).then(docs => {
     

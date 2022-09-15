@@ -170,7 +170,7 @@
 
                                 <th>Hint</th>
 
-                                <th>submit</th>
+                                <th>Edit</th>
                             </tr>
                         </thead>
                         <tfoot>
@@ -182,7 +182,7 @@
 
                                 <th>Hint</th>
 
-                                <th>submit</th>
+                                <th>Edit</th>
 
                             </tr>
                         </tfoot>
@@ -205,9 +205,25 @@
 
                                     </td>
                                     <td>
-                                        <a href="/individualpayments/<%=dics[i].name%>">
-                                            <%=dics[i].name%>
-                                        </a>
+                                        <%if(docs[i].relation=='Purchase'){%>
+                                            <a href="/individualpurchase/<%=docs[i].name%>">
+                                                <%=docs[i].name%>
+                                            </a>
+                                            <%}else if(docs[i].relation=='Sales'){%>
+                                                <a href="/individualsales/<%=docs[i].name%>">
+                                                    <%=docs[i].name%>
+                                                </a>
+                                                <%}else if(docs[i].relation=='Loader'){%>
+                                                    <a href="/employee/indidualkooli/<%=docs[i].name%>">
+                                                        <%=docs[i].name%>
+                                                    </a>
+                                                    <%}else if(docs[i].relation=='Employee'){%>
+                                                        <a href="/paymentcontroller/indivdualsalary/<%=docs[i].name%>">
+                                                            <%=docs[i].name%>
+                                                        </a>
+                                                        <%}else {%>
+                                                            <%=docs[i].name%>
+                                                                <%}%>
                                     </td>
                                     <td>
                                         <%=dics[i].relation%>
@@ -225,7 +241,17 @@
 
 
 
-                                    <td><a href="/deletepaid/<%=dics[i].relation%>/<%=dics[i]._id%>" class="btn btn-danger" onclick="return confirm('are you sure')">Delete</a></td>
+                                    <td>
+                                        <%if(docs[i].relation=='Purchase'){%>
+                                            <a href="/individualpurchase/<%=docs[i].name%>">
+Go to Profile                                            </a>
+                                            <%}else if(docs[i].relation=='Sales'){%>
+                                                <a href="/individualsales/<%=docs[i].name%>">
+                                                    Go to Profile                                                </a>
+                                                <%}else {%>
+                                                    <a href="/deletepaid/<%=dics[i].relation%>/<%=dics[i]._id%>" class="btn btn-danger" onclick="return confirm('are you sure')">Delete</a>
+                                                    <%}%>
+                                    </td>
 
 
                                 </tr>
@@ -330,7 +356,7 @@
 
                                 <th>Hint</th>
 
-                                <th>submit</th>
+                                <th>Edit</th>
                             </tr>
                         </thead>
                         <tfoot>
@@ -342,7 +368,7 @@
 
                                 <th>Hint</th>
 
-                                <th>submit</th>
+                                <th>Edit</th>
 
                             </tr>
                         </tfoot>
@@ -365,9 +391,25 @@
 
                                     </td>
                                     <td>
-                                        <a href="/individualpayments/<%=docs[i].name%>">
-                                            <%=docs[i].name%>
-                                        </a>
+                                        <%if(docs[i].relation=='Purchase'){%>
+                                            <a href="/individualpurchase/<%=docs[i].name%>">
+                                                <%=docs[i].name%>
+                                            </a>
+                                            <%}else if(docs[i].relation=='Sales'){%>
+                                                <a href="/individualsales/<%=docs[i].name%>">
+                                                    <%=docs[i].name%>
+                                                </a>
+                                                <%}else if(docs[i].relation=='Loader'){%>
+                                                    <a href="/employee/indidualkooli/<%=docs[i].name%>">
+                                                        <%=docs[i].name%>
+                                                    </a>
+                                                    <%}else if(docs[i].relation=='Employee'){%>
+                                                        <a href="/paymentcontroller/indivdualsalary/<%=docs[i].name%>">
+                                                            <%=docs[i].name%>
+                                                        </a>
+                                                        <%}else {%>
+                                                            <%=docs[i].name%>
+                                                                <%}%>
                                     </td>
                                     <td>
                                         <%=docs[i].relation%>
@@ -384,7 +426,19 @@
                                     </td>
 
 
-                                    <td><a href="/deleterecieced/<%=dics[i].relation%>/<%=dics[i]._id%>" class="btn btn-danger" onclick="return confirm('are you sure')">Delete</a></td>
+                                    <td>
+                                        <%if(docs[i].relation=='Purchase'){%>
+                                            <a href="/individualpurchase/<%=docs[i].name%>">
+Go to Profile                                            </a>
+                                            <%}else if(docs[i].relation=='Sales'){%>
+                                                <a href="/individualsales/<%=docs[i].name%>">
+                                                    Go to Profile                                                </a>
+                                                <%}else {%>
+                                                    <a href="/deleterecieced/<%=dics[i].relation%>/<%=dics[i]._id%>" class="btn btn-danger" onclick="return confirm('are you sure')">Delete</a>
+                                                    <%}%>
+
+
+                                    </td>
 
                                 </tr>
                                 <%}%>

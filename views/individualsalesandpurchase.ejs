@@ -6,10 +6,10 @@
         <div class="d-sm-flex align-items-center justify-content-between mb-4">
             <h1 class="h3 mb-0 text-gray-800">
                 <%if(category =='sales'){%>
-                    sales to
+                    Sales To
                     <%=name%>
                         <%}else{%>
-                            Purchase from
+                            Purchase From
                             <%=name%>
                                 <%}%>
             </h1>
@@ -156,7 +156,7 @@
                                 <%if(category =='sales'){%>
                                     <th>Amount Recieved</th>
                                     <th>Total amount</th>
-                                    <th>After TDS 1%</th>
+                                    <th> TDS %</th>
 
                                     <%}else{%>
                                         <th>Total amount</th>
@@ -178,7 +178,7 @@
                                     <%if(category =='sales'){%>
                                         <td><input required class="p-1 form-control" style="width: 150px;" tabIndex="4" type="number" step=".01" name="amount" id="paid"></td>
                                         <td><input required class="p-1" tabIndex="5" type="number" step=".01" style="width: 150px;" name="total" id="total"></td>
-                                        <td><input required class="p-1" tabIndex="5" type="number" step=".01" style="width: 120px;" name="tds" id="tds"></td>
+                                        <td><input required class="p-1" tabIndex="5" value="1" type="number" step=".01" style="width: 120px;" name="tds" id="tds"></td>
                                         <%}else{%>
                                             <td><input required class="p-1" tabIndex="4" type="number" step=".01" style="width: 150px;" name="total" id="total"></td>
                                             <td><input required class="p-1 form-control" style="width: 150px;" tabIndex="5" type="number" step=".01" name="amount" id="paid"></td>
@@ -222,7 +222,7 @@
                                     <%}else{%>
                                         <th>kilogram</th>
                                         <th>Bag price</th>
-                                        <th>Price</th>
+                                        <th>Kg Price</th>
                                         <th>Total</th>
                                         <th>Paid</th>
                                         <%}%>
@@ -270,7 +270,13 @@
                                 length = length - 1;
                                 kilogram = kilogram + data[i].deal.kilogram
                                 paid = paid + data[i].deal.paid
-                                total = total + data[i].deal.total
+                                if(category =='sales'){
+                                    total = total + data[i].deal.tds
+
+                                }else{
+                                    total = total + data[i].deal.total
+
+                                    }
                                 %>
                                 <tr id="purchase" class="purchase">
                                     <td>
@@ -343,18 +349,19 @@
                             <th>Date</th>
 
                             <%if(category =='sales'){%>
-                                <th></th>
+                                <th>Loari</th>
                                 <th id="totalbag"></th>
                                 <th>Price</th>
                                 <th id="totalpai">Paid</th>
+                                <th>Total</th>
+
                                 <th id="totalamount">Total</th>
-                                <th>Price</th>
 
 
                                 <%}else{%>
                                     <th id="totalbag"></th>
-                                    <th></th>
-                                    <th></th>
+                                    <th>Bag price</th>
+                                    <th>Kg Price</th>
                                     <th id="totalamount">Total</th>
                                     <th id="totalpai">Paid</th>
                                     <%}%>
@@ -569,10 +576,10 @@
             document.getElementById('arrayid').value = obj[i].deal.id;
             document.getElementById('previoustotal').value = obj[i].deal.total;
             document.getElementById('previouspaid').value = obj[i].deal.paid;
-            document.getElementById('editpaid').value = obj[i].deal.paid
+            document.getElementById('editpaid').value = obj[i].deal.paid <%if(category =='sales'){%>
             document.getElementById('tdstotal').value = obj[i].deal.tds;
             document.getElementById('editloari').value = obj[i].deal.loari;
-
+            <%}%>
             $('#editmodel').modal('show')
 
         }
@@ -596,7 +603,6 @@
             var price = document.getElementById('price').value;
             var total = parseInt(kilogram * price);
             document.getElementById('total').value = total;
-            document.getElementById('tds').value = parseInt(total - (total * 1 / 100));
         });
         $(".price-control").on("change", function() {
             var kilogram = document.getElementById('editkilogram').value;

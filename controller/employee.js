@@ -162,11 +162,23 @@ exports.PostEditemployee = (req, res) => {
 }
 exports.deleteemployee = (req, res) => {
 
+    Employees.findOne({ _id: req.params.id }).then(docs => {
+        if (docs) {
 
-    Employees.findByIdAndDelete(req.params.id).then((err, docs) => {
-        if (err) console.log(err)
-        return res.redirect('/employee/Editemployee')
+            docs.detail.forEach(one => {
+
+                Payments.findOneAndDelete({ _id: one._id }).then((err, docs) => {
+
+                })
+            });
+        }
+    }).then(docs => {
+        Employees.findOneAndDelete({ _id: req.params.id }).then((err, docs) => {
+            res.redirect('/employee/Editemployee')
+        })
+
     })
+
 
 
 }

@@ -50,7 +50,7 @@ exports.postdetailedbuyerdata = (req, res) => {
             console.log(err)
         }
         if (docs) {
-            var maintotal = docs.total + totalpayment - req.body.amount || 0;
+            var maintotal = docs.total + totalpayment - (amount || 0);
             docs.updateOne({
                     total: maintotal
 
@@ -112,7 +112,7 @@ exports.postdetailedbuyerdata = (req, res) => {
 
         }
     }).then(doc => {
-        if (req.body.amount != 0) {
+        if (req.body.amount && req.body.amount != 0) {
             var paymentmanagent = new Payments({
 
                 name: name,
@@ -1133,7 +1133,7 @@ exports.deleteuser = (req, res) => {
 
 exports.editorder = (req, res) => {
 
-    var totalpayment = parseInt(req.body.edittotal)
+    var totalpayment = parseInt(req.body.edittotal) || 0
     var paymentamount
     var category
     let amount = 0
@@ -1148,24 +1148,13 @@ exports.editorder = (req, res) => {
         category = req.body.section == "sales" ? 'recieved' : 'payment'
     }
 
-    Payments.findByIdAndUpdate(req.body.arrayid).then(docs => {
-        if (docs) {
-            docs.hint = req.body.hint
-            docs.amount = paymentamount || 0
-            docs.date = new Date(req.body.editdate)
-            docs.dateadded = new Date()
-            docs.category = category
-            docs.save()
-        }
-
-    })
     if (req.body.section == "sales") {
         var loari = req.body.editloari ? req.body.editloari.toUpperCase().trim() : '';
         var name
         Buyers.findOne({ id: req.body.objectid }).then(docs => {
             name = docs.name
 
-            var maintotal = docs.total - parseInt(req.body.previoustotal) + totalpayment
+            var maintotal = docs.total - parseInt(req.body.previoustotal) + parseInt(req.body.previouspaid) + totalpayment - parseInt(req.body.paid || 0)
 
             docs.updateOne({
                     total: maintotal,
@@ -1178,7 +1167,7 @@ exports.editorder = (req, res) => {
             Buyers.findOneAndUpdate({ id: req.body.objectid, deal: { $elemMatch: { id: req.body.arrayid } } }, {
 
                         $set: {
-
+                            'deal.$.dateadded': new Date(),
                             'deal.$.date': req.body.editdate,
                             'deal.$.loari': loari,
                             'deal.$.kilogram': req.body.editkilogram,
@@ -1192,7 +1181,7 @@ exports.editorder = (req, res) => {
                     }, // list fields you like to change
                     { 'new': true, 'safe': true, 'upsert': true })
                 .then(docs => {
-
+                    paymentchange(name)
                     if (req.body.types == "seperate") {
                         req.flash('error', "Successfully Editted")
                         res.redirect('/salesmanagement')
@@ -1210,8 +1199,8 @@ exports.editorder = (req, res) => {
         var name
         Sellers.findOne({ id: req.body.objectid }).then(docs => {
             name = docs.name;
-            var maintotal = docs.total - parseInt(req.body.previoustotal) + totalpayment
-
+            var maintotal = docs.total - parseInt(req.body.previoustotal) + parseInt(req.body.previouspaid) + totalpayment - parseInt(req.body.paid || 0)
+                //deletehere console.log(docs.total, req.body.previoustotal, req.body.previouspaid, totalpayment, req.body.paid)
             docs.updateOne({
                     total: maintotal,
 
@@ -1223,7 +1212,7 @@ exports.editorder = (req, res) => {
             Sellers.findOneAndUpdate({ id: req.body.objectid, deal: { $elemMatch: { id: req.body.arrayid } } }, {
 
                         $set: {
-
+                            'deal.$.dateadded': new Date(),
                             'deal.$.date': req.body.editdate,
                             'deal.$.kilogram': req.body.editkilogram,
                             'deal.$.price': req.body.editprize,
@@ -1237,7 +1226,7 @@ exports.editorder = (req, res) => {
                     { 'new': true, 'safe': true, 'upsert': true })
                 .then(docs => {
 
-
+                    paymentchange(name)
                     if (req.body.types == "seperate") {
                         req.flash('error', "Successfully added")
                         res.redirect('/purchasemanagement')
@@ -1251,5 +1240,38 @@ exports.editorder = (req, res) => {
         })
 
 
+    }
+
+    function paymentchange(name) {
+        Payments.findByIdAndUpdate(req.body.arrayid).then(docs => {
+            if (docs) {
+                console.log('docsund')
+                docs.hint = req.body.hint
+                docs.amount = paymentamount || 0
+                docs.date = new Date(req.body.editdate)
+                docs.dateadded = new Date()
+                docs.category = category
+                docs.save()
+            } else if (req.body.paid > 0 || req.body.paid < 0) {
+                console.log('here', name)
+                var paymentmanagent = new Payments({
+
+                    name: name,
+                    _id: req.body.arrayid,
+                    hint: req.body.hint,
+                    amount: paymentamount,
+                    relation: req.body.section == "sales" ? 'Sales' : 'Purchase',
+                    date: new Date(req.body.editdate),
+                    dateadded: new Date(),
+                    category: category,
+
+
+                })
+                paymentmanagent.save((err, docs) => {})
+            } else {
+
+            }
+
+        })
     }
 }

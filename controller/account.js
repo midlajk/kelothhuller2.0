@@ -232,8 +232,7 @@ exports.deletepaid = (req, res) => {
             req.params.name = docs.name
             managementController.deletesales(req, res)
         } else {
-            Payments.findByIdAndDelete(req.params.arrayid).then((err, docs) => {
-                if (err) console.log(err)
+            Payments.findByIdAndDelete(req.params.id).then((err, docs) => {
                 req.flash("recieved", false)
                 res.redirect('/getpayments')
             })
@@ -274,7 +273,6 @@ exports.deletepayment = (req, res) => {
             managementController.deletesales(req, res)
         } else {
             Payments.findByIdAndDelete(req.params.id).then((err, docs) => {
-                if (err) console.log(err)
                 req.flash("recieved", true)
                 res.redirect('/getpayments')
             })
