@@ -10,11 +10,9 @@
             </h1>
 
             <h6>
-                <%if(filter){%>
-                    From
-                    <%=moment(start).format( 'DD-MM-YYYY')%> to
-                        <%=moment(end).format( 'DD-MM-YYYY')%>
-                            <%}%>
+                DATA ENTERED
+                <%=start%>
+                    <%=end%>
             </h6>
         </div>
         <!-- Content Row -->
@@ -270,25 +268,7 @@ Go to Profile                                            </a>
 
                 <a href="#" id="paymentbutton" class="btn btn-success float-right mr-2">Paid</a>
             </div>
-            <div class="card-header py-3">
 
-                <form>
-                    <div class="col-sm-12 mb-3 mb-sm-0 input-group">
-                        <input required type="text" id="mylistofsellers" class="form-control form-control-user" oninput="check_user()" placeholder="Search for names" list="sellernames" autocomplete="off">
-                        <div class="input-group-append">
-                            <a href="" id="check" type="button" class="btn btn-danger">View Individual accounts</a>
-                        </div>
-
-                        <datalist id="sellernames">
-                            <%for(let docs of names){%>
-                                <option value="<%=docs%>">
-                                <%}%>
-                        </datalist>
-                    </div>
-                </form>
-
-
-            </div>
             <div class="card-body">
                 <div class="table-responsive">
                     <table class="table" width="100%" cellspacing="0">
@@ -494,18 +474,7 @@ Go to Profile                                            </a>
 
 
 
-    <script type="text/javascript">
-        function check_user() {
-            var name = document.getElementById("mylistofsellers").value;
-            var x = document.getElementById("check")
-            if (!name) {
 
-            } else {
-
-                x.href = "/individualpayments/" + name
-            }
-        }
-    </script>
     <script>
         $(document).ready(function() {
             $('#MyTable').DataTable({

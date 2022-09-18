@@ -256,7 +256,11 @@
                                 //       payd = payd + data[j-1].deal.paid
                                 // totl = totl + data[j-1].deal.total
                                 // }
+                                if(category =='sales'){
+                                    remaining = remaining + data[j-1].deal.tds - data[j-1].deal.paid
+                                }else{
                                 remaining = remaining + data[j-1].deal.total - data[j-1].deal.paid
+                                }
                                 rem.push(remaining)
                                 // pay.push(payd)
                                 // tot.push(totl)
@@ -558,7 +562,7 @@
 
 
             '<%if(category =="sales"){%>'
-            document.getElementById("deletebutton").href = "/deletesales/" + obj[i].name + "/" + obj[i].deal.id + "/indivdual/" + obj[i].deal.total + "/" + obj[i].deal.paid;
+            document.getElementById("deletebutton").href = "/deletesales/" + obj[i].name + "/" + obj[i].deal.id + "/indivdual/" + obj[i].deal.tds + "/" + obj[i].deal.paid;
             '<%}else{%>'
             document.getElementById("deletebutton").href = "/deletepurchase/" + obj[i].name + "/" + obj[i].deal.id + "/indivdual/" + obj[i].deal.total + "/" + obj[i].deal.paid;
             '<%}%>'
@@ -579,6 +583,11 @@
             document.getElementById('editpaid').value = obj[i].deal.paid <%if(category =='sales'){%>
             document.getElementById('tdstotal').value = obj[i].deal.tds;
             document.getElementById('editloari').value = obj[i].deal.loari;
+            document.getElementById('previoustotal').value = obj[i].deal.tds;
+
+            <%}else{%>
+            document.getElementById('previoustotal').value = obj[i].deal.total;
+
             <%}%>
             $('#editmodel').modal('show')
 

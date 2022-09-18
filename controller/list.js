@@ -12,7 +12,7 @@ const Loaderskooli = mongoose.model('Loaderskooli');
 exports.dealerslist = (req, res) => {
     Buyers.aggregate([{
         $addFields: {
-            totalsales: { $sum: "$deal.total" },
+            totalsales: { $sum: "$deal.tds" },
             totalkg: { $sum: "$deal.kilogram" },
             totalpaid: { $sum: "$deal.paid" }
         }
@@ -101,7 +101,7 @@ exports.filterdelerslist = (req, res) => {
             },
             {
                 $addFields: {
-                    totalsales: { $sum: "$deal.total" },
+                    totalsales: { $sum: "$deal.tds" },
                     totalkg: { $sum: "$deal.kilogram" },
                     totalpaid: { $sum: "$deal.paid" }
 

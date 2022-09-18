@@ -498,8 +498,9 @@ exports.postaddkooli = (req, res) => {
     }
 }
 exports.viewkooli = (req, res) => {
-    var start = new Date(08 / 03 / 2000)
+    var start = new Date()
     var end = new Date()
+    start.setDate(0);
     Loaderskooli.aggregate([{ $unwind: "$order" }]).sort({ "order.date": -1, "order._id": -1 }).exec((err, docs) => {
         Loaders.find().distinct('name').then(loaders => {
             Loaderskooli.find().distinct('seller').then(loads => {
@@ -546,8 +547,9 @@ exports.koolifilter = (req, res) => {
 
 }
 exports.individualloads = (req, res) => {
-    var start = new Date(08 / 03 / 2000)
+    var start = new Date()
     var end = new Date()
+    start.setDate(0);
     Loaderskooli.aggregate([{
         $match: {
             "seller": req.params.id
@@ -617,8 +619,9 @@ exports.indidualkooli = (req, res) => {
     } else {
         payment = false;
     }
-    var start = new Date(08 / 03 / 2000)
+    var start = new Date()
     var end = new Date()
+    start.setDate(0);
     name = req.params.id.toUpperCase();
     Loaders.aggregate([{
             "$match": { "name": name }
@@ -1057,8 +1060,9 @@ exports.loaderspayment = (req, res) => {
     } else {
         payment = false;
     }
-    var start = new Date(08 / 03 / 2000)
+    var start = new Date()
     var end = new Date()
+    start.setDate(0);
 
     Loaders.aggregate([
         { $unwind: "$work" }, {

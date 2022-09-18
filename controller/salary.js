@@ -13,7 +13,20 @@ exports.salary = (req, res) => {
     } else {
         payment = false;
     }
-    Employees.aggregate([{ $unwind: "$detail" }]).sort({ "detail.date": -1, "detail._id": -1 }).exec((err, data) => {
+    var start = new Date()
+    var end = new Date()
+    start.setDate(0);
+
+ 
+    Employees.aggregate([{ $unwind: "$detail" }, {
+        $match: {
+
+            "detail.date": {
+                $lt: end,
+                $gte: start
+            }
+        }
+    }]).sort({ "detail.date": -1, "detail._id": -1 }).exec((err, data) => {
 
             Employees.find().distinct('name').then(borrevers => {
                 res.render('salary', {
@@ -21,7 +34,9 @@ exports.salary = (req, res) => {
                     docs: data,
                     individual: false,
                     borrevers: borrevers,
-                    filter: false,
+                    filter: true,
+                    start: start,
+                    end: end,
                     payment: payment
 
                 })
@@ -40,7 +55,6 @@ exports.filtersalary = (req, res) => {
     }
     var start = new Date(req.body.sdate)
     var end = new Date(req.body.edate)
-    console.log("here")
     Employees.aggregate([{ $unwind: "$detail" }, {
         $match: {
 

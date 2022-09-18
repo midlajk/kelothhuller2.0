@@ -9,6 +9,7 @@ const Buyers = mongoose.model('Buyers');
 const managementController = require('./management');
 const employeecontroller = require('./employee');
 const salarycontroller = require('./salary');
+const moment = require("moment");
 
 const Loaders = mongoose.model('Loaders');
 /* ------------------------ */
@@ -21,7 +22,18 @@ exports.getpayments = (req, res) => {
     } else {
         recieved = false;
     }
-    Payments.find().sort({ "date": -1, "_id": -1 }).exec(async(err, data) => {
+    var start = new Date()
+    var end = new Date()
+    start.setUTCHours(0, 0, 0, 0);
+    end.setUTCHours(23, 59, 59, 999)
+
+
+    Payments.find({ //query today up to tonight
+        dateadded: {
+            $gte: start,
+            $lt: end
+        }
+    }).sort({ "date": -1, "_id": -1 }).exec(async(err, data) => {
         const Buyer = await Buyers.find().distinct('name').lean();
         const Seller = await Sellers.find().distinct('name').lean();
         const Loader = await Loaders.find().distinct('name').lean();
@@ -31,15 +43,16 @@ exports.getpayments = (req, res) => {
         res.render('paymentmanage', {
             mainpath: '/paymentsmanage',
             docs: data,
-            individual: false,
-            names: [],
-            filter: false,
             dics: data,
             recieved: recieved,
             Buyers: Buyer,
             Seller: Seller,
             Loader: Loader,
-            Employee: Employee
+            Employee: Employee,
+            start: 'TODAY',
+            end: '! Filter to see more data',
+
+
 
         })
     })
@@ -51,6 +64,7 @@ exports.getpayments = (req, res) => {
 exports.filterpayments = (req, res) => {
     var start = new Date(req.body.sdate)
     var end = new Date(req.body.edate)
+
     let recieved = req.flash('recieved');
     if (recieved.length > 0) {
         recieved = recieved[0];
@@ -58,48 +72,34 @@ exports.filterpayments = (req, res) => {
         recieved = false;
     }
 
-    Payments.aggregate([{ $unwind: "$paid" }, {
-        $match: {
-
-            "paid.date": {
-                $lt: end,
-                $gte: start
-            }
+    end.setDate(end.getDate() + 1)
+    Payments.find({ //query today up to tonight
+        date: {
+            $gte: start,
+            $lt: end
         }
-    }]).sort({ "paid.date": -1, "paid._id": -1 }).exec((err, dics) => {
-        Payments.aggregate([{ $unwind: "$payment" }, {
-            $match: {
-
-                "payment.date": {
-                    $lt: end,
-                    $gte: start
-                }
-            }
-        }]).sort({ "payment.date": -1, "payment._id": -1 }).exec(async(err, data) => {
-            const Buyer = await Buyers.find().distinct('name').lean();
-            const Seller = await Sellers.find().distinct('name').lean();
-            const Loader = await Payments.find().distinct('name').lean();
-            const Employee = await Payments.find().distinct('name').lean();
-
-            res.render('paymentmanage', {
-                mainpath: '/paymentsmanage',
-                docs: data,
-                start: start,
-                end: end,
-                individual: false,
-                names: [],
-                filter: true,
-                dics: dics,
-                recieved: recieved,
-                Buyers: Buyer,
-                Seller: Seller,
-                Loader: Loader,
-                Employee: Employee
+    }).sort({ "date": -1, "_id": -1 }).exec(async(err, data) => {
+        const Buyer = await Buyers.find().distinct('name').lean();
+        const Seller = await Sellers.find().distinct('name').lean();
+        const Loader = await Loaders.find().distinct('name').lean();
+        const Employee = await Employees.find().distinct('name').lean();
 
 
-            })
+        res.render('paymentmanage', {
+            mainpath: '/paymentsmanage',
+            docs: data,
+            start: 'FROM ' + start.toLocaleDateString(),
+            end: ' TO ' + end.toLocaleDateString(),
+            dics: data,
+            recieved: recieved,
+            Buyers: Buyer,
+            Seller: Seller,
+            Loader: Loader,
+            Employee: Employee
+
 
         })
+
 
     })
 

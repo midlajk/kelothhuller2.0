@@ -356,6 +356,8 @@
                             </div>
 
                             <input type="hidden" name="previoustotal" id="previoustotal">
+                            <input type="hidden" name="previouspaid" id="previouspaid">
+
                             <input type="hidden" name="paid" id="paidhiden">
                             <input type="hidden" value="" name="arrayid" id="arrayid">
                             <input type="hidden" value="" name="objectid" id="objectid">
@@ -410,7 +412,7 @@
         function editsales(i) {
             var obj = <%- JSON.stringify(buyer) %>;
 
-            document.getElementById("deletebutton").href = "/deletesales/" + obj[i].name + "/" + obj[i].deal.id + "/seperate/" + obj[i].deal.total + "/" + obj[i].deal.paid;
+            document.getElementById("deletebutton").href = "/deletesales/" + obj[i].name + "/" + obj[i].deal.id + "/seperate/" + obj[i].deal.tds + "/" + obj[i].deal.paid;
             var today = moment(obj[i].deal.date).format('YYYY-MM-DD');
             document.getElementById("editdate").value = today;
 
@@ -424,8 +426,9 @@
             document.getElementById('editprize').value = obj[i].deal.price;
             document.getElementById('objectid').value = obj[i].id;
             document.getElementById('arrayid').value = obj[i].deal.id;
-            document.getElementById('previoustotal').value = obj[i].deal.total;
+            document.getElementById('previoustotal').value = obj[i].deal.tds;
             document.getElementById('paidhiden').value = obj[i].deal.paid;
+            document.getElementById('previouspaid').value = obj[i].deal.paid;
 
             $('#editmodel').modal('show')
 

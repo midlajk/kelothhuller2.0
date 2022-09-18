@@ -7,6 +7,7 @@ const Sellers = mongoose.model('Sellers');
 const Users = mongoose.model('Users');
 const Buyers = mongoose.model('Buyers');
 const Payments = mongoose.model('Payments');
+const moment = require("moment");
 
 
 const Names = mongoose.model('Names');
@@ -45,10 +46,6 @@ exports.postdetailedbuyerdata = (req, res) => {
     var name = req.body.name.toUpperCase().trim().split('-')[0];
     Sellers.findOne({ name: name }).then((docs, err) => {
 
-
-        if (err) {
-            console.log(err)
-        }
         if (docs) {
             var maintotal = docs.total + totalpayment - (amount || 0);
             docs.updateOne({
@@ -89,7 +86,7 @@ exports.postdetailedbuyerdata = (req, res) => {
 
                 id: objectid,
                 name: name,
-                total: totalpayment,
+                total: totalpayment - amount,
                 deal: [{
                     id: arrayid,
                     date: date,
@@ -149,7 +146,6 @@ exports.postdetailedbuyerdata = (req, res) => {
             req.flash("recieved", true)
             res.redirect('/getpayments')
         } else {
-            console.log(req.body.type)
             req.flash('error', "Successfully added")
             res.redirect('/individualpurchase/' + name);
         }
@@ -174,7 +170,6 @@ exports.deletepurchase = (req, res) => {
                     }
                 }, { safe: true, upsert: true },
                 function(err, model) {
-                    console.log(err);
 
 
                 }
@@ -183,7 +178,6 @@ exports.deletepurchase = (req, res) => {
 
     }).then((docs, err) => {
         Payments.findByIdAndDelete(req.params.arrayid).then((err, docs) => {
-            if (err) console.log(err)
 
         })
         if (req.params.type == "seperate") {
@@ -203,6 +197,7 @@ exports.deletepurchase = (req, res) => {
 };
 exports.postbuyerform = (req, res) => {
     var totalpayment = parseInt(req.body.total) || 0;
+    var tds = parseInt(totalpayment - (totalpayment * (req.body.tds / 100))) || 0
     const objectid = new mongoose.Types.ObjectId()
     date = new Date(req.body.date)
     var arrayid
@@ -234,7 +229,7 @@ exports.postbuyerform = (req, res) => {
     var loari = req.body.loari ? req.body.loari.toUpperCase().trim() : '';
     Buyers.findOne({ name: name }).then(docs => {
         if (docs) {
-            var maintotal = docs.total + totalpayment - amount;
+            var maintotal = docs.total + tds - amount;
             docs.updateOne({
                     total: maintotal
 
@@ -253,7 +248,7 @@ exports.postbuyerform = (req, res) => {
                             date: req.body.date,
                             kilogram: req.body.kilogram || 0,
                             price: req.body.price || 0,
-                            tds: parseInt(totalpayment - (totalpayment * (req.body.tds / 100))) || 0,
+                            tds: tds || 0,
                             total: totalpayment || 0,
                             hint: req.body.hint,
                             loari: loari,
@@ -270,7 +265,7 @@ exports.postbuyerform = (req, res) => {
 
                 id: objectid,
                 name: name,
-                total: totalpayment,
+                total: tds - amount,
                 deal: [{
                     dateadded: new Date(),
                     id: arrayid,
@@ -278,7 +273,7 @@ exports.postbuyerform = (req, res) => {
                     kilogram: req.body.kilogram || 0,
                     price: req.body.price || 0,
                     total: totalpayment,
-                    tds: parseInt(totalpayment - (totalpayment * (req.body.tds / 100))) || 0,
+                    tds: tds || 0,
                     loari: loari,
                     hint: req.body.hint,
                     paid: amount || 0
@@ -370,7 +365,6 @@ exports.deletesales = (req, res) => {
                 }
             }, { safe: true, upsert: true },
             function(err, model) {
-                console.log(err);
 
 
             }
@@ -379,7 +373,6 @@ exports.deletesales = (req, res) => {
     }).then((err, docs) => {
         if (err) console.log(err)
         Payments.findByIdAndDelete(req.params.arrayid).then((err, docs) => {
-            if (err) console.log(err)
 
         })
 
@@ -406,14 +399,18 @@ exports.salesmanagement = (req, res) => {
     } else {
         message = null;
     }
-    var start = new Date(08 / 03 / 2000)
+    var start = new Date()
     var end = new Date()
+    start.setUTCHours(0, 0, 0, 0);
+    end.setUTCHours(23, 59, 59, 999)
+
+
     Buyers.aggregate([{ $unwind: "$deal" }, {
             $match: {
 
-                "deal.date": {
-                    $lt: end,
-                    $gte: start
+                "deal.dateadded": {
+                    $gte: start,
+                    $lt: end
                 },
                 "deal.total": {
                     $gt: 0,
@@ -557,12 +554,15 @@ exports.purchasemanagement = (req, res) => {
     } else {
         message = null;
     }
-    var start = new Date(08 / 03 / 2000)
+    var start = new Date()
     var end = new Date()
+    start.setUTCHours(0, 0, 0, 0);
+    end.setUTCHours(23, 59, 59, 999)
+
     Sellers.aggregate([{ $unwind: "$deal" }, {
         $match: {
 
-            "deal.date": {
+            "deal.dateadded": {
                 $lt: end,
                 $gte: start,
 
@@ -607,8 +607,6 @@ exports.purchasefilter = (req, res) => {
 
         start = new Date(req.body.sdate);
         end = new Date(req.body.edate);
-
-        console.log(start)
         filter = [{ $unwind: "$deal" }, {
             $match: {
 
@@ -1134,6 +1132,7 @@ exports.deleteuser = (req, res) => {
 exports.editorder = (req, res) => {
 
     var totalpayment = parseInt(req.body.edittotal) || 0
+    var tdstotal = parseInt(req.body.tdstotal) || 0
     var paymentamount
     var category
     let amount = 0
@@ -1151,10 +1150,11 @@ exports.editorder = (req, res) => {
     if (req.body.section == "sales") {
         var loari = req.body.editloari ? req.body.editloari.toUpperCase().trim() : '';
         var name
+
         Buyers.findOne({ id: req.body.objectid }).then(docs => {
             name = docs.name
 
-            var maintotal = docs.total - parseInt(req.body.previoustotal) + parseInt(req.body.previouspaid) + totalpayment - parseInt(req.body.paid || 0)
+            var maintotal = docs.total - parseInt(req.body.previoustotal) + parseInt(req.body.previouspaid) + tdstotal - parseInt(req.body.paid || 0)
 
             docs.updateOne({
                     total: maintotal,
@@ -1172,7 +1172,7 @@ exports.editorder = (req, res) => {
                             'deal.$.loari': loari,
                             'deal.$.kilogram': req.body.editkilogram,
                             'deal.$.price': req.body.editprize,
-                            'deal.$.tds': req.body.tdstotal,
+                            'deal.$.tds': tdstotal,
                             'deal.$.total': totalpayment,
                             'deal.$.hint': req.body.hint,
                             'deal.$.paid': req.body.paid
@@ -1200,7 +1200,6 @@ exports.editorder = (req, res) => {
         Sellers.findOne({ id: req.body.objectid }).then(docs => {
             name = docs.name;
             var maintotal = docs.total - parseInt(req.body.previoustotal) + parseInt(req.body.previouspaid) + totalpayment - parseInt(req.body.paid || 0)
-                //deletehere console.log(docs.total, req.body.previoustotal, req.body.previouspaid, totalpayment, req.body.paid)
             docs.updateOne({
                     total: maintotal,
 
@@ -1245,7 +1244,6 @@ exports.editorder = (req, res) => {
     function paymentchange(name) {
         Payments.findByIdAndUpdate(req.body.arrayid).then(docs => {
             if (docs) {
-                console.log('docsund')
                 docs.hint = req.body.hint
                 docs.amount = paymentamount || 0
                 docs.date = new Date(req.body.editdate)
@@ -1253,7 +1251,6 @@ exports.editorder = (req, res) => {
                 docs.category = category
                 docs.save()
             } else if (req.body.paid > 0 || req.body.paid < 0) {
-                console.log('here', name)
                 var paymentmanagent = new Payments({
 
                     name: name,
