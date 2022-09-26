@@ -365,7 +365,6 @@ exports.postaddkooli = (req, res) => {
                         }]
                     })
                     loaderskooli.save((err, data) => {
-                        if (err) console.log(err)
 
                     })
                 }
@@ -373,9 +372,7 @@ exports.postaddkooli = (req, res) => {
             }).then(docs => {
                 req.flash('error', "Data added! Date : " + req.body.date + ",  Seller : " + seller + ", Bag : " + req.body.bags + ", Kooli : " + req.body.kooli + ", workers : [ " + req.body.workername + " ]")
                 res.redirect('/employee/addkooli')
-            }).catch(err => {
-                console.log(err)
-            })
+            }).catch(err => {})
 
 
 
@@ -434,7 +431,6 @@ exports.postaddkooli = (req, res) => {
                             }]
                         })
                         loaders.save((err, data) => {
-                            if (err) console.log(err)
 
                         })
                     }
@@ -483,7 +479,6 @@ exports.postaddkooli = (req, res) => {
                         }]
                     })
                     loaders.save((err, data) => {
-                        if (err) console.log(err)
 
                     })
                 }
@@ -633,16 +628,7 @@ exports.indidualkooli = (req, res) => {
         Loaders.aggregate([{
                 "$match": { "name": name }
             },
-            { $unwind: "$payed" }, {
-                $match: {
-
-                    "payed.date": {
-                        $lt: end,
-                        $gte: start
-                    }
-                }
-            }
-
+            { $unwind: "$payed" }
         ]).sort({ "payed.date": -1, "payed._id": -1 }).exec((err, dics) => {
             Loaders.find().distinct('name').then(loaders => {
 
@@ -851,9 +837,7 @@ exports.addloaderkooli = (req, res) => {
                 }
 
             })
-            loaders.save((err, docs) => {
-                if (err) console.log(err)
-            })
+            loaders.save((err, docs) => {})
         }
 
     }).then(docs => {

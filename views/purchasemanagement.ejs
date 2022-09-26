@@ -128,10 +128,9 @@
                                     </datalist>
 
                                     <td><input required class="form-control price-control" tabIndex="5" type="number" step=".01" name="kilogram" style="width: 125px;" id="kilogram"></td>
-                                    <td><input required class="p-1 form-control price-control" tabIndex="6" type="number" step=".01" style="width: 125px;" name="price" id="price"></td>
+                                    <td><input required class="p-1 form-control price-control" tabIndex="6" type="number" style="width: 125px;" name="price" id="price"></td>
                                     <td><input required class="p-1 form-control kg-controller" tabIndex="7" type="number" step=".01" style="width: 100px;" name="kgprice" id="kgprice"></td>
                                     <td><input required class="p-1" tabIndex="8" type="number" step=".01" style="width: 150px;" name="total" id="total"></td>
-                                    <input type="hidden" name="through" value="Bank">
 
                                     <td><input class="p-1 form-control" style="width: 100px;" tabIndex="9" type="text" step=".01" name="hint" id="hint"></td>
                                     <input type="hidden" name="type" value="seperate">
@@ -352,7 +351,7 @@
         $(".price-control").on("change", function() {
             var kilogram = document.getElementById('kilogram').value;
             var bagprice = document.getElementById('price').value;
-            var price = parseInt(bagprice / 50)
+            var price = parseFloat(bagprice / 50).toFixed(2)
             var total = parseInt(kilogram * price);
             document.getElementById('total').value = total;
             document.getElementById('kgprice').value = price;
@@ -370,7 +369,7 @@
         $(".price-control").on("change", function() {
             var kilogram = document.getElementById('editkilogram').value;
             var bagprice = document.getElementById('bagprice').value;
-            var price = parseInt(bagprice / 50)
+            var price = parseFloat(bagprice / 50).toFixed(2)
             var total = parseInt(kilogram * price);
             document.getElementById('edittotal').value = total;
         });
@@ -383,7 +382,7 @@
         });
         $(".price-2").on("change", function() {
             var price = document.getElementById('bagprice').value;
-            document.getElementById('editprize').value = parseInt(price / 50)
+            document.getElementById('editprize').value = parseFloat(price / 50).toFixed(2)
 
         });
     </script>
