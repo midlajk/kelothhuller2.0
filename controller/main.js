@@ -17,7 +17,6 @@ exports.postloginpage = (req, res) => {
     var name = req.body.name.toUpperCase()
     var password = req.body.password
     Users.findOne({ name: name }).then(docs => {
-        console.log(docs, name)
         if (!docs) {
 
             req.flash('error', 'No user registered.');
@@ -36,7 +35,6 @@ exports.postloginpage = (req, res) => {
                             req.session.isadminlogged = true;
                             req.session.ismanager = false;
                             return req.session.save(err => {
-                                console.log(err)
                                 res.redirect('/dealerslist')
                             });
                         } else {
@@ -45,7 +43,6 @@ exports.postloginpage = (req, res) => {
                             req.session.isadminlogged = false;
                             req.session.ismanager = true;
                             return req.session.save(err => {
-                                console.log(err)
                                 res.redirect('/employee/addkooli')
                             });
                         }
@@ -57,9 +54,7 @@ exports.postloginpage = (req, res) => {
                         res.redirect('/login');
                     }
 
-                }).catch(err => {
-                    console.log(err)
-                })
+                }).catch(err => {})
 
         }
     })
@@ -83,7 +78,6 @@ exports.loginpage = (req, res) => {
 }
 exports.logout = (req, res, next) => {
     req.session.destroy(err => {
-        console.log(err);
         res.redirect('/login');
     });
 

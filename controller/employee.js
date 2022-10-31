@@ -1400,6 +1400,7 @@ exports.indidualdailykoolifilter = (req, res) => {
 }
 
 exports.deleteattendance = (req, res) => {
+    console.log('here', req.body)
     var date = new Date(req.params.date)
     Attendance.findOne({ _id: req.params.id }).then(docs => {
         if (docs) {
@@ -1413,7 +1414,7 @@ exports.deleteattendance = (req, res) => {
                             }
                         }, { safe: true, upsert: true },
                         function(err, model) {
-                            console.log(err);
+                            console.log(err, model);
 
 
                         }
@@ -1428,6 +1429,8 @@ exports.deleteattendance = (req, res) => {
         }
     }).then(docs => {
         Attendance.findOneAndDelete({ id: req.body.objectid }).then((err, docs) => {
+            console.log(err, docs);
+
             res.redirect('/employee/viewattendance')
         })
 

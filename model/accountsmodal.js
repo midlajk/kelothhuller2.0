@@ -16,6 +16,13 @@ var sellers = new Schema({
         total: Number,
         paid:Number,
         hint: String,
+    }],
+    storage:[{
+        date: Date,
+        kilogram: Number,
+        price: Number,
+        product: String,
+        settlementquntity:Number
     }]
 });
 
@@ -41,6 +48,13 @@ var buyers = new Schema({
         paid:Number,
  
 
+    }],
+    storage:[{
+        date: Date,
+        kilogram: Number,
+        price: Number,
+        product: String,
+        settlementquntity:Number
     }]
 });
 

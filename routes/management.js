@@ -29,4 +29,16 @@ router.get('/deleteuser/:id',isAdmin, managementController.deleteuser);
 router.post('/editorder',isAdmin, managementController.editorder);
 
 
+
+//////Storage management ////
+router.get('/purchasestoragemanagement',isAdmin, managementController.purchasestoragemanagement);
+router.get('/salesstoragemanagement',isAdmin, managementController.salesstoragemanagement);
+
+router.post('/addpuchasestorage',isAdmin, managementController.addpuchasestorage);
+router.post('/addsalesstorage',isAdmin, managementController.addsalesstorage);
+router.post('/editpurchasestorage',isAdmin, managementController.editpuchasestorage);
+router.post('/editsalesstorage',isAdmin, managementController.editsalesstorage);
+router.get('/deletepurchasestorage/:name/:arrayid/',isAdmin, managementController.deletepurchasestorage);
+router.get('/deletesalesestorage/:name/:arrayid/',isAdmin, managementController.deletesalesestorage);
+
 module.exports = router;

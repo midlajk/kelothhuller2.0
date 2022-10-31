@@ -1272,3 +1272,264 @@ exports.editorder = (req, res) => {
         })
     }
 }
+
+
+
+////////////////////Storage ///////////
+exports.purchasestoragemanagement = (req, res) => {
+    let message = req.flash('error');
+    if (message.length > 0) {
+        message = message[0];
+    } else {
+        message = null;
+    }
+    var start = new Date()
+    var end = new Date()
+    start.setUTCHours(0, 0, 0, 0);
+    end.setUTCHours(23, 59, 59, 999)
+
+    Sellers.aggregate([{ $unwind: "$storage" }]).sort({ "storage.date": -1, "storage._id": -1 }).exec(async(err, datas) => {
+        const buyers = await Sellers.find().distinct('name').lean();
+        res.render('purchasestoragemanagement', {
+            mainpath: '/storagemanagement',
+            subpath: '',
+            seller: datas,
+            names: buyers,
+            errorMessage: message,
+            start: 'TODAY',
+            end: '! Filter to see more data',
+        })
+    })
+
+
+}
+exports.salesstoragemanagement = (req, res) => {
+    let message = req.flash('error');
+    if (message.length > 0) {
+        message = message[0];
+    } else {
+        message = null;
+    }
+    var start = new Date()
+    var end = new Date()
+    start.setUTCHours(0, 0, 0, 0);
+    end.setUTCHours(23, 59, 59, 999)
+
+    Buyers.aggregate([{ $unwind: "$storage" }]).sort({ "storage.date": -1, "storage._id": -1 }).exec(async(err, datas) => {
+        const sellers = await Buyers.find().distinct('name').lean();
+
+        res.render('salesstoragemanagement', {
+            mainpath: '/storagemanagement',
+            subpath: '',
+            seller: datas,
+            names: sellers,
+            errorMessage: message,
+            start: 'TODAY',
+            end: '! Filter to see more data',
+        })
+    })
+
+
+}
+exports.addpuchasestorage = (req, res) => {
+    date = new Date(req.body.date)
+    var name = req.body.name.toUpperCase().trim().split('-')[0];
+    const objectid = new mongoose.Types.ObjectId()
+
+    Sellers.findOne({ name: name }).then((docs, err) => {
+
+        if (docs) {
+
+            docs.updateOne({
+
+                    $push: {
+
+                        "storage": {
+
+                            date: date,
+                            kilogram: req.body.kilogram || 0,
+                            price: req.body.price || 0,
+                            product: req.body.product,
+
+
+                        }
+                    }
+                }, { safe: true, upsert: true },
+                function(err, model) {
+
+                    res.redirect('/purchasestoragemanagement')
+                }
+            )
+
+        } else {
+            var sellers = new Sellers({
+
+                id: objectid,
+                name: name,
+                total: 0,
+                storage: [{
+                    date: date,
+                    kilogram: req.body.kilogram || 0,
+                    price: req.body.price || 0,
+                    product: req.body.product,
+
+                }]
+
+            })
+            sellers.save(function(err, doc) {
+                console.log(err, docs)
+                res.redirect('/purchasestoragemanagement')
+
+            })
+
+
+
+        }
+    })
+
+
+}
+
+exports.addsalesstorage = (req, res) => {
+    date = new Date(req.body.date)
+    var name = req.body.name.toUpperCase().trim().split('-')[0];
+    const objectid = new mongoose.Types.ObjectId()
+
+    Buyers.findOne({ name: name }).then((docs, err) => {
+        if (docs) {
+            docs.updateOne({
+
+                    $push: {
+
+                        "storage": {
+
+                            date: date,
+                            kilogram: req.body.kilogram || 0,
+                            price: req.body.price || 0,
+                            product: req.body.product,
+
+                        }
+                    }
+                }, { safe: true, upsert: true },
+                function(err, model) {
+
+                    res.redirect('/salesstoragemanagement')
+
+                }
+            )
+
+        } else {
+            var buyer = new Buyers({
+                name: name,
+                total: 0,
+                id: objectid,
+                storage: [{
+                    date: date,
+                    kilogram: req.body.kilogram || 0,
+                    price: req.body.price || 0,
+                    product: req.body.product,
+
+                }]
+
+            })
+            buyer.save((err, docs) => {
+                res.redirect('/salesstoragemanagement')
+
+            })
+
+        }
+    })
+}
+
+
+exports.editpuchasestorage = (req, res) => {
+    Sellers.findOneAndUpdate({ _id: req.body.objectid, storage: { $elemMatch: { _id: req.body.arrayid } } }, {
+
+                $set: {
+                    'storage.$.date': req.body.date,
+                    'storage.$.kilogram': req.body.kilogram,
+                    'storage.$.price': req.body.price,
+                    'storage.$.product': req.body.product,
+                    'storage.$.settlementquntity': (req.body.settled + req.body.newsettlement),
+
+
+                }
+            }, // list fields you like to change
+            { 'new': true, 'safe': true, 'upsert': true })
+        .then(docs => {
+
+
+            res.redirect('/purchasestoragemanagement')
+
+        })
+
+
+}
+exports.editsalesstorage = (req, res) => {
+    Buyers.findOneAndUpdate({ _id: req.body.objectid, storage: { $elemMatch: { _id: req.body.arrayid } } }, {
+
+                $set: {
+                    'storage.$.date': req.body.date,
+                    'storage.$.kilogram': req.body.kilogram,
+                    'storage.$.price': req.body.price,
+                    'storage.$.product': req.body.product,
+                    'storage.$.settlementquntity': (req.body.settled + req.body.newsettlement),
+
+
+                }
+            }, // list fields you like to change
+            { 'new': true, 'safe': true, 'upsert': true })
+        .then((docs, err) => {
+
+            console.log(err)
+            res.redirect('/salesstoragemanagement')
+
+        })
+
+
+}
+
+
+
+exports.deletepurchasestorage = (req, res) => {
+    Sellers.findOne({ name: req.params.name }).then((docs, err) => {
+        if (docs) {
+
+            docs.updateOne({
+                    $pull: {
+                        "storage": {
+                            _id: req.params.arrayid
+                        }
+                    }
+                }, { safe: true, upsert: true },
+                function(err, model) {
+                    res.redirect('/purchasestoragemanagement')
+
+
+                }
+            )
+        }
+
+    })
+}
+exports.deletesalesestorage = (req, res) => {
+    Buyers.findOne({ name: req.params.name }).then((docs, err) => {
+        if (docs) {
+
+            docs.updateOne({
+                    $pull: {
+                        "storage": {
+                            _id: req.params.arrayid
+                        }
+                    }
+                }, { safe: true, upsert: true },
+                function(err, model) {
+
+                    res.redirect('/salesstoragemanagement')
+
+                }
+            )
+        }
+
+    })
+}
