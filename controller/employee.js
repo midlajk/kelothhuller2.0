@@ -1400,13 +1400,10 @@ exports.indidualdailykoolifilter = (req, res) => {
 }
 
 exports.deleteattendance = (req, res) => {
-    console.log('request', req.params)
     var date = new Date(req.params.date)
     Attendance.findOne({ _id: req.params.id }).then(docs => {
-        console.log('finddocs' + docs)
         if (docs) {
             docs.name.forEach(one => {
-                console.log('name : ' + one)
                 Employees.findOne({ name: one }).then((docs, err) => {
                     docs.updateOne({
                             $pull: {
@@ -1416,8 +1413,6 @@ exports.deleteattendance = (req, res) => {
                             }
                         }, { safe: true, upsert: true },
                         function(model, err) {
-                            console.log('err' + err, 'model' + model);
-
 
                         }
                     )
@@ -1431,8 +1426,6 @@ exports.deleteattendance = (req, res) => {
         }
     }).then(docs => {
         Attendance.findOneAndDelete({ _id: req.params.id }).then((docs, err) => {
-            console.log('err' + err, 'doc' + docs);
-
             res.redirect('/employee/viewattendance')
         })
 
