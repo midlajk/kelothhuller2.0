@@ -1430,8 +1430,7 @@ exports.deleteattendance = (req, res) => {
             });
         }
     }).then(docs => {
-        console.log('recheed here')
-        Attendance.findOneAndDelete({ _id: req.body.objectid }).then((docs, err) => {
+        Attendance.findOneAndDelete({ _id: req.params.id }).then((docs, err) => {
             console.log('err' + err, 'doc' + docs);
 
             res.redirect('/employee/viewattendance')
