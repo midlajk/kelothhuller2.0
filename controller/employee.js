@@ -1431,7 +1431,7 @@ exports.deleteattendance = (req, res) => {
         }
     }).then(docs => {
         console.log('recheed here')
-        Attendance.findOneAndDelete({ id: req.body.objectid }).then((err, docs) => {
+        Attendance.findOneAndDelete({ _id: req.body.objectid }).then((docs, err) => {
             console.log('err' + err, 'doc' + docs);
 
             res.redirect('/employee/viewattendance')
