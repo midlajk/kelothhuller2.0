@@ -101,10 +101,11 @@
                         <tbody>
                             <% var bags = 0;
                             var kooli = 0;
-                            for(var i=0; i < docs.length ; i++){
+                            for(var i=0; i < docs.length ; i++){   %>
+
                                 <!-- bags = parseInt(bags) + parseInt(docs[i].order.numberofsack);
                                 kooli = parseInt(kooli) + parseInt(docs[i].order.total); -->
-                                %>
+                             
 
                                 <tr>
                                     <td>
@@ -140,13 +141,11 @@
 
                                             <td>
                                                 <%=docs[i].order.loaders%>
-                                                <!-- <%for(var k=0; k < docs[i].order.loaders.length; k++){%>
+                                              <!-- <%for(var k=0; k < docs[i].order.loaders.length; k++){%>
 
                                                     <a href="/employee/indidualkooli/<%=docs[i].order.loaders[k]%>">
                                                         <%=docs[i].order.loaders[k]%>
-                                                    </a> ,
-
-                                                    <%}%> -->
+                                                    </a> ,<%}%> -->
 
                                             </td>
                                             <%if(currentuser.isadminlogged){%>
