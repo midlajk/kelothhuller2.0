@@ -45,11 +45,11 @@
 
                                         <select class="form-control form-control-user js-example-basic-single" id="list_loaders" onchange="check_loader()">
                                 <option value="">Search names</option>
-                                  <%for(let docs of loads){%>
+                                  <!-- <%for(let docs of loads){%>
                         <option value="<%=docs%>">
                             <%=docs%>
                         </option>
-                        <%}%>
+                        <%}%> -->
                             </select>
                                         <div class="input-group-append">
 
@@ -61,9 +61,9 @@
 
                                         <select class="form-control form-control-user js-example-basic-single" style="width: 80%;" id="list_sellers" onchange="check_seller()">
                                 <option value="">Search names</option>
-                                  <%for(let docs of loads){%>
+                                  <!-- <%for(let docs of loads){%>
                                     <option value="<%=docs%>"><%=docs%></option>
-                                  <%}%>
+                                  <%}%> -->
                              </select>
 
                                         <div class="input-group-append">
@@ -102,8 +102,8 @@
                             <% var bags = 0;
                             var kooli = 0;
                             for(var i=0; i < docs.length ; i++){
-                                bags = parseInt(bags) + parseInt(docs[i].order.numberofsack);
-                                kooli = parseInt(kooli) + parseInt(docs[i].order.total);
+                                <!-- bags = parseInt(bags) + parseInt(docs[i].order.numberofsack);
+                                kooli = parseInt(kooli) + parseInt(docs[i].order.total); -->
                                 %>
 
                                 <tr>
@@ -126,7 +126,8 @@
                                                 <%=docs[i].order.numberofsack%>
                                             </td>
                                             <td>
-                                                <%=parseInt(docs[i].order.total/docs[i].order.numberofsack)%>
+                                                vvv
+                                                <!-- <%=parseInt(docs[i].order.total/docs[i].order.numberofsack)%> -->
                                             </td>
                                             <td>
                                                 <%=docs[i].order.total%>
@@ -138,14 +139,14 @@
 
 
                                             <td>
-
-                                                <%for(var k=0; k < docs[i].order.loaders.length; k++){%>
+                                                <%=docs[i].order.loaders%>
+                                                <!-- <%for(var k=0; k < docs[i].order.loaders.length; k++){%>
 
                                                     <a href="/employee/indidualkooli/<%=docs[i].order.loaders[k]%>">
                                                         <%=docs[i].order.loaders[k]%>
                                                     </a> ,
 
-                                                    <%}%>
+                                                    <%}%> -->
 
                                             </td>
                                             <%if(currentuser.isadminlogged){%>
@@ -355,12 +356,13 @@
     </script>
     <script>
         $(document).ready(function() {
-            var bags = <%= bags %>;
-            var kooli = <%= kooli%>;
+            // var bags = <%= bags %>;
+            // var kooli = <%= kooli%>;
+             var bags = 0;
+             var kooli = 0;
 
-
-            document.getElementById('totalbag').innerHTML = bags.toLocaleString();
-            document.getElementById('totalkooli').innerHTML = kooli.toLocaleString()
+            // document.getElementById('totalbag').innerHTML = bags.toLocaleString();
+            // document.getElementById('totalkooli').innerHTML = kooli.toLocaleString()
 
 
         });
