@@ -139,7 +139,6 @@
 
 
                                             <td>
-                                                <%=docs[i].order.loaders%>
                                               <%for(var k=0; k < docs[i].order.loaders.length; k++){%>
 
                                                     <a href="/employee/indidualkooli/<%=docs[i].order.loaders[k]%>">
@@ -356,7 +355,7 @@
         $(document).ready(function() {
             var bags = <%= bags %>;
             var kooli = <%= kooli%>;
-            
+
             document.getElementById('totalbag').innerHTML = bags.toLocaleString();
             document.getElementById('totalkooli').innerHTML = kooli.toLocaleString()
 
