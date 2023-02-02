@@ -497,19 +497,21 @@ exports.viewkooli = (req, res) => {
     var end = new Date()
     start.setDate(0);
     Loaderskooli.aggregate([{ $unwind: "$order" }]).sort({ "order.date": -1, "order._id": -1 }).exec((err, docs) => {
-        Loaders.find().distinct('name').then(loaders => {
-            Loaderskooli.find().distinct('seller').then(loads => {
+        // Loaders.find().distinct('name').then(loaders => {
+        //     Loaderskooli.find().distinct('seller').then(loads => {
                 res.render('viewkooli', {
                     docs: docs,
                     mainpath: '/viewkooli',
                     start: start,
                     end: end,
                     individual: false,
-                    loaders: loaders,
-                    loads: loads
+                    loaders: [],
+                    loads: []
+                    // loaders: loaders,
+                    // loads: loads
                 })
-            })
-        })
+        //     })
+        // })
     })
 
 }
