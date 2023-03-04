@@ -495,8 +495,16 @@ exports.postaddkooli = (req, res) => {
 exports.viewkooli = (req, res) => {
     var start = new Date()
     var end = new Date()
-    start.setDate(0);
-    Loaderskooli.aggregate([{ $unwind: "$order" }]).sort({ "order.date": -1, "order._id": -1 }).exec((err, docs) => {
+    start.setDate(start.getDay()-2);
+    Loaderskooli.aggregate([{ $unwind: "$order" }, {
+        $match: {
+
+            "order.date": {
+                $lt: end,
+                $gte: start
+            }
+        }
+    }]).sort({ "order.date": -1, "order._id": -1 }).exec((err, docs) => {
         Loaders.find().distinct('name').then(loaders => {
             Loaderskooli.find().distinct('seller').then(loads => {
                 res.render('viewkooli', {
