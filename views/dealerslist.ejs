@@ -182,7 +182,7 @@
                                 <th>Purchase amount</th>
                                 <th>Amount Paid</th>
                                 <th>Difference</th>
-                                <th>Total Remaining</th>
+                                <th>Total Storage</th>
                                 <th>Delete</th>
                             </tr>
                         </thead>
@@ -194,7 +194,7 @@
                                 <th>Purchase amount</th>
                                 <th>Amount Paid</th>
                                 <th>Difference</th>
-                                <th>Total Remaining</th>
+                                <th>Total Storage</th>
                                 <th>Delete</th>
                             </tr>
                         </tfoot>
@@ -231,7 +231,7 @@
                                         <%= (parseInt(dics[i].totalsales) - parseInt(dics[i].totalpaid)).toLocaleString()  %>
                                     </td>
                                     <td>
-                                        <%=dics[i].total.toLocaleString()%>
+                                        <%=dics[i].totalstorage.toLocaleString()%>
                                     </td>
                                     <td><a href="#" onclick="deletedealer('<%=i%>','purchase')" class="btn btn-primary">edit</a>
                                 </tr>

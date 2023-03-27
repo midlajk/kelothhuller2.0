@@ -21,7 +21,13 @@ exports.dealerslist = (req, res) => {
             $addFields: {
                 totalsales: { $sum: "$deal.total" },
                 totalkg: { $sum: "$deal.kilogram" },
-                totalpaid: { $sum: "$deal.paid" }
+                totalpaid: { $sum: "$deal.paid" },
+                totalstorage:{$sum: { $cond: [ {$and : [ { $lt: [ "$deal.total", 10] },
+                { $gt: [ "$deal.total",-10] }
+                ] },
+                deal.kilogram,
+      0 ] }}
+
             }
         }]).sort({ "_id": -1 }).exec((err, dics) => {
 
