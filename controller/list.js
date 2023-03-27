@@ -25,7 +25,7 @@ exports.dealerslist = (req, res) => {
                 totalstorage:{$sum: { $cond: [ {$and : [ { $lt: [ "$deal.total", 10] },
                 { $gt: [ "$deal.total",-10] }
                 ] },
-                deal.kilogram,
+                "$deal.kilogram",
       0 ] }}
 
             }
